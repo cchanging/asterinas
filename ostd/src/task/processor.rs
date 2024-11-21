@@ -2,7 +2,7 @@
 
 use alloc::sync::Arc;
 
-use super::{context_switch, Task, TaskContext};
+use super::{context_switch, scheduler::miri_switch_to, Task, TaskContext};
 use crate::cpu_local_cell;
 
 cpu_local_cell! {
@@ -42,7 +42,7 @@ pub(super) fn current_task() -> Option<Arc<Task>> {
 ///
 /// This function will panic if called while holding preemption locks or with
 /// local IRQ disabled.
-pub(super) fn switch_to_task(next_task: Arc<Task>) {
+pub fn switch_to_task(next_task: Arc<Task>) {
     super::atomic_mode::might_sleep();
 
     let irq_guard = crate::trap::disable_local();
@@ -68,6 +68,7 @@ pub(super) fn switch_to_task(next_task: Arc<Task>) {
         next_user_space.vm_space().activate();
     }
 
+    let miri_next_task = next_task.clone();
     // Change the current task to the next task.
     //
     // We cannot directly drop `current` at this point. Since we are running as
@@ -92,7 +93,8 @@ pub(super) fn switch_to_task(next_task: Arc<Task>) {
     unsafe {
         // This function may not return, for example, when the current task exits. So make sure
         // that all variables on the stack can be forgotten without causing resource leakage.
-        context_switch(current_task_ctx_ptr, next_task_ctx_ptr);
+        miri_switch_to(miri_next_task.as_ref());
+        //context_switch(current_task_ctx_ptr, next_task_ctx_ptr);
     }
 
     // Now it's fine to drop `prev_task`. However, we choose not to do this because it is not

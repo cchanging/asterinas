@@ -61,7 +61,7 @@ static NUM_CPUS: Once<u32> = Once::new();
 ///
 /// The caller must ensure that this function is called only once on the BSP
 /// at the correct time when the number of CPUs is available from the platform.
-pub(crate) unsafe fn init_num_cpus() {
+pub unsafe fn init_num_cpus() {
     let num_processors = get_num_processors().unwrap_or(1);
     NUM_CPUS.call_once(|| num_processors);
 }
@@ -72,7 +72,7 @@ pub(crate) unsafe fn init_num_cpus() {
 ///
 /// The caller must ensure that this function is called only once on the
 /// correct CPU with the correct CPU ID.
-pub(crate) unsafe fn set_this_cpu_id(id: u32) {
+pub unsafe fn set_this_cpu_id(id: u32) {
     CURRENT_CPU.store(id);
 }
 
@@ -124,5 +124,5 @@ unsafe impl PinCurrentCpu for DisabledPreemptGuard {}
 
 cpu_local_cell! {
     /// The number of the current CPU.
-    static CURRENT_CPU: u32 = u32::MAX;
+    static CURRENT_CPU: u32 = 0;
 }

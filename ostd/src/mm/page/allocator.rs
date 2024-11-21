@@ -123,7 +123,7 @@ where
     Some(vector)
 }
 
-pub(crate) fn init() {
+pub fn init() {
     let regions = crate::boot::memory_regions();
     let mut total: usize = 0;
     let mut allocator = FrameAllocator::<32>::new();

@@ -20,6 +20,8 @@ pub(crate) unsafe fn set_base(addr: u64) {
 
 /// Gets the base address for the CPU local storage by reading the GS base model-specific register.
 pub(crate) fn get_base() -> u64 {
+    #[cfg(miri)]
+    return 0x1000;
     GS::read_base().as_u64()
 }
 
@@ -140,18 +142,18 @@ macro_rules! impl_numeric_single_instruction_for {
     )*};
 }
 
-impl_numeric_single_instruction_for!(
-    [u64,   reg,    ":r"]
-    [usize, reg,    ":r"]
-    [u32,   reg,    ":e"]
-    [u16,   reg,    ":x"]
-    [u8,    reg_byte, ""]
-    [i64,   reg,    ":r"]
-    [isize, reg,    ":r"]
-    [i32,   reg,    ":e"]
-    [i16,   reg,    ":x"]
-    [i8,    reg_byte, ""]
-);
+// impl_numeric_single_instruction_for!(
+//     [u64,   reg,    ":r"]
+//     [usize, reg,    ":r"]
+//     [u32,   reg,    ":e"]
+//     [u16,   reg,    ":x"]
+//     [u8,    reg_byte, ""]
+//     [i64,   reg,    ":r"]
+//     [isize, reg,    ":r"]
+//     [i32,   reg,    ":e"]
+//     [i16,   reg,    ":x"]
+//     [i8,    reg_byte, ""]
+// );
 
 macro_rules! impl_generic_single_instruction_for {
     ($([<$gen_type:ident $(, $more_gen_type:ident)*>, $typ:ty])*) => {$(
@@ -186,42 +188,42 @@ macro_rules! impl_generic_single_instruction_for {
     )*}
 }
 
-impl_generic_single_instruction_for!(
-    [<T>, *const T]
-    [<T>, *mut T]
-    [<T, R>, fn(T) -> R]
-);
+// impl_generic_single_instruction_for!(
+//     [<T>, *const T]
+//     [<T>, *mut T]
+//     [<T, R>, fn(T) -> R]
+// );
 
 // In this module, booleans are represented by the least significant bit of a
 // `u8` type. Other bits must be zero. This definition is compatible with the
 // Rust reference: <https://doc.rust-lang.org/reference/types/boolean.html>.
 
-impl SingleInstructionLoad for bool {
-    unsafe fn load(offset: *const Self) -> Self {
-        debug_assert_initialized!();
+// impl SingleInstructionLoad for bool {
+//     unsafe fn load(offset: *const Self) -> Self {
+//         debug_assert_initialized!();
 
-        let val: u8;
-        core::arch::asm!(
-            "mov {0}, gs:[{1}]",
-            out(reg_byte) val,
-            in(reg) offset,
-            options(nostack, readonly),
-        );
-        debug_assert!(val == 1 || val == 0);
-        val == 1
-    }
-}
+//         let val: u8;
+//         core::arch::asm!(
+//             "mov {0}, gs:[{1}]",
+//             out(reg_byte) val,
+//             in(reg) offset,
+//             options(nostack, readonly),
+//         );
+//         debug_assert!(val == 1 || val == 0);
+//         val == 1
+//     }
+// }
 
-impl SingleInstructionStore for bool {
-    unsafe fn store(offset: *mut Self, val: Self) {
-        debug_assert_initialized!();
+// impl SingleInstructionStore for bool {
+//     unsafe fn store(offset: *mut Self, val: Self) {
+//         debug_assert_initialized!();
 
-        let val: u8 = if val { 1 } else { 0 };
-        core::arch::asm!(
-            "mov gs:[{0}], {1}",
-            in(reg) offset,
-            in(reg_byte) val,
-            options(nostack),
-        );
-    }
-}
+//         let val: u8 = if val { 1 } else { 0 };
+//         core::arch::asm!(
+//             "mov gs:[{0}], {1}",
+//             in(reg) offset,
+//             in(reg_byte) val,
+//             options(nostack),
+//         );
+//     }
+// }

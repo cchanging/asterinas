@@ -18,7 +18,7 @@
 //! boot information is transparent for the upper level kernel.
 //!
 
-mod linux_boot;
+pub mod linux_boot;
 mod multiboot;
 mod multiboot2;
 

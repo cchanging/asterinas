@@ -8,9 +8,11 @@
 mod fifo_scheduler;
 pub mod info;
 
+use core::intrinsics::unreachable;
+
 use spin::Once;
 
-use super::{preempt::cpu_local, processor, Task};
+use super::{preempt::cpu_local, processor::{self, current_task}, Task};
 use crate::{
     cpu::{CpuId, PinCurrentCpu},
     prelude::*,
@@ -154,6 +156,39 @@ where
     });
 }
 
+// pub fn run_thread(func: Box<dyn FnOnce() + Send + Sync>) {
+//     func();
+// }
+
+pub fn run_thread(_temp: usize) {
+    let current_task = current_task()
+        .expect("no current task, it should have current task in kernel task entry");
+    // SAFETY: The scheduler will ensure that the task is only accessed
+    // by one CPU.
+    let task_func = unsafe { &mut *current_task.func.get() };
+    let task_func = task_func
+        .take()
+        .expect("task function is `None` when trying to run");
+    task_func();
+
+    // Manually drop all the on-stack variables to prevent memory leakage!
+    // This is needed because `scheduler::exit_current()` will never return.
+    drop(current_task);
+    exit_current();
+}
+
+// extern "C" {
+//     pub fn miri_create_new_thread(func: fn(usize) -> !, arg: usize, task: &Task);
+// }
+
+extern "Rust" {    
+    pub fn miri_create_new_thread(func: fn(usize), arg: usize, task: &Task);
+    
+    pub fn miri_switch_to(task: &Task);
+
+    pub fn miri_load_cpu_local(addr: *const u8) -> *const u8;
+}
+
 /// Unblocks a target task.
 pub(crate) fn unpark_target(runnable: Arc<Task>) {
     let preempt_cpu = SCHEDULER
@@ -174,7 +209,9 @@ pub(super) fn run_new_task(runnable: Arc<Task>) {
     if !SCHEDULER.is_completed() {
         fifo_scheduler::init();
     }
-
+    unsafe {
+        miri_create_new_thread(run_thread, 0, runnable.as_ref());
+    }
     let preempt_cpu = SCHEDULER
         .get()
         .unwrap()
@@ -213,7 +250,7 @@ pub(super) fn exit_current() -> ! {
 }
 
 /// Yields execution.
-pub(super) fn yield_now() {
+pub fn yield_now() {
     reschedule(|local_rq| {
         local_rq.update_current(UpdateFlags::Yield);
         if let Some(next_task) = local_rq.pick_next_current() {

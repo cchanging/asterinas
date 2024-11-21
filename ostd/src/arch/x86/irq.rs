@@ -53,10 +53,13 @@ pub(crate) fn enable_local() {
 }
 
 pub(crate) fn disable_local() {
+    #[cfg(not(miri))]
     x86_64::instructions::interrupts::disable();
 }
 
 pub(crate) fn is_local_enabled() -> bool {
+    #[cfg(miri)]
+    return false;
     (rflags::read_raw() & RFlags::INTERRUPT_FLAG.bits()) != 0
 }
 

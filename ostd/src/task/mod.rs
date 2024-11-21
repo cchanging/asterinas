@@ -11,8 +11,9 @@ pub mod scheduler;
 use core::{any::Any, cell::SyncUnsafeCell};
 
 use kernel_stack::KernelStack;
-pub(crate) use preempt::cpu_local::reset_preempt_info;
+pub use preempt::cpu_local::reset_preempt_info;
 use processor::current_task;
+use scheduler::{miri_create_new_thread, run_thread};
 
 pub use self::{
     preempt::{disable_preempt, DisabledPreemptGuard},
@@ -27,7 +28,7 @@ use crate::{prelude::*, user::UserSpace};
 /// If having a user space, the task can switch to the user space to
 /// execute user code. Multiple tasks can share a single user space.
 pub struct Task {
-    func: SyncUnsafeCell<Option<Box<dyn FnOnce() + Send + Sync>>>,
+    pub func: SyncUnsafeCell<Option<Box<dyn FnOnce() + Send + Sync>>>,
     data: Box<dyn Any + Send + Sync>,
     user_space: Option<Arc<UserSpace>>,
     ctx: SyncUnsafeCell<TaskContext>,
@@ -195,6 +196,9 @@ impl TaskOptions {
             },
         };
 
+        // unsafe {
+        //     miri_create_new_thread(run_thread, 0, &new_task);
+        // }
         Ok(new_task)
     }
 

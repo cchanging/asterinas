@@ -67,3 +67,7 @@ default = ["cvm_guest", "log_color"]
 log_color = ["dep:owo-colors"]
 # The guest OS support for Confidential VMs (CVMs), e.g., Intel TDX
 cvm_guest = ["dep:tdx-guest", "dep:iced-x86"]
+
+[[bin]]
+name = "main"
+path = "src/bin/main.rs"

@@ -49,7 +49,7 @@ pub(in crate::task) fn inc_guard_count() {
 }
 
 pub(in crate::task) fn dec_guard_count() {
-    debug_assert!(get_guard_count() > 0);
+    //debug_assert!(get_guard_count() > 0);
     PREEMPT_INFO.sub_assign(1);
 }
 
@@ -67,7 +67,7 @@ cpu_local_cell! {
 /// initialize the CPU-local storage for APs, the value of the AP's
 /// `PREEMPT_INFO` would be that of the BSP's. Therefore, we need to reset the
 /// `PREEMPT_INFO` to the initial state on APs' initialization.
-pub(crate) unsafe fn reset_preempt_info() {
+pub unsafe fn reset_preempt_info() {
     PREEMPT_INFO.store(NEED_PREEMPT_MASK);
 }
 

@@ -56,6 +56,16 @@ extern "C" {
     fn __cpu_local_end();
 }
 
+#[cfg(miri)]
+const CPU_LOCAL_START: *const u64 = 0x1000 as *const u64;
+#[cfg(not(miri))]
+const CPU_LOCAL_START: *const u64 = __cpu_local_start as *const u64;
+
+#[cfg(miri)]
+const CPU_LOCAL_END: *const u64 = 0xFFFFFFFFFF as *const u64;
+#[cfg(not(miri))]
+const CPU_LOCAL_END: *const u64 = __cpu_local_end as *const u64;
+
 /// Sets the base address of the CPU-local storage for the bootstrap processor.
 ///
 /// It should be called early to let [`crate::task::disable_preempt`] work,
@@ -68,7 +78,7 @@ extern "C" {
 ///
 /// It should be called only once and only on the BSP.
 pub(crate) unsafe fn early_init_bsp_local_base() {
-    let start_base_va = __cpu_local_start as usize as u64;
+    let start_base_va = CPU_LOCAL_START as usize as u64;
 
     // SAFETY: The base to be set is the start of the `.cpu_local` section,
     // where accessing the CPU-local objects have defined behaviors.
@@ -90,8 +100,8 @@ static CPU_LOCAL_STORAGES: Once<Vec<ContPages<KernelMeta>>> = Once::new();
 /// this function being called, otherwise copying non-constant values
 /// will result in pretty bad undefined behavior.
 pub unsafe fn init_on_bsp() {
-    let bsp_base_va = __cpu_local_start as usize;
-    let bsp_end_va = __cpu_local_end as usize;
+    let bsp_base_va = CPU_LOCAL_START as usize;
+    let bsp_end_va = CPU_LOCAL_END as usize;
 
     let num_cpus = super::num_cpus();
 
@@ -119,7 +129,7 @@ pub unsafe fn init_on_bsp() {
 
     CPU_LOCAL_STORAGES.call_once(|| cpu_local_storages);
 
-    arch::cpu::local::set_base(bsp_base_va as u64);
+    //arch::cpu::local::set_base(bsp_base_va as u64);
 
     has_init::set_true();
 }

@@ -310,9 +310,13 @@ impl KVirtArea<Untracked> {
 
 impl<M: AllocatorSelector + 'static> Drop for KVirtArea<M> {
     fn drop(&mut self) {
+        let range = self.start()..self.end();
+        if range.len() == 0 {
+            return;
+        }
         // 1. unmap all mapped pages.
         let page_table = KERNEL_PAGE_TABLE.get().unwrap();
-        let range = self.start()..self.end();
+        
         let mut cursor = page_table.cursor_mut(&range).unwrap();
         let flusher = TlbFlusher::new(CpuSet::new_full(), disable_preempt());
         let tlb_prefer_flush_all = self.end() - self.start() > FLUSH_ALL_RANGE_THRESHOLD;

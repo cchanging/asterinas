@@ -118,6 +118,53 @@ impl From<E820Type> for MemoryRegionType {
     }
 }
 
+pub fn init_miri_memory_regions(memory_regions: &'static Once<Vec<MemoryRegion>>) {
+    let mut regions = Vec::<MemoryRegion>::new();
+    regions.push(MemoryRegion::new(
+        0x0, 0xa0000, MemoryRegionType::Usable
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x100000, 0x700000,  MemoryRegionType::Usable
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x800000, 0x8000, MemoryRegionType::NonVolatileSleep
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x808000, 0x3000, MemoryRegionType::Usable
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x80b000, 0x1000, MemoryRegionType::NonVolatileSleep
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x80c000, 0x4000,  MemoryRegionType::Usable
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x810000, 0xf0000,   MemoryRegionType::NonVolatileSleep
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x900000, 0x7e5e0000, MemoryRegionType::Usable
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x7eee0000, 0xc1000,  MemoryRegionType::Reserved
+    ));
+
+    regions.push(MemoryRegion::new(
+        0x7efa1000, 0x94e000,  MemoryRegionType::Usable
+    ));
+
+    memory_regions.call_once(|| non_overlapping_regions_from(regions.as_ref()));
+}
+
+
+
 fn init_memory_regions(memory_regions: &'static Once<Vec<MemoryRegion>>) {
     let mut regions = Vec::<MemoryRegion>::new();
 

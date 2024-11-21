@@ -111,6 +111,10 @@ pub fn init() {
     call_all_boot_init_callbacks();
 }
 
+pub fn init_for_miri() {
+    crate::arch::x86::boot::linux_boot::init_miri_memory_regions(&MEMORY_REGIONS);
+}
+
 /// Calls the OSTD-user defined entrypoint of the actual kernel.
 ///
 /// Any kernel that uses the `ostd` crate should define a function marked with

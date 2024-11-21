@@ -38,16 +38,16 @@ impl KernelStack {
     /// Generates a kernel stack with guard pages.
     /// 4 additional pages are allocated and regarded as guard pages, which should not be accessed.
     pub fn new_with_guard_page() -> Result<Self> {
-        let mut new_kvirt_area = KVirtArea::<Tracked>::new(KERNEL_STACK_SIZE + 4 * PAGE_SIZE);
+        let mut new_kvirt_area = KVirtArea::<Tracked>::new(0);
         let mapped_start = new_kvirt_area.range().start + 2 * PAGE_SIZE;
         let mapped_end = mapped_start + KERNEL_STACK_SIZE;
-        let pages = allocator::alloc(KERNEL_STACK_SIZE, |_| KernelStackMeta::default()).unwrap();
-        let prop = PageProperty {
-            flags: PageFlags::RW,
-            cache: CachePolicy::Writeback,
-            priv_flags: PrivilegedPageFlags::empty(),
-        };
-        new_kvirt_area.map_pages(mapped_start..mapped_end, pages.iter().cloned(), prop);
+        // let pages = allocator::alloc(KERNEL_STACK_SIZE, |_| KernelStackMeta::default()).unwrap();
+        // let prop = PageProperty {
+        //     flags: PageFlags::RW,
+        //     cache: CachePolicy::Writeback,
+        //     priv_flags: PrivilegedPageFlags::empty(),
+        // };
+        // new_kvirt_area.map_pages(mapped_start..mapped_end, pages.iter().cloned(), prop);
 
         Ok(Self {
             kvirt_area: new_kvirt_area,
