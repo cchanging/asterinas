@@ -150,7 +150,7 @@ impl TaskOptions {
     pub fn build(self) -> Result<Task> {
         /// all task will entering this function
         /// this function is mean to executing the task_fn in Task
-        extern "C" fn kernel_task_entry() -> ! {
+        extern "C" fn kernel_task_entry() {
             let current_task = current_task()
                 .expect("no current task, it should have current task in kernel task entry");
             // SAFETY: The scheduler will ensure that the task is only accessed

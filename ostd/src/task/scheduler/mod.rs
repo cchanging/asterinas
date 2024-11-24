@@ -236,17 +236,17 @@ fn set_need_preempt(cpu_id: CpuId) {
 /// Dequeues the current task from its runqueue.
 ///
 /// This should only be called if the current is to exit.
-pub(super) fn exit_current() -> ! {
+pub(super) fn exit_current() {
     reschedule(|local_rq: &mut dyn LocalRunQueue| {
         let _ = local_rq.dequeue_current();
         if let Some(next_task) = local_rq.pick_next_current() {
             ReschedAction::SwitchTo(next_task.clone())
         } else {
-            ReschedAction::Retry
+            ReschedAction::DoNothing
         }
     });
 
-    unreachable!()
+    //unreachable!()
 }
 
 /// Yields execution.
