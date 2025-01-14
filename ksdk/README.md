@@ -5,7 +5,7 @@
 
 ### What is it?
 
-KSDK (short for Operating System Development Kit) is designed to simplify the development of Rust operating systems. It aims to streamline the process by leveraging the framekernel architecture, originally proposed by [Astros](https://github.com/astros/astros).
+KSDK (short for Kernel Software Development Kit) is designed to simplify the development of Rust operating systems. It aims to streamline the process by leveraging the framekernel architecture, originally proposed by [Astros](https://github.com/astros/astros).
 
 `cargo-ksdk` is a command-line tool that facilitates project management for those developed on the framekernel architecture. Much like Cargo for Rust projects, `cargo-ksdk` enables building, running, and testing projects conveniently.
 

@@ -1,6 +1,6 @@
 # Astros KSTD
 
-With the Astros KSTD (Operating System Standard Library), 
+With the Astros KSTD (Kernel Standard Library), 
 you don't have to learn the dark art of unsafe Rust programming
 and risk shooting yourself in the foot.
 You will be doing whatever your heart desires,

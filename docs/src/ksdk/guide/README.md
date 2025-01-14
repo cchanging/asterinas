@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Astros KSDK (short for Operating System Development Kit) 
+The Astros KSDK (short for Kernel Software Development Kit) 
 is designed to simplify the development of Rust operating systems.
 It aims to streamline the process 
 by leveraging [the framekernel architecture](../../kernel/the-framekernel-architecture.md). 

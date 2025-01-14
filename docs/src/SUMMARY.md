@@ -52,4 +52,4 @@
 
 * [RFC Overview]()
     * [RFC-0001: RFC Process]()
-    * [RFC-0002: Operating System Development Kit (KSDK)]()
+    * [RFC-0002: Kernel Software Development Kit (KSDK)]()
