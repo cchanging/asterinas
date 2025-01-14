@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_util::slot_vec::SlotVec;
+use astros_util::slot_vec::SlotVec;
 
 use super::Inode;
 use crate::prelude::*;

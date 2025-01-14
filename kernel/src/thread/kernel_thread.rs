@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::{
+use kstd::{
     cpu::CpuSet,
     task::{Task, TaskOptions},
 };

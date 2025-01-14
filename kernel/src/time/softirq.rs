@@ -2,8 +2,8 @@
 
 use alloc::{boxed::Box, vec::Vec};
 
-use aster_softirq::{softirq_id::TIMER_SOFTIRQ_ID, SoftIrqLine};
-use ostd::{
+use astros_softirq::{softirq_id::TIMER_SOFTIRQ_ID, SoftIrqLine};
+use kstd::{
     sync::{LocalIrqDisabled, RwLock},
     timer,
 };

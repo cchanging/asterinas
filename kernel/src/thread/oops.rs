@@ -2,7 +2,7 @@
 
 //! Kernel "oops" handling.
 //!
-//! In Asterinas, a Rust panic leads to a kernel "oops". A kernel oops behaves
+//! In Astros, a Rust panic leads to a kernel "oops". A kernel oops behaves
 //! as an exceptional control flow event. If kernel oopses happened too many
 //! times, the kernel panics and the system gets halted. Kernel oops are per-
 //! thread, so one thread's oops does not affect other threads.
@@ -22,7 +22,7 @@ use core::{
     sync::atomic::{AtomicBool, AtomicUsize, Ordering},
 };
 
-use ostd::{cpu::PinCurrentCpu, panic, task::disable_preempt};
+use kstd::{cpu::PinCurrentCpu, panic, task::disable_preempt};
 
 use super::Thread;
 
@@ -79,7 +79,7 @@ const MAX_OOPS_COUNT: usize = 10_000;
 
 static OOPS_COUNT: AtomicUsize = AtomicUsize::new(0);
 
-#[ostd::panic_handler]
+#[kstd::panic_handler]
 fn panic_handler(info: &core::panic::PanicInfo) -> ! {
     let message = info.message();
 

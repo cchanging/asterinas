@@ -17,10 +17,10 @@
 use alloc::{boxed::Box, sync::Arc};
 use core::{mem::ManuallyDrop, time::Duration};
 
-use aster_rights::Rights;
-use aster_time::{read_monotonic_time, Instant};
-use aster_util::coeff::Coeff;
-use ostd::{
+use astros_rights::Rights;
+use astros_time::{read_monotonic_time, Instant};
+use astros_util::coeff::Coeff;
+use kstd::{
     mm::{UFrame, VmIo, PAGE_SIZE},
     sync::SpinLock,
     Pod,
@@ -135,7 +135,7 @@ impl VdsoData {
 
     /// Init VDSO data based on the default clocksource.
     fn init(&mut self) {
-        let clocksource = aster_time::default_clocksource();
+        let clocksource = astros_time::default_clocksource();
         let coeff = clocksource.coeff();
         self.set_clock_mode(DEFAULT_CLOCK_MODE);
         self.set_coeff(coeff);
@@ -321,7 +321,7 @@ fn init_vdso() {
 pub(super) fn init() {
     init_start_secs_count();
     init_vdso();
-    aster_time::VDSO_DATA_HIGH_RES_UPDATE_FN.call_once(|| Arc::new(update_vdso_high_res_instant));
+    astros_time::VDSO_DATA_HIGH_RES_UPDATE_FN.call_once(|| Arc::new(update_vdso_high_res_instant));
 
     // Coarse resolution clock IDs directly read the instant stored in VDSO data without
     // using coefficients for calculation, thus the related instant requires more frequent updating.

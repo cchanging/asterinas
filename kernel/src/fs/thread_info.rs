@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::sync::{RwLock, RwMutex};
+use kstd::sync::{RwLock, RwMutex};
 
 use super::{fs_resolver::FsResolver, utils::FileCreationMask};
 

@@ -17,11 +17,11 @@ pub use inode::ExfatInode;
 mod test {
     use alloc::fmt::Debug;
 
-    use aster_block::{
+    use astros_block::{
         bio::{BioEnqueueError, BioStatus, BioType, SubmittedBio},
         BlockDevice, BlockDeviceMeta,
     };
-    use ostd::{
+    use kstd::{
         mm::{FrameAllocOptions, Segment, VmIo, PAGE_SIZE},
         prelude::*,
     };

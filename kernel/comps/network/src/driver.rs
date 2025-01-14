@@ -2,11 +2,11 @@
 
 use alloc::vec;
 
-use aster_bigtcp::{
+use astros_bigtcp::{
     device::{self, NotifyDevice},
     time::Instant,
 };
-use ostd::mm::VmWriter;
+use kstd::mm::VmWriter;
 
 use crate::{buffer::RxBuffer, AnyNetworkDevice};
 

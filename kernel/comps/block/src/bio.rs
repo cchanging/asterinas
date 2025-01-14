@@ -3,7 +3,7 @@
 use align_ext::AlignExt;
 use bitvec::array::BitArray;
 use int_to_c_enum::TryFromInt;
-use ostd::{
+use kstd::{
     mm::{
         DmaDirection, DmaStream, DmaStreamSlice, FrameAllocOptions, Infallible, USegment, VmIo,
         VmReader, VmWriter,
@@ -146,9 +146,9 @@ pub enum BioEnqueueError {
     TooBig,
 }
 
-impl From<BioEnqueueError> for ostd::Error {
+impl From<BioEnqueueError> for kstd::Error {
     fn from(_error: BioEnqueueError) -> Self {
-        ostd::Error::NotEnoughResources
+        kstd::Error::NotEnoughResources
     }
 }
 

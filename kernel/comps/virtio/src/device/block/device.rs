@@ -10,14 +10,14 @@ use alloc::{
 };
 use core::{fmt::Debug, hint::spin_loop, mem::size_of};
 
-use aster_block::{
+use astros_block::{
     bio::{bio_segment_pool_init, BioEnqueueError, BioStatus, BioType, SubmittedBio},
     request_queue::{BioRequest, BioRequestSingleQueue},
     BlockDeviceMeta,
 };
 use id_alloc::IdAlloc;
 use log::{debug, info};
-use ostd::{
+use kstd::{
     mm::{DmaDirection, DmaStream, DmaStreamSlice, FrameAllocOptions, VmIo},
     sync::SpinLock,
     trap::TrapFrame,
@@ -62,7 +62,7 @@ impl BlockDevice {
             ),
         });
 
-        aster_block::register_device(device_id, block_device);
+        astros_block::register_device(device_id, block_device);
 
         bio_segment_pool_init();
         Ok(())
@@ -89,7 +89,7 @@ impl BlockDevice {
     }
 }
 
-impl aster_block::BlockDevice for BlockDevice {
+impl astros_block::BlockDevice for BlockDevice {
     fn enqueue(&self, bio: SubmittedBio) -> Result<(), BioEnqueueError> {
         self.queue.enqueue(bio)
     }

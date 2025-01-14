@@ -5,7 +5,7 @@
 use alloc::{boxed::Box, sync::Arc};
 use core::{fmt, sync::atomic::AtomicU64};
 
-use ostd::{
+use kstd::{
     cpu::{all_cpus, AtomicCpuSet, CpuId, PinCurrentCpu},
     sync::SpinLock,
     task::{
@@ -26,7 +26,7 @@ mod idle;
 mod real_time;
 mod stop;
 
-use ostd::arch::read_tsc as sched_clock;
+use kstd::arch::read_tsc as sched_clock;
 
 pub use self::policy::*;
 use self::policy::{SchedPolicyKind, SchedPolicyState};

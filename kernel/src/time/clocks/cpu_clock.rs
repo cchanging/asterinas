@@ -3,7 +3,7 @@
 use alloc::sync::Arc;
 use core::time::Duration;
 
-use ostd::sync::SpinLock;
+use kstd::sync::SpinLock;
 
 use crate::time::Clock;
 

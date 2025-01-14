@@ -14,7 +14,7 @@ use core::{
     sync::atomic::{AtomicU64, Ordering},
 };
 
-use ostd_pod::Pod;
+use kstd_pod::Pod;
 
 use super::{
     compaction::Compactor,
@@ -50,7 +50,7 @@ pub(super) struct TreeInner<K: RecordKey<K>, V, D> {
     compactor: Compactor<K, V>,
     tx_log_store: Arc<TxLogStore<D>>,
     listener_factory: Arc<dyn TxEventListenerFactory<K, V>>,
-    master_sync_id: MasterSyncId,
+    mastros_sync_id: MasterSyncId,
 }
 
 /// Levels in a `TxLsmTree`.
@@ -276,7 +276,7 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
             compactor: Compactor::new(),
             tx_log_store,
             listener_factory,
-            master_sync_id: MasterSyncId::new(sync_id_store, sync_id)?,
+            mastros_sync_id: MasterSyncId::new(sync_id_store, sync_id)?,
         })
     }
 
@@ -290,8 +290,8 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
         let (sst_manager, ssts_sync_id) = Self::recover_sst_manager(&tx_log_store)?;
 
         let max_sync_id = wal_sync_id.max(ssts_sync_id);
-        let master_sync_id = MasterSyncId::new(sync_id_store, max_sync_id)?;
-        let sync_id = master_sync_id.id();
+        let mastros_sync_id = MasterSyncId::new(sync_id_store, max_sync_id)?;
+        let sync_id = mastros_sync_id.id();
 
         let memtable_manager = Self::recover_memtable_manager(
             sync_id,
@@ -306,7 +306,7 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
             compactor: Compactor::new(),
             tx_log_store,
             listener_factory,
-            master_sync_id,
+            mastros_sync_id,
         };
 
         recov_self.do_migration_tx()?;
@@ -411,19 +411,19 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
     }
 
     pub fn sync(&self) -> Result<()> {
-        let master_sync_id = self.master_sync_id.id() + 1;
+        let mastros_sync_id = self.mastros_sync_id.id() + 1;
 
         // Wait asynchronous compaction to finish
         // TODO: Error handling for compaction: try twice or become read-only
         self.compactor.wait_compaction()?;
 
         // TODO: Error handling for WAL: try twice or become read-only
-        self.wal_append_tx.sync(master_sync_id)?;
+        self.wal_append_tx.sync(mastros_sync_id)?;
 
-        self.memtable_manager.sync(master_sync_id);
+        self.memtable_manager.sync(mastros_sync_id);
 
         // TODO: Error handling: try twice or ignore
-        self.master_sync_id.increment()?;
+        self.mastros_sync_id.increment()?;
         Ok(())
     }
 
@@ -559,7 +559,7 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
             )
         })?;
 
-        let master_sync_id = self.master_sync_id.id();
+        let mastros_sync_id = self.mastros_sync_id.id();
         let tx_log_store = self.tx_log_store.clone();
         let listener = event_listener.clone();
         let res: Result<_> = tx.context(move || {
@@ -592,10 +592,10 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
             }
 
             let upper_records_iter =
-                upper_sst.iter(master_sync_id, false, &tx_log_store, Some(&listener));
+                upper_sst.iter(mastros_sync_id, false, &tx_log_store, Some(&listener));
 
             let lower_records_iter = lower_ssts.iter().flat_map(|(_, sst)| {
-                sst.iter(master_sync_id, false, &tx_log_store, Some(&listener))
+                sst.iter(mastros_sync_id, false, &tx_log_store, Some(&listener))
             });
 
             // Compact records then build new SSTs
@@ -605,7 +605,7 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
                 &tx_log_store,
                 &listener,
                 to_level,
-                master_sync_id,
+                mastros_sync_id,
             )?;
 
             // Delete the old SSTs
@@ -659,7 +659,7 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
             Error::with_msg(TxAborted, "migration TX callback 'on_tx_begin' failed")
         })?;
 
-        let master_sync_id = self.master_sync_id.id();
+        let mastros_sync_id = self.mastros_sync_id.id();
         let tx_log_store = self.tx_log_store.clone();
         let listener = event_listener.clone();
         let res: Result<_> = tx.context(move || {
@@ -670,17 +670,17 @@ impl<K: RecordKey<K>, V: RecordValue, D: BlockSet + 'static> TreeInner<K, V, D> 
                 let ssts = sst_manager.list_level(level);
                 // Iterate SSTs whose sync ID is equal to the
                 // master sync ID, who may have unsynced records
-                for (&id, sst) in ssts.filter(|(_, sst)| sst.sync_id() == master_sync_id) {
+                for (&id, sst) in ssts.filter(|(_, sst)| sst.sync_id() == mastros_sync_id) {
                     // Collect synced records only
                     let mut synced_records_iter = sst
-                        .iter(master_sync_id, true, &tx_log_store, Some(&listener))
+                        .iter(mastros_sync_id, true, &tx_log_store, Some(&listener))
                         .peekable();
 
                     if synced_records_iter.peek().is_some() {
                         // Create new migrated SST
                         let new_log = tx_log_store.create_log(bucket)?;
                         let new_sst =
-                            SSTable::build(synced_records_iter, master_sync_id, &new_log, None)?;
+                            SSTable::build(synced_records_iter, mastros_sync_id, &new_log, None)?;
                         created_ssts.push((new_sst, level));
                         continue;
                     }

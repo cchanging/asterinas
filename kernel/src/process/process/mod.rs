@@ -33,11 +33,11 @@ mod session;
 mod terminal;
 mod timer_manager;
 
-use aster_rights::Full;
+use astros_rights::Full;
 use atomic_integer_wrapper::define_atomic_version_of_integer_like_type;
 pub use builder::ProcessBuilder;
 pub use job_control::JobControl;
-use ostd::{sync::WaitQueue, task::Task};
+use kstd::{sync::WaitQueue, task::Task};
 pub use process_group::ProcessGroup;
 pub use session::Session;
 pub use terminal::Terminal;
@@ -673,7 +673,7 @@ impl Process {
 #[cfg(ktest)]
 mod test {
 
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
 

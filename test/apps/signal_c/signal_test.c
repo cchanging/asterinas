@@ -196,7 +196,7 @@ int test_handle_sigfpe()
 	(void)c;
 	fxsave(y);
 
-	// Asterinas does not save and restore fpregs now, so we emit this check.
+	// Astros does not save and restore fpregs now, so we emit this check.
 	// if (memcmp(x, y, 512) != 0) {
 	//     THROW_ERROR("floating point registers are modified");
 	// }

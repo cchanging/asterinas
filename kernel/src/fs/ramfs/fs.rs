@@ -6,11 +6,11 @@ use core::{
 };
 
 use align_ext::AlignExt;
-use aster_block::bio::BioWaiter;
-use aster_rights::Full;
-use aster_util::slot_vec::SlotVec;
+use astros_block::bio::BioWaiter;
+use astros_rights::Full;
+use astros_util::slot_vec::SlotVec;
 use hashbrown::HashMap;
-use ostd::{
+use kstd::{
     mm::{UntypedMem, VmIo},
     sync::{PreemptDisabled, RwLockWriteGuard},
 };

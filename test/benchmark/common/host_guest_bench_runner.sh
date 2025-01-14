@@ -75,10 +75,10 @@ run_benchmark() {
     rm -f "${guest_log_file}"
 }
 
-# Run the benchmark on the Asterinas VM
-run_benchmark "${ASTERINAS_GUEST_CMD}" "${ASTERINAS_OUTPUT}" "/tmp/asterinas.log" "${READY_MESSAGE}" 
+# Run the benchmark on the Astros VM
+run_benchmark "${ASTERINAS_GUEST_CMD}" "${ASTERINAS_OUTPUT}" "/tmp/astros.log" "${READY_MESSAGE}" 
 
-# Wait for the Asterinas QEMU process to exit
+# Wait for the Astros QEMU process to exit
 wait
 
 # Run the benchmark on the Linux VM

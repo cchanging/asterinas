@@ -2,7 +2,7 @@
 
 use core::ops::Range;
 
-use aster_rights::Rights;
+use astros_rights::Rights;
 
 use super::{VmPerms, Vmar, VmarMapOptions, VmarRightsOp, Vmar_};
 use crate::{
@@ -22,8 +22,8 @@ impl Vmar<Rights> {
     /// # Example
     ///
     /// ```
-    /// use aster_nix::prelude::*;
-    /// use aster_nix::vm::{PAGE_SIZE, Vmar, VmoOptions};
+    /// use astros_nix::prelude::*;
+    /// use astros_nix::vm::{PAGE_SIZE, Vmar, VmoOptions};
     ///
     /// let vmar = Vmar::new().unwrap();
     /// let vmo = VmoOptions::new(10 * PAGE_SIZE).alloc().unwrap();

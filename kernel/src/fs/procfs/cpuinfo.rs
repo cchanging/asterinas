@@ -5,7 +5,7 @@
 //!
 //! Reference: <https://man7.org/linux/man-pages/man5/proc_cpuinfo.5.html>
 
-use ostd::cpu::num_cpus;
+use kstd::cpu::num_cpus;
 
 use crate::{
     arch::cpu::CpuInfo,

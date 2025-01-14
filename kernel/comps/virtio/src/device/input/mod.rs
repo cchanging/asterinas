@@ -27,8 +27,8 @@
 //
 
 pub mod device;
-use aster_util::safe_ptr::SafePtr;
-use ostd::{io_mem::IoMem, Pod};
+use astros_util::safe_ptr::SafePtr;
+use kstd::{io_mem::IoMem, Pod};
 
 use crate::transport::VirtioTransport;
 

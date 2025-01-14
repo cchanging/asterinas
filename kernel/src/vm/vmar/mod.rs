@@ -10,8 +10,8 @@ pub mod vm_mapping;
 use core::{num::NonZeroUsize, ops::Range};
 
 use align_ext::AlignExt;
-use aster_rights::Rights;
-use ostd::{
+use astros_rights::Rights;
+use kstd::{
     cpu::CpuExceptionInfo,
     mm::{tlb::TlbFlushOp, PageFlags, PageProperty, VmSpace, MAX_USERSPACE_VADDR},
 };

@@ -1,9 +1,9 @@
 [book]
-authors = ["The Asterinas authors"]
+authors = ["The Astros authors"]
 language = "en"
 multilingual = false
 src = "src"
-title = "The Asterinas Book"
+title = "The Astros Book"
 
 [build]
 create-missing = false

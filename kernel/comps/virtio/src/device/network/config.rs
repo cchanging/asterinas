@@ -2,10 +2,10 @@
 
 use core::mem::offset_of;
 
-use aster_network::EthernetAddr;
-use aster_util::safe_ptr::SafePtr;
+use astros_network::EthernetAddr;
+use astros_util::safe_ptr::SafePtr;
 use bitflags::bitflags;
-use ostd::Pod;
+use kstd::Pod;
 
 use crate::transport::{ConfigManager, VirtioTransport};
 

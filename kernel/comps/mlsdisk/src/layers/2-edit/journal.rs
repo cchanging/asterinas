@@ -3,7 +3,7 @@
 use core::marker::PhantomData;
 
 use lending_iterator::LendingIterator;
-use ostd_pod::Pod;
+use kstd_pod::Pod;
 use serde::{
     de::{VariantAccess, Visitor},
     Deserialize, Serialize,
@@ -807,7 +807,7 @@ impl<E: Edit<S>, S> CompactPolicy<E, S> for DefaultCompactPolicy {
 
 #[cfg(test)]
 mod tests {
-    use ostd_pod::Pod;
+    use kstd_pod::Pod;
     use serde::{Deserialize, Serialize};
 
     use super::{

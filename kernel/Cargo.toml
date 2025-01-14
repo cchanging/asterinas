@@ -1,33 +1,33 @@
 [package]
-name = "aster-nix"
+name = "astros-nix"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-align_ext = { path = "../ostd/libs/align_ext" }
-aster-input = { path = "comps/input" }
-aster-block = { path = "comps/block" }
-aster-network = { path = "comps/network" }
-aster-console = { path = "comps/console" }
-aster-framebuffer = { path = "comps/framebuffer" }
-aster-softirq = { path = "comps/softirq" }
-aster-logger = { path = "comps/logger" }
-aster-mlsdisk = { path = "comps/mlsdisk" }
-aster-time = { path = "comps/time" }
-aster-virtio = { path = "comps/virtio" }
-aster-rights = { path = "libs/aster-rights" }
+align_ext = { path = "../kstd/libs/align_ext" }
+astros-input = { path = "comps/input" }
+astros-block = { path = "comps/block" }
+astros-network = { path = "comps/network" }
+astros-console = { path = "comps/console" }
+astros-framebuffer = { path = "comps/framebuffer" }
+astros-softirq = { path = "comps/softirq" }
+astros-logger = { path = "comps/logger" }
+astros-mlsdisk = { path = "comps/mlsdisk" }
+astros-time = { path = "comps/time" }
+astros-virtio = { path = "comps/virtio" }
+astros-rights = { path = "libs/astros-rights" }
 component = { path = "libs/comp-sys/component" }
 controlled = { path = "libs/comp-sys/controlled" }
-ostd = { path = "../ostd" }
+kstd = { path = "../kstd" }
 typeflags = { path = "libs/typeflags" }
 typeflags-util = { path = "libs/typeflags-util" }
-aster-rights-proc = { path = "libs/aster-rights-proc" }
-aster-util = { path = "libs/aster-util" }
-aster-bigtcp = { path = "libs/aster-bigtcp" }
+astros-rights-proc = { path = "libs/astros-rights-proc" }
+astros-util = { path = "libs/astros-util" }
+astros-bigtcp = { path = "libs/astros-bigtcp" }
 atomic-integer-wrapper = { path = "libs/atomic-integer-wrapper" }
-id-alloc = { path = "../ostd/libs/id-alloc" }
+id-alloc = { path = "../kstd/libs/id-alloc" }
 int-to-c-enum = { path = "libs/int-to-c-enum" }
 cpio-decoder = { path = "libs/cpio-decoder" }
 ascii = { version = "1.1", default-features = false, features = ["alloc"] }
@@ -56,7 +56,7 @@ rand = { version = "0.8.5", default-features = false, features = [
     "std_rng",
 ] }
 static_assertions = "1.1.0"
-inherit-methods-macro = { git = "https://github.com/asterinas/inherit-methods-macro", rev = "98f7e3e" }
+inherit-methods-macro = { git = "https://github.com/astros/inherit-methods-macro", rev = "98f7e3e" }
 getset = "0.1.2"
 takeable = "0.2.2"
 cfg-if = "1.0"
@@ -70,4 +70,4 @@ riscv = { version = "0.11.1", features = ["s-mode"] }
 [features]
 all = ["cvm_guest"]
 
-cvm_guest = ["dep:tdx-guest", "ostd/cvm_guest"]
+cvm_guest = ["dep:tdx-guest", "kstd/cvm_guest"]

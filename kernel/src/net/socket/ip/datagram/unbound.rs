@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_bigtcp::{socket::UdpSocket, wire::IpEndpoint};
+use astros_bigtcp::{socket::UdpSocket, wire::IpEndpoint};
 
 use super::{bound::BoundDatagram, DatagramObserver};
 use crate::{events::IoEvents, net::socket::ip::common::bind_port, prelude::*};

@@ -2,9 +2,9 @@
 
 #![allow(dead_code)]
 
-use aster_rights::{Dup, Read, TRights, Write};
-use aster_rights_proc::require;
-use ostd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
+use astros_rights::{Dup, Read, TRights, Write};
+use astros_rights_proc::require;
+use kstd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
 
 use super::{capabilities::CapSet, credentials_::Credentials_, Credentials, Gid, Uid};
 use crate::prelude::*;

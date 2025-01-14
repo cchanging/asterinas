@@ -2,7 +2,7 @@
 
 use core::sync::atomic::{AtomicBool, Ordering};
 
-use aster_bigtcp::{
+use astros_bigtcp::{
     socket::{NeedIfacePoll, RawTcpOption, RawTcpSetOption},
     wire::IpEndpoint,
 };
@@ -11,7 +11,7 @@ use connecting::{ConnResult, ConnectingStream};
 use init::InitStream;
 use listen::ListenStream;
 use options::{Congestion, KeepIdle, MaxSegment, NoDelay, WindowClamp, KEEPALIVE_INTERVAL};
-use ostd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
+use kstd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
 use takeable::Takeable;
 use util::TcpOptionSet;
 
@@ -463,7 +463,7 @@ impl FileLike for StreamSocket {
         Metadata::new_socket(
             0,
             InodeMode::from_bits_truncate(0o140777),
-            aster_block::BLOCK_SIZE,
+            astros_block::BLOCK_SIZE,
         )
     }
 }

@@ -16,7 +16,7 @@ pub(crate) use core::{any::Any, ffi::CStr, fmt::Debug};
 pub(crate) use bitflags::bitflags;
 pub(crate) use int_to_c_enum::TryFromInt;
 pub(crate) use log::{debug, error, info, log_enabled, trace, warn};
-pub(crate) use ostd::{
+pub(crate) use kstd::{
     mm::{FallibleVmRead, FallibleVmWrite, Vaddr, VmReader, VmWriter, PAGE_SIZE},
     sync::{Mutex, MutexGuard, RwLock, RwMutex, SpinLock, SpinLockGuard},
     Pod,
@@ -47,7 +47,7 @@ macro_rules! current_thread {
     };
 }
 
-pub(crate) use aster_logger::{print, println};
+pub(crate) use astros_logger::{print, println};
 
 pub(crate) use crate::{
     context::{Context, CurrentUserSpace, ReadCString},

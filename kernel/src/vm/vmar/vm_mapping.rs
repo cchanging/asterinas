@@ -7,7 +7,7 @@ use core::{
 };
 
 use align_ext::AlignExt;
-use ostd::mm::{
+use kstd::mm::{
     tlb::TlbFlushOp, vm_space::VmItem, CachePolicy, FrameAllocOptions, PageFlags, PageProperty,
     UFrame, VmSpace,
 };

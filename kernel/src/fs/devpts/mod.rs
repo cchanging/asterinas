@@ -4,7 +4,7 @@
 
 use core::time::Duration;
 
-use aster_util::slot_vec::SlotVec;
+use astros_util::slot_vec::SlotVec;
 use id_alloc::IdAlloc;
 
 use self::{ptmx::Ptmx, slave::PtySlaveInode};
@@ -59,7 +59,7 @@ impl DevPts {
     }
 
     /// Create the master and slave pair.
-    fn create_master_slave_pair(&self) -> Result<(Arc<PtyMaster>, Arc<PtySlaveInode>)> {
+    fn create_mastros_slave_pair(&self) -> Result<(Arc<PtyMaster>, Arc<PtySlaveInode>)> {
         let index = self
             .index_alloc
             .lock()

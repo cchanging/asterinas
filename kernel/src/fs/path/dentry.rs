@@ -10,7 +10,7 @@ use core::{
 
 use hashbrown::HashMap;
 use inherit_methods_macro::inherit_methods;
-use ostd::sync::RwMutexWriteGuard;
+use kstd::sync::RwMutexWriteGuard;
 
 use crate::{
     fs::{

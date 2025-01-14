@@ -2,7 +2,7 @@
 
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
 
-use ostd::{
+use kstd::{
     bus::{
         pci::{
             bus::{PciDevice, PciDriver},

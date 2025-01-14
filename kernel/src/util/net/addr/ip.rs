@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_bigtcp::wire::{Ipv4Address, PortNum};
+use astros_bigtcp::wire::{Ipv4Address, PortNum};
 
 use super::family::CSocketAddrFamily;
 use crate::prelude::*;

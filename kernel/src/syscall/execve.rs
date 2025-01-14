@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_rights::WriteOp;
-use ostd::{
+use astros_rights::WriteOp;
+use kstd::{
     cpu::{FpuState, RawGeneralRegs, UserContext},
     user::UserContextApi,
 };

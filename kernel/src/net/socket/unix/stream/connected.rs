@@ -2,7 +2,7 @@
 
 use core::ops::Deref;
 
-use ostd::sync::PreemptDisabled;
+use kstd::sync::PreemptDisabled;
 
 use crate::{
     events::IoEvents,

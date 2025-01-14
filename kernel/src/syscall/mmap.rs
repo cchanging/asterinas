@@ -3,7 +3,7 @@
 //! This mod defines mmap flags and the handler to syscall mmap
 
 use align_ext::AlignExt;
-use aster_rights::Rights;
+use astros_rights::Rights;
 
 use super::SyscallReturn;
 use crate::{

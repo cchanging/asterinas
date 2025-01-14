@@ -14,7 +14,7 @@
 //! refer to the man 2 eventfd documentation.
 //!
 
-use ostd::sync::WaitQueue;
+use kstd::sync::WaitQueue;
 
 use super::SyscallReturn;
 use crate::{

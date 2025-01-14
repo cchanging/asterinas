@@ -2,7 +2,7 @@
 
 use core::sync::atomic::Ordering;
 
-use ostd::sync::{WaitQueue, Waiter};
+use kstd::sync::{WaitQueue, Waiter};
 
 use super::sig_mask::SigMask;
 use crate::{
@@ -92,7 +92,7 @@ pub trait Pause: WaitTimeout {
     /// This method will return an error with [`ETIME`] if the timeout is reached.
     ///
     /// Unlike other methods in the trait, this method will _not_ return an error with [`EINTR`] if
-    /// a signal is received (FIXME: See <https://github.com/asterinas/asterinas/pull/1577> for why
+    /// a signal is received (FIXME: See <https://github.com/astros/astros/pull/1577> for why
     /// we cannot fix this directly).
     ///
     /// [`ETIME`]: crate::error::Errno::ETIME
@@ -218,7 +218,7 @@ pub fn with_signal_blocked<R>(ctx: &Context, mask: SigMask, operate: impl FnOnce
 mod test {
     use core::sync::atomic::AtomicBool;
 
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
     use crate::thread::{kernel_thread::ThreadOptions, Thread};

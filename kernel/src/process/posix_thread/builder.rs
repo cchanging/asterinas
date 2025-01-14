@@ -2,7 +2,7 @@
 
 #![allow(dead_code)]
 
-use ostd::{cpu::CpuSet, task::Task, user::UserSpace};
+use kstd::{cpu::CpuSet, task::Task, user::UserSpace};
 
 use super::{thread_table, PosixThread, ThreadLocal};
 use crate::{

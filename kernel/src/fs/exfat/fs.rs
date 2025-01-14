@@ -5,15 +5,15 @@
 
 use core::{num::NonZeroUsize, ops::Range, sync::atomic::AtomicU64};
 
-use aster_block::{
+use astros_block::{
     bio::{BioDirection, BioSegment, BioWaiter},
     id::BlockId,
     BlockDevice,
 };
 use hashbrown::HashMap;
 use lru::LruCache;
-use ostd::mm::Segment;
-pub(super) use ostd::mm::VmIo;
+use kstd::mm::Segment;
+pub(super) use kstd::mm::VmIo;
 
 use super::{
     bitmap::ExfatBitmap,

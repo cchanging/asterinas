@@ -9,14 +9,14 @@
 
 struct exit_info {
 	int should_use_exit_group;
-	int should_exit_master_first;
+	int should_exit_mastros_first;
 };
 
 static void *thread_slave(void *info_)
 {
 	struct exit_info *info = info_;
 
-	if (info->should_exit_master_first) {
+	if (info->should_exit_mastros_first) {
 		if (info->should_use_exit_group)
 			sleep(3600);
 		usleep(200 * 1000);
@@ -37,7 +37,7 @@ static void *thread_master(void *info_)
 
 	CHECK(pthread_create(&tid, NULL, &thread_slave, info));
 
-	if (!info->should_exit_master_first) {
+	if (!info->should_exit_mastros_first) {
 		if (info->should_use_exit_group)
 			sleep(3600);
 		usleep(200 * 1000);
@@ -57,28 +57,28 @@ FN_TEST(exit_two_threads)
 	int stat;
 
 	info.should_use_exit_group = 1;
-	info.should_exit_master_first = 1;
+	info.should_exit_mastros_first = 1;
 	if (CHECK(fork()) == 0) {
 		thread_master(&info);
 	}
 	TEST_RES(wait(&stat), WIFEXITED(stat) && WEXITSTATUS(stat) == 77);
 
 	info.should_use_exit_group = 1;
-	info.should_exit_master_first = 0;
+	info.should_exit_mastros_first = 0;
 	if (CHECK(fork()) == 0) {
 		thread_master(&info);
 	}
 	TEST_RES(wait(&stat), WIFEXITED(stat) && WEXITSTATUS(stat) == 55);
 
 	info.should_use_exit_group = 0;
-	info.should_exit_master_first = 1;
+	info.should_exit_mastros_first = 1;
 	if (CHECK(fork()) == 0) {
 		thread_master(&info);
 	}
 	TEST_RES(wait(&stat), WIFEXITED(stat) && WEXITSTATUS(stat) == 66);
 
 	info.should_use_exit_group = 0;
-	info.should_exit_master_first = 0;
+	info.should_exit_mastros_first = 0;
 	if (CHECK(fork()) == 0) {
 		thread_master(&info);
 	}

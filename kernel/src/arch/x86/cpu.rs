@@ -6,7 +6,7 @@ use alloc::{
     vec::Vec,
 };
 
-use ostd::{
+use kstd::{
     cpu::{cpuid, CpuException, CpuExceptionInfo, RawGeneralRegs, UserContext},
     Pod,
 };

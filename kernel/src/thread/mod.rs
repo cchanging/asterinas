@@ -4,7 +4,7 @@
 
 use core::sync::atomic::Ordering;
 
-use ostd::{
+use kstd::{
     cpu::{AtomicCpuSet, CpuSet},
     task::Task,
 };

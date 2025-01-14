@@ -2,8 +2,8 @@
 
 use core::sync::atomic::{AtomicBool, Ordering};
 
-use aster_rights::{Read, ReadOp, TRights, Write, WriteOp};
-use aster_rights_proc::require;
+use astros_rights::{Read, ReadOp, TRights, Write, WriteOp};
+use astros_rights_proc::require;
 
 use crate::{
     events::IoEvents,
@@ -395,7 +395,7 @@ impl<T> FifoInner<T> {
 
 #[cfg(ktest)]
 mod test {
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
 

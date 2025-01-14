@@ -17,8 +17,8 @@ pub mod rootfs;
 pub mod thread_info;
 pub mod utils;
 
-use aster_block::BlockDevice;
-use aster_virtio::device::block::device::BlockDevice as VirtIoBlockDevice;
+use astros_block::BlockDevice;
+use astros_virtio::device::block::device::BlockDevice as VirtIoBlockDevice;
 
 use crate::{
     fs::{
@@ -30,7 +30,7 @@ use crate::{
 };
 
 fn start_block_device(device_name: &str) -> Result<Arc<dyn BlockDevice>> {
-    if let Some(device) = aster_block::get_device(device_name) {
+    if let Some(device) = astros_block::get_device(device_name) {
         let cloned_device = device.clone();
         let task_fn = move || {
             info!("spawn the virt-io-block thread");

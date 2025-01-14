@@ -2,7 +2,7 @@
 
 use core::{num::NonZeroU64, sync::atomic::Ordering};
 
-use ostd::{
+use kstd::{
     cpu::UserContext,
     task::Task,
     user::{UserContextApi, UserSpace},

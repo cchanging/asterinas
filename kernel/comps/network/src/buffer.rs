@@ -2,7 +2,7 @@
 
 use alloc::{collections::linked_list::LinkedList, sync::Arc};
 
-use ostd::{
+use kstd::{
     mm::{
         Daddr, DmaDirection, DmaStream, FrameAllocOptions, HasDaddr, Infallible, VmReader,
         VmWriter, PAGE_SIZE,

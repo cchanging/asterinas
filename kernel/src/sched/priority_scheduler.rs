@@ -2,7 +2,7 @@
 
 use core::sync::atomic::Ordering;
 
-use ostd::{
+use kstd::{
     cpu::{num_cpus, CpuId, CpuSet, PinCurrentCpu},
     task::{
         disable_preempt,
@@ -26,11 +26,11 @@ pub fn init() {
     let preempt_scheduler = Box::new(PreemptScheduler::default());
     let scheduler = Box::<PreemptScheduler<Thread, Task>>::leak(preempt_scheduler);
 
-    // Inject the scheduler into the ostd for actual scheduling work.
+    // Inject the scheduler into the kstd for actual scheduling work.
     inject_scheduler(scheduler);
 
     // Set the scheduler into the system for statistics.
-    // We set this after injecting the scheduler into ostd,
+    // We set this after injecting the scheduler into kstd,
     // so that the loadavg statistics are updated after the scheduler is used.
     set_stats_from_scheduler(scheduler);
 }

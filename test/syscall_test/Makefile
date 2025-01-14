@@ -90,7 +90,7 @@ $(BIN_DIR): $(SRC_DIR)
 
 $(SRC_DIR):
 	@rm -rf $@ && mkdir -p $@
-	@cd $@ && git clone -b 20200921.0 https://github.com/asterinas/gvisor.git .
+	@cd $@ && git clone -b 20200921.0 https://github.com/astros/gvisor.git .
 endif
 
 $(TARGET_DIR): $(RUN_BASH) $(BLOCK_LIST) $(EXFAT_BLOCK_LIST)

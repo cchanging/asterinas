@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::mm::{DmaCoherent, FrameAllocOptions, HasPaddr, VmIo};
+use kstd::mm::{DmaCoherent, FrameAllocOptions, HasPaddr, VmIo};
 use tdx_guest::tdcall::{get_report, TdCallError};
 
 use super::*;
@@ -84,7 +84,7 @@ impl FileIo for TdxGuest {
 fn handle_get_report(arg: usize) -> Result<i32> {
     const SHARED_BIT: u8 = 51;
     const SHARED_MASK: u64 = 1u64 << SHARED_BIT;
-    let current_task = ostd::task::Task::current().unwrap();
+    let current_task = kstd::task::Task::current().unwrap();
     let user_space = CurrentUserSpace::new(&current_task);
     let user_request: TdxReportRequest = user_space.read_val(arg)?;
 

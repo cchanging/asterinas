@@ -7,7 +7,7 @@ mod group;
 mod static_cap;
 mod user;
 
-use aster_rights::FullOp;
+use astros_rights::FullOp;
 use credentials_::Credentials_;
 pub use group::Gid;
 pub use user::Uid;

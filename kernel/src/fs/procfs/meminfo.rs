@@ -8,7 +8,7 @@
 
 use alloc::format;
 
-use ostd::mm::stat;
+use kstd::mm::stat;
 
 use crate::{
     fs::{

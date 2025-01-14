@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_bigtcp::{
+use astros_bigtcp::{
     errors::udp::{RecvError, SendError},
     wire::IpEndpoint,
 };

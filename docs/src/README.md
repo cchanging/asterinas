@@ -1,10 +1,10 @@
-# The Asterinas Book
+# The Astros Book
 
 <p align="center">
-    <img src="images/logo_en.svg" alt="asterinas-logo" width="620"><br>
+    <img src="images/logo_en.svg" alt="astros-logo" width="620"><br>
 </p>
 
-Welcome to the documentation for Asterinas,
+Welcome to the documentation for Astros,
 an open-source project and community
 focused on developing cutting-edge Rust OS kernels.
 
@@ -12,51 +12,51 @@ focused on developing cutting-edge Rust OS kernels.
 
 This book is divided into five distinct parts:
 
-#### [Part 1: Asterinas Kernel](kernel/)
+#### [Part 1: Astros Kernel](kernel/)
 
-Explore the modern OS kernel at the heart of Asterinas.
+Explore the modern OS kernel at the heart of Astros.
 Designed to realize the full potential of Rust,
-Asterinas Kernel implements the Linux ABI in a safe and efficient way.
+Astros Kernel implements the Linux ABI in a safe and efficient way.
 This means it can seamlessly replace Linux,
 offering enhanced safety and security.
 
-#### [Part 2: Asterinas OSTD](ostd/)
+#### [Part 2: Astros KSTD](kstd/)
 
-The Asterinas OSTD lays down a minimalistic, powerful, and solid foundation
+The Astros KSTD lays down a minimalistic, powerful, and solid foundation
 for OS development.
 It's akin to Rust's `std` crate
 but crafted for the demands of _safe_ Rust OS development.
-The Asterinas Kernel is built on this very OSTD.
+The Astros Kernel is built on this very KSTD.
 
-#### [Part 3: Asterinas OSDK](osdk/guide/)
+#### [Part 3: Astros KSDK](ksdk/guide/)
 
-The OSDK is a command-line tool
+The KSDK is a command-line tool
 that streamlines the workflow to 
 create, build, test, and run Rust OS projects
-that are built upon Asterinas OSTD.
+that are built upon Astros KSTD.
 Developed specifically for OS developers,
 it extends Rust's Cargo tool to better suite their specific needs.
-OSDK is instrumental in the development of Asterinas Kernel.
+KSDK is instrumental in the development of Astros Kernel.
 
-#### [Part 4: Contributing to Asterinas](to-contribute/)
+#### [Part 4: Contributing to Astros](to-contribute/)
 
-Asterinas is in its early stage
+Astros is in its early stage
 and welcomes your contributions!
 This part provides guidance
-on how you can become an integral part of the Asterinas project.
+on how you can become an integral part of the Astros project.
 
 #### [Part 5: Requests for Comments (RFCs)](rfcs/)
 
-Significant decisions in Asterinas are made through a transparent RFC process.
+Significant decisions in Astros are made through a transparent RFC process.
 This part describes the RFC process
 and archives all approvaed RFCs.
 
 ## Licensing
 
-Asterinas's source code and documentation primarily use the 
-[Mozilla Public License (MPL), Version 2.0](https://github.com/asterinas/asterinas/blob/main/LICENSE-MPL).
+Astros's source code and documentation primarily use the 
+[Mozilla Public License (MPL), Version 2.0](https://github.com/astros/astros/blob/main/LICENSE-MPL).
 Select components are under more permissive licenses,
-detailed [here](https://github.com/asterinas/asterinas/blob/main/.licenserc.yaml).
+detailed [here](https://github.com/astros/astros/blob/main/.licenserc.yaml).
 
 Our choice of the [weak-copyleft](https://www.tldrlegal.com/license/mozilla-public-license-2-0-mpl-2) MPL license reflects a strategic balance:
 
@@ -77,4 +77,4 @@ the MPL permits the linking of MPL-covered files with proprietary code.
 
 In conclusion, we believe that
 MPL is the best choice
-to foster a vibrant, robust, and inclusive open-source community around Asterinas.
+to foster a vibrant, robust, and inclusive open-source community around Astros.

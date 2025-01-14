@@ -12,7 +12,7 @@
 mod heap;
 mod init_stack;
 
-use aster_rights::Full;
+use astros_rights::Full;
 pub use heap::Heap;
 
 pub use self::{

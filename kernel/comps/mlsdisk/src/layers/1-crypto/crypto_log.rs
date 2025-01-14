@@ -3,7 +3,7 @@
 use alloc::vec;
 use core::{any::Any, mem::size_of};
 
-use ostd_pod::Pod;
+use kstd_pod::Pod;
 use serde::{Deserialize, Serialize};
 use static_assertions::const_assert;
 

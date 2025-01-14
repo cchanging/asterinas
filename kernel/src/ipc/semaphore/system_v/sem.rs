@@ -7,7 +7,7 @@ use core::{
 };
 
 use atomic_integer_wrapper::define_atomic_version_of_integer_like_type;
-use ostd::sync::{PreemptDisabled, Waiter, Waker};
+use kstd::sync::{PreemptDisabled, Waiter, Waker};
 
 use super::sem_set::{SemSetInner, SEMVMX};
 use crate::{

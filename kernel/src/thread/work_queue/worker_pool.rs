@@ -7,7 +7,7 @@ use core::{
     time::Duration,
 };
 
-use ostd::{
+use kstd::{
     cpu::{CpuId, CpuSet},
     sync::WaitQueue,
     task::Task,

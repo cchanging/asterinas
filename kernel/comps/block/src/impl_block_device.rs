@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::mm::{VmIo, VmReader, VmWriter};
+use kstd::mm::{VmIo, VmReader, VmWriter};
 
 use super::{
     bio::{Bio, BioEnqueueError, BioSegment, BioStatus, BioType, BioWaiter, SubmittedBio},
@@ -93,10 +93,10 @@ impl dyn BlockDevice {
 
 impl VmIo for dyn BlockDevice {
     /// Reads consecutive bytes of several sectors in size.
-    fn read(&self, offset: usize, writer: &mut VmWriter) -> ostd::Result<()> {
+    fn read(&self, offset: usize, writer: &mut VmWriter) -> kstd::Result<()> {
         let read_len = writer.avail();
         if !is_sector_aligned(offset) || !is_sector_aligned(read_len) {
-            return Err(ostd::Error::InvalidArgs);
+            return Err(kstd::Error::InvalidArgs);
         }
         if read_len == 0 {
             return Ok(());
@@ -129,15 +129,15 @@ impl VmIo for dyn BlockDevice {
         let status = bio.submit_and_wait(self)?;
         match status {
             BioStatus::Complete => bio_segment.read(0, writer),
-            _ => Err(ostd::Error::IoError),
+            _ => Err(kstd::Error::IoError),
         }
     }
 
     /// Writes consecutive bytes of several sectors in size.
-    fn write(&self, offset: usize, reader: &mut VmReader) -> ostd::Result<()> {
+    fn write(&self, offset: usize, reader: &mut VmReader) -> kstd::Result<()> {
         let write_len = reader.remain();
         if !is_sector_aligned(offset) || !is_sector_aligned(write_len) {
-            return Err(ostd::Error::InvalidArgs);
+            return Err(kstd::Error::InvalidArgs);
         }
         if write_len == 0 {
             return Ok(());
@@ -168,17 +168,17 @@ impl VmIo for dyn BlockDevice {
         let status = bio.submit_and_wait(self)?;
         match status {
             BioStatus::Complete => Ok(()),
-            _ => Err(ostd::Error::IoError),
+            _ => Err(kstd::Error::IoError),
         }
     }
 }
 
 impl dyn BlockDevice {
     /// Asynchronously writes consecutive bytes of several sectors in size.
-    pub fn write_bytes_async(&self, offset: usize, buf: &[u8]) -> ostd::Result<BioWaiter> {
+    pub fn write_bytes_async(&self, offset: usize, buf: &[u8]) -> kstd::Result<BioWaiter> {
         let write_len = buf.len();
         if !is_sector_aligned(offset) || !is_sector_aligned(write_len) {
-            return Err(ostd::Error::InvalidArgs);
+            return Err(kstd::Error::InvalidArgs);
         }
         if write_len == 0 {
             return Ok(BioWaiter::new());

@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Ask a question or seek clarification about Asterinas
+about: Ask a question or seek clarification about Astros
 title: Short summary of your question
 labels: C-question
 ---

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_virtio::device::socket::header::VsockDeviceAddr;
+use astros_virtio::device::socket::header::VsockDeviceAddr;
 
 use crate::{net::socket::SocketAddr, prelude::*};
 

@@ -7,13 +7,13 @@ use alloc::string::String;
 use core::{cmp::Ordering, time::Duration};
 
 pub(super) use align_ext::AlignExt;
-use aster_block::{
+use astros_block::{
     bio::{BioDirection, BioSegment, BioWaiter},
     id::{Bid, BlockId},
     BLOCK_SIZE,
 };
-use aster_rights::Full;
-use ostd::mm::{Segment, VmIo};
+use astros_rights::Full;
+use kstd::mm::{Segment, VmIo};
 
 use super::{
     constants::*,

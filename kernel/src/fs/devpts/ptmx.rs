@@ -45,7 +45,7 @@ impl Ptmx {
     ///
     /// Creates a master and slave pair and returns the master inode.
     pub fn open(&self) -> Result<Arc<PtyMaster>> {
-        let (master, _) = self.devpts().create_master_slave_pair()?;
+        let (master, _) = self.devpts().create_mastros_slave_pair()?;
         Ok(master)
     }
 
@@ -176,7 +176,7 @@ impl Device for Inner {
 
     fn open(&self) -> Result<Option<Arc<dyn FileIo>>> {
         let devpts = self.0.upgrade().unwrap();
-        let (master, _) = devpts.create_master_slave_pair()?;
+        let (master, _) = devpts.create_mastros_slave_pair()?;
         Ok(Some(master as _))
     }
 }

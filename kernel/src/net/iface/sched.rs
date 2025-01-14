@@ -2,8 +2,8 @@
 
 use core::sync::atomic::{AtomicU64, Ordering};
 
-use aster_bigtcp::iface::ScheduleNextPoll;
-use ostd::sync::WaitQueue;
+use astros_bigtcp::iface::ScheduleNextPoll;
+use kstd::sync::WaitQueue;
 
 pub struct PollScheduler {
     /// The time when we should do the next poll.

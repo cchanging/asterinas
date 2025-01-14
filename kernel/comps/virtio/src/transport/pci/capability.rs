@@ -2,7 +2,7 @@
 
 use alloc::sync::Arc;
 
-use ostd::bus::pci::{
+use kstd::bus::pci::{
     capability::vendor::CapabilityVndrData,
     cfg_space::{Bar, IoBar, MemoryBar},
     common_device::BarManager,

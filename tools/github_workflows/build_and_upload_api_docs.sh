@@ -38,12 +38,12 @@ validate_parameter() {
     fi
 }
 
-# Build documentation of ostd
+# Build documentation of kstd
 build_api_docs() {
     cd "${ASTER_SRC_DIR}"
-    make install_osdk
-    cd "${ASTER_SRC_DIR}/ostd"
-    cargo osdk doc
+    make install_ksdk
+    cd "${ASTER_SRC_DIR}/kstd"
+    cargo ksdk doc
 }
 
 # Git clone the API documentation repo
@@ -84,7 +84,7 @@ update_nightly_doc() {
     git checkout --orphan new_branch
     rm -rf *
     cp -r ${ASTER_SRC_DIR}/target/x86_64-unknown-none/doc/* ./
-    generate_redirect_index_html "https://asterinas.github.io/api-docs-nightly/ostd"
+    generate_redirect_index_html "https://astros.github.io/api-docs-nightly/kstd"
     git add .
     git commit -am "Update nightly API docs"
     git branch -D main
@@ -100,7 +100,7 @@ update_release_doc() {
     git rm -rf --ignore-unmatch "${VERSION}"
     mkdir "${VERSION}"
     cp -r ${ASTER_SRC_DIR}/target/x86_64-unknown-none/doc/* ${VERSION}/
-    generate_redirect_index_html "https://asterinas.github.io/api-docs/${VERSION}/ostd"
+    generate_redirect_index_html "https://astros.github.io/api-docs/${VERSION}/kstd"
     git add .
     git commit -am "Update API docs to v${VERSION}"
     GIT_SSH_COMMAND="ssh -i ${SSH_KEY_FILE} -o UserKnownHostsFile=${KNOWN_HOSTS_FILE}" git push -f origin main
@@ -125,11 +125,11 @@ KNOWN_HOSTS_FILE="${WORK_DIR}/known_hosts"
 build_api_docs
 
 if [ "$1" = "nightly" ]; then
-    REPO_URL=git@github.com:asterinas/api-docs-nightly.git
+    REPO_URL=git@github.com:astros/api-docs-nightly.git
     clone_repo
     update_nightly_doc
 elif [ "$1" = "release" ]; then
-    REPO_URL=git@github.com:asterinas/api-docs.git
+    REPO_URL=git@github.com:astros/api-docs.git
     clone_repo
     update_release_doc
 else

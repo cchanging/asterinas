@@ -4,7 +4,7 @@
 
 use core::mem;
 
-use ostd::{
+use kstd::{
     mm::{Fallible, Infallible, VmReader, VmSpace, VmWriter},
     task::Task,
 };
@@ -47,7 +47,7 @@ pub struct CurrentUserSpace<'a>(&'a VmSpace);
 #[macro_export]
 macro_rules! current_userspace {
     () => {
-        CurrentUserSpace::new(&ostd::task::Task::current().unwrap())
+        CurrentUserSpace::new(&kstd::task::Task::current().unwrap())
     };
 }
 

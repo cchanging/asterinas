@@ -3,7 +3,7 @@
 //! Read the Cpu ctx content then dispatch syscall to corresponding handler
 //! The each sub module contains functions that handle real syscall logic.
 pub use clock_gettime::ClockId;
-use ostd::cpu::UserContext;
+use kstd::cpu::UserContext;
 
 use crate::{context::Context, cpu::LinuxAbi, prelude::*};
 
@@ -251,7 +251,7 @@ macro_rules! dispatch_fn_inner {
         $crate::syscall::syscall_handler!($cnt, $handler, $args, $ctx, &$user_ctx)
     };
     ( $args: ident, $ctx: ident, $user_ctx: ident, $handler: ident ( args[ .. $cnt: tt ] , &mut user_ctx ) ) => {
-        // `$user_ctx` is already of type `&mut ostd::cpu::UserContext`,
+        // `$user_ctx` is already of type `&mut kstd::cpu::UserContext`,
         // so no need to take `&mut` again
         $crate::syscall::syscall_handler!($cnt, $handler, $args, $ctx, $user_ctx)
     };
@@ -270,7 +270,7 @@ macro_rules! impl_syscall_nums_and_dispatch_fn {
             syscall_number: u64,
             args: [u64; 6],
             ctx: &crate::context::Context,
-            user_ctx: &mut ostd::cpu::UserContext,
+            user_ctx: &mut kstd::cpu::UserContext,
         ) -> $crate::prelude::Result<$crate::syscall::SyscallReturn> {
             match syscall_number {
                 $(

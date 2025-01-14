@@ -4,7 +4,7 @@
 
 set -e
 
-# This script is used to update Asterinas version numbers in all relevant files in the repository.
+# This script is used to update Astros version numbers in all relevant files in the repository.
 # Usage: ./tools/bump_version.sh bump_type
 # bump_type can be one of: patch, minor, or major.
 
@@ -27,13 +27,13 @@ update_dep_version() {
     sed -i "0,/${pattern}/s/${pattern}/$2 = { version = \"${new_version}\"/1" $1
 }
 
-# Update Docker image versions (`asterinas/asterinas:{version}`) in file $1
+# Update Docker image versions (`astros/astros:{version}`) in file $1
 update_image_versions() {
     echo "Updating file $1"
     # Update the version of the development container
-    sed -i "s/asterinas\/asterinas:[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+/asterinas\/asterinas:${new_version}/g" $1
-    # Update the test environment described in the OSDK manual
-    sed -i "s/asterinas\/osdk:[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+/asterinas\/osdk:${new_version}/g" $1
+    sed -i "s/astros\/astros:[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+/astros\/astros:${new_version}/g" $1
+    # Update the test environment described in the KSDK manual
+    sed -i "s/astros\/ksdk:[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+/astros\/ksdk:${new_version}/g" $1
 }
 
 # Print the help message
@@ -42,7 +42,7 @@ print_help() {
     echo ""
     echo "The bump_type argument must be either \"patch\", \"minor\", or \"major\","
     echo "which instructs the script to increment the patch, minor, and major part"
-    echo "of the semantic version number of Asterinas, respectively."
+    echo "of the semantic version number of Astros, respectively."
 }
 
 # Add the number $1 by 1
@@ -103,14 +103,14 @@ update_tag_version() {
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ASTER_SRC_DIR=${SCRIPT_DIR}/..
 DOCS_DIR=${ASTER_SRC_DIR}/docs
-OSTD_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ostd/Cargo.toml
-OSTD_TEST_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ostd/libs/ostd-test/Cargo.toml
-OSTD_MACROS_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ostd/libs/ostd-macros/Cargo.toml
-LINUX_BOOT_PARAMS_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ostd/libs/linux-bzimage/boot-params/Cargo.toml
-LINUX_BZIMAGE_BUILDER_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ostd/libs/linux-bzimage/builder/Cargo.toml
-LINUX_BZIMAGE_SETUP_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ostd/libs/linux-bzimage/setup/Cargo.toml
-OSDK_CARGO_TOML_PATH=${ASTER_SRC_DIR}/osdk/Cargo.toml
-OSDK_TEST_RUNNER_CARGO_TOML_PATH=${ASTER_SRC_DIR}/osdk/test-kernel/Cargo.toml
+KSTD_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/Cargo.toml
+KSTD_TEST_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/kstd-test/Cargo.toml
+KSTD_MACROS_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/kstd-macros/Cargo.toml
+LINUX_BOOT_PARAMS_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/linux-bzimage/boot-params/Cargo.toml
+LINUX_BZIMAGE_BUILDER_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/linux-bzimage/builder/Cargo.toml
+LINUX_BZIMAGE_SETUP_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/linux-bzimage/setup/Cargo.toml
+KSDK_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ksdk/Cargo.toml
+KSDK_TEST_RUNNER_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ksdk/test-kernel/Cargo.toml
 VERSION_PATH=${ASTER_SRC_DIR}/VERSION
 
 current_version=$(cat ${VERSION_PATH})
@@ -125,24 +125,24 @@ validate_bump_type
 new_version=$(bump_version ${current_version})
 
 # Update the versions in Cargo.toml
-update_package_version ${OSTD_TEST_CARGO_TOML_PATH}
-update_package_version ${OSTD_MACROS_CARGO_TOML_PATH}
-update_package_version ${OSTD_CARGO_TOML_PATH}
+update_package_version ${KSTD_TEST_CARGO_TOML_PATH}
+update_package_version ${KSTD_MACROS_CARGO_TOML_PATH}
+update_package_version ${KSTD_CARGO_TOML_PATH}
 update_package_version ${LINUX_BOOT_PARAMS_CARGO_TOML_PATH}
 update_package_version ${LINUX_BZIMAGE_BUILDER_CARGO_TOML_PATH}
 update_package_version ${LINUX_BZIMAGE_SETUP_CARGO_TOML_PATH}
-update_dep_version ${OSTD_CARGO_TOML_PATH} ostd-test
-update_dep_version ${OSTD_CARGO_TOML_PATH} linux-boot-params
-update_dep_version ${OSTD_CARGO_TOML_PATH} ostd-macros
+update_dep_version ${KSTD_CARGO_TOML_PATH} kstd-test
+update_dep_version ${KSTD_CARGO_TOML_PATH} linux-boot-params
+update_dep_version ${KSTD_CARGO_TOML_PATH} kstd-macros
 update_dep_version ${LINUX_BZIMAGE_SETUP_CARGO_TOML_PATH} linux-boot-params
-update_package_version ${OSDK_CARGO_TOML_PATH}
-update_package_version ${OSDK_TEST_RUNNER_CARGO_TOML_PATH}
-update_dep_version ${OSDK_TEST_RUNNER_CARGO_TOML_PATH} ostd
-update_dep_version ${OSDK_CARGO_TOML_PATH} linux-bzimage-builder
+update_package_version ${KSDK_CARGO_TOML_PATH}
+update_package_version ${KSDK_TEST_RUNNER_CARGO_TOML_PATH}
+update_dep_version ${KSDK_TEST_RUNNER_CARGO_TOML_PATH} kstd
+update_dep_version ${KSDK_CARGO_TOML_PATH} linux-bzimage-builder
 
 # Automatically bump Cargo.lock files
-cargo update -p aster-nix --precise $new_version # For Cargo.lock
-cd osdk && cargo update -p cargo-osdk --precise $new_version # For osdk/Cargo.lock
+cargo update -p astros-nix --precise $new_version # For Cargo.lock
+cd ksdk && cargo update -p cargo-ksdk --precise $new_version # For ksdk/Cargo.lock
 
 # Update Docker image versions in README files
 update_image_versions ${ASTER_SRC_DIR}/README.md
@@ -168,4 +168,4 @@ update_image_versions $GET_STARTED_PATH
 # `-n` is used to avoid adding a '\n' in the VERSION file.
 echo -n "${new_version}" > ${VERSION_PATH}
 
-echo "Bumped Asterinas OSTD & OSDK version to $new_version"
+echo "Bumped Astros KSTD & KSDK version to $new_version"

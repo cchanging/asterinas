@@ -3,7 +3,7 @@
 #![allow(dead_code)]
 
 use intrusive_collections::{intrusive_adapter, LinkedList, LinkedListAtomicLink};
-use ostd::{
+use kstd::{
     cpu::num_cpus,
     sync::{Waiter, Waker},
 };

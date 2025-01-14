@@ -2,7 +2,7 @@
 
 use core::time::Duration;
 
-use ostd::sync::{WaitQueue, Waiter};
+use kstd::sync::{WaitQueue, Waiter};
 
 use super::{clocks::JIFFIES_TIMER_MANAGER, timer::Timeout, Timer, TimerManager};
 use crate::prelude::*;

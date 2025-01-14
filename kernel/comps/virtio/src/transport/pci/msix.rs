@@ -2,7 +2,7 @@
 
 use alloc::vec::Vec;
 
-use ostd::{bus::pci::capability::msix::CapabilityMsixData, trap::IrqLine};
+use kstd::{bus::pci::capability::msix::CapabilityMsixData, trap::IrqLine};
 
 pub struct VirtioMsixManager {
     config_msix_vector: u16,
@@ -20,7 +20,7 @@ impl VirtioMsixManager {
     pub fn new(mut msix: CapabilityMsixData) -> Self {
         let mut msix_vector_list: Vec<u16> = (0..msix.table_size()).collect();
         for i in msix_vector_list.iter() {
-            let irq = ostd::trap::IrqLine::alloc().unwrap();
+            let irq = kstd::trap::IrqLine::alloc().unwrap();
             msix.set_interrupt_vector(irq, *i);
         }
         let config_msix_vector = msix_vector_list.pop().unwrap();

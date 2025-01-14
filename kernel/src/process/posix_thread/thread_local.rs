@@ -2,7 +2,7 @@
 
 use core::cell::{Cell, RefCell};
 
-use ostd::{mm::Vaddr, task::CurrentTask};
+use kstd::{mm::Vaddr, task::CurrentTask};
 
 use super::RobustListHead;
 use crate::process::signal::SigStack;

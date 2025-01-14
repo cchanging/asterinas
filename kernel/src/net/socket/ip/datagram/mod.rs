@@ -2,8 +2,8 @@
 
 use core::sync::atomic::{AtomicBool, Ordering};
 
-use aster_bigtcp::wire::IpEndpoint;
-use ostd::sync::PreemptDisabled;
+use astros_bigtcp::wire::IpEndpoint;
+use kstd::sync::PreemptDisabled;
 use takeable::Takeable;
 
 use self::{bound::BoundDatagram, unbound::UnboundDatagram};
@@ -270,7 +270,7 @@ impl FileLike for DatagramSocket {
         Metadata::new_socket(
             0,
             InodeMode::from_bits_truncate(0o140777),
-            aster_block::BLOCK_SIZE,
+            astros_block::BLOCK_SIZE,
         )
     }
 }

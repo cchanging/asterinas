@@ -3,10 +3,10 @@
 use alloc::{boxed::Box, sync::Arc};
 use core::mem::size_of;
 
-use aster_rights::{ReadOp, WriteOp};
-use aster_util::{field_ptr, safe_ptr::SafePtr};
+use astros_rights::{ReadOp, WriteOp};
+use astros_util::{field_ptr, safe_ptr::SafePtr};
 use log::warn;
-use ostd::{
+use kstd::{
     bus::{
         mmio::{
             bus::MmioDevice,
@@ -37,7 +37,7 @@ pub struct VirtioMmioDevice {
 pub struct VirtioMmioTransport {
     layout: SafePtr<VirtioMmioLayout, IoMem>,
     device: Arc<VirtioMmioDevice>,
-    common_device: ostd::bus::mmio::common_device::MmioCommonDevice,
+    common_device: kstd::bus::mmio::common_device::MmioCommonDevice,
     multiplex: Arc<RwLock<MultiplexIrq>>,
 }
 

@@ -2,7 +2,7 @@
 
 use core::time::Duration;
 
-use ostd::sync::Waiter;
+use kstd::sync::Waiter;
 
 use super::{clock_gettime::read_clock, ClockId, SyscallReturn};
 use crate::{

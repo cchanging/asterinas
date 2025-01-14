@@ -2,8 +2,8 @@
 
 use core::{fmt::Display, ops::Range};
 
-use aster_rights::Full;
-use ostd::mm::VmIo;
+use astros_rights::Full;
+use kstd::mm::VmIo;
 
 use super::{
     constants::{EXFAT_FILE_NAME_LEN, MAX_NAME_LENGTH},

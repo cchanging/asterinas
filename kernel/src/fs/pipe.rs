@@ -195,7 +195,7 @@ mod test {
     use alloc::sync::Arc;
     use core::sync::atomic::{self, AtomicBool};
 
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
     use crate::{

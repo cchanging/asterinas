@@ -9,7 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='The Dockerfile generator for OSDK.')
+    parser = argparse.ArgumentParser(description='The Dockerfile generator for KSDK.')
     parser.add_argument('--intel-tdx', action='store_true', help='Include Intel TDX support')
     parser.add_argument(
         '--out-dir',

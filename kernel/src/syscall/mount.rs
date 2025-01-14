@@ -154,7 +154,7 @@ fn do_new_mount(
 /// Get the filesystem by fs_type and devname.
 fn get_fs(fs_type: CString, devname: CString) -> Result<Arc<dyn FileSystem>> {
     let devname = devname.to_str().unwrap();
-    let device = match aster_block::get_device(devname) {
+    let device = match astros_block::get_device(devname) {
         Some(device) => device,
         None => return_errno_with_message!(Errno::ENOENT, "Device does not exist"),
     };

@@ -4,7 +4,7 @@
 
 use core::sync::atomic::{AtomicU8, Ordering};
 
-use aster_util::slot_vec::SlotVec;
+use astros_util::slot_vec::SlotVec;
 
 use super::{
     file_handle::FileLike,

@@ -2,8 +2,8 @@
 
 #![allow(unused_variables)]
 
-use aster_rights::Full;
-use ostd::{cpu::*, mm::VmSpace};
+use astros_rights::Full;
+use kstd::{cpu::*, mm::VmSpace};
 
 use crate::{
     prelude::*,

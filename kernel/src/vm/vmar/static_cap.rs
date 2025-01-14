@@ -2,8 +2,8 @@
 
 use core::ops::Range;
 
-use aster_rights::{Dup, Rights, TRightSet, TRights, Write};
-use aster_rights_proc::require;
+use astros_rights::{Dup, Rights, TRightSet, TRights, Write};
+use astros_rights_proc::require;
 
 use super::{VmPerms, Vmar, VmarMapOptions, VmarRightsOp, Vmar_};
 use crate::{
@@ -27,8 +27,8 @@ impl<R: TRights> Vmar<TRightSet<R>> {
     /// # Example
     ///
     /// ```
-    /// use aster_nix::prelude::*;
-    /// use aster_nix::vm::{PAGE_SIZE, Vmar, VmoOptions};
+    /// use astros_nix::prelude::*;
+    /// use astros_nix::vm::{PAGE_SIZE, Vmar, VmoOptions};
     ///
     /// let vmar = Vmar::<RightsWrapper<Full>>::new().unwrap();
     /// let vmo = VmoOptions::new(10 * PAGE_SIZE).alloc().unwrap();

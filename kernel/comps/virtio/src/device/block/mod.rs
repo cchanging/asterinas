@@ -4,11 +4,11 @@ pub mod device;
 
 use core::mem::offset_of;
 
-use aster_block::SECTOR_SIZE;
-use aster_util::safe_ptr::SafePtr;
+use astros_block::SECTOR_SIZE;
+use astros_util::safe_ptr::SafePtr;
 use bitflags::bitflags;
 use int_to_c_enum::TryFromInt;
-use ostd::Pod;
+use kstd::Pod;
 
 use crate::transport::{ConfigManager, VirtioTransport};
 

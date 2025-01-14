@@ -230,10 +230,10 @@ FN_TEST(poll_shutdown_readwrite)
 
 	CHECK(write(sk_connect, buf, 4096));
 
-	// TODO: The following test cannot be passed on Asterinas due to the following reasons:
+	// TODO: The following test cannot be passed on Astros due to the following reasons:
 	// 1. On Linux, an RST packet is generated when attempting to write to a closed socket.
-	//    However, Asterinas currently does not generate this packet.
-	// 2. RST packets cause a POLLERR on Linux, but Asterinas currently lack support for this.
+	//    However, Astros currently does not generate this packet.
+	// 2. RST packets cause a POLLERR on Linux, but Astros currently lack support for this.
 
 	// TEST_RES(poll(&pfd, 1, 0),
 	// 	 pfd.revents ==

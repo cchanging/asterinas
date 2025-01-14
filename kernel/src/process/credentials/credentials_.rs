@@ -2,7 +2,7 @@
 
 use core::sync::atomic::{AtomicBool, Ordering};
 
-use ostd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
+use kstd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
 
 use super::{group::AtomicGid, user::AtomicUid, Gid, Uid};
 use crate::{
