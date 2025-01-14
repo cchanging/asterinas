@@ -83,7 +83,7 @@ bitflags! {
         /// Sets to 1 if the device can respond to Memory SPace accesses.
         const MEMORY_SPACE              =  1 << 1;
         /// Sets to 1 if the device can behave as a bus master.
-        const BUS_MASTER                =  1 << 2;
+        const BUS_MASTROS                =  1 << 2;
         /// Sets to 1 if the device can monitor Special Cycle operations.
         const SPECIAL_CYCLES            =  1 << 3;
         /// Memory Write and Invalidate Enable. Set to 1 if the device can
@@ -124,7 +124,7 @@ bitflags! {
         /// operation in which the error occurred
         /// 3. Bit 6 of the Command register (Parity Error Response bit) is set
         ///  to 1.
-        const MASTER_DATA_PARITY_ERROR  = 1 << 8;
+        const MASTROS_DATA_PARITY_ERROR  = 1 << 8;
         /// The read-only bit that represent the slowest time that a device will
         /// assert DEVSEL# for any bus command except Configuration Space read
         /// and writes.
@@ -142,7 +142,7 @@ bitflags! {
         const RECEIVED_TARGET_ABORT     = 1 << 12;
         /// Sets to 1 by a master device when its transaction (except for Special
         /// Cycle transactions) is terminated with Mastros-Abort.
-        const RECEIVED_MASTER_ABORT     = 1 << 13;
+        const RECEIVED_MASTROS_ABORT     = 1 << 13;
         /// Sets to 1 when the device asserts SERR#
         const SIGNALED_SYSTEM_ERROR     = 1 << 14;
         /// Sets to 1 when the device detects a parity error, even if parity error

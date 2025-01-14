@@ -101,17 +101,17 @@ update_tag_version() {
 }
 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ASTER_SRC_DIR=${SCRIPT_DIR}/..
-DOCS_DIR=${ASTER_SRC_DIR}/docs
-KSTD_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/Cargo.toml
-KSTD_TEST_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/kstd-test/Cargo.toml
-KSTD_MACROS_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/kstd-macros/Cargo.toml
-LINUX_BOOT_PARAMS_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/linux-bzimage/boot-params/Cargo.toml
-LINUX_BZIMAGE_BUILDER_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/linux-bzimage/builder/Cargo.toml
-LINUX_BZIMAGE_SETUP_CARGO_TOML_PATH=${ASTER_SRC_DIR}/kstd/libs/linux-bzimage/setup/Cargo.toml
-KSDK_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ksdk/Cargo.toml
-KSDK_TEST_RUNNER_CARGO_TOML_PATH=${ASTER_SRC_DIR}/ksdk/test-kernel/Cargo.toml
-VERSION_PATH=${ASTER_SRC_DIR}/VERSION
+ASTROS_SRC_DIR=${SCRIPT_DIR}/..
+DOCS_DIR=${ASTROS_SRC_DIR}/docs
+KSTD_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/kstd/Cargo.toml
+KSTD_TEST_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/kstd/libs/kstd-test/Cargo.toml
+KSTD_MACROS_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/kstd/libs/kstd-macros/Cargo.toml
+LINUX_BOOT_PARAMS_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/kstd/libs/linux-bzimage/boot-params/Cargo.toml
+LINUX_BZIMAGE_BUILDER_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/kstd/libs/linux-bzimage/builder/Cargo.toml
+LINUX_BZIMAGE_SETUP_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/kstd/libs/linux-bzimage/setup/Cargo.toml
+KSDK_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/ksdk/Cargo.toml
+KSDK_TEST_RUNNER_CARGO_TOML_PATH=${ASTROS_SRC_DIR}/ksdk/test-kernel/Cargo.toml
+VERSION_PATH=${ASTROS_SRC_DIR}/VERSION
 
 current_version=$(cat ${VERSION_PATH})
 bump_type=$1
@@ -145,23 +145,23 @@ cargo update -p astros-nix --precise $new_version # For Cargo.lock
 cd ksdk && cargo update -p cargo-ksdk --precise $new_version # For ksdk/Cargo.lock
 
 # Update Docker image versions in README files
-update_image_versions ${ASTER_SRC_DIR}/README.md
-update_image_versions ${ASTER_SRC_DIR}/README_CN.md
+update_image_versions ${ASTROS_SRC_DIR}/README.md
+update_image_versions ${ASTROS_SRC_DIR}/README_CN.md
 update_image_versions ${SCRIPT_DIR}/docker/README.md
 update_image_versions ${DOCS_DIR}/src/kernel/intel_tdx.md
 
 # Update Docker image versions in workflows
-WORKFLOWS=$(find "${ASTER_SRC_DIR}/.github/workflows/" -type f -name "*.yml")
+WORKFLOWS=$(find "${ASTROS_SRC_DIR}/.github/workflows/" -type f -name "*.yml")
 for workflow in $WORKFLOWS; do
     update_image_versions $workflow
 done
 
 # Update tag version in release_tag workflow
-RELEASE_TAG_WORKFLOW=${ASTER_SRC_DIR}/.github/workflows/push_git_tag.yml
+RELEASE_TAG_WORKFLOW=${ASTROS_SRC_DIR}/.github/workflows/push_git_tag.yml
 update_tag_version $RELEASE_TAG_WORKFLOW
 
 # Update Docker image versions in the documentation
-GET_STARTED_PATH=${ASTER_SRC_DIR}/docs/src/kernel/README.md
+GET_STARTED_PATH=${ASTROS_SRC_DIR}/docs/src/kernel/README.md
 update_image_versions $GET_STARTED_PATH
 
 # Create or update VERSION

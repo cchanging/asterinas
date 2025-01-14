@@ -5,9 +5,9 @@
 set -e
 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ASTER_ROOT_DIR=${SCRIPT_DIR}/../../..
-ASTER_RUST_VERSION=$( grep -m1 -o 'nightly-[0-9]\+-[0-9]\+-[0-9]\+' ${ASTER_ROOT_DIR}/rust-toolchain.toml )
-VERSION=$( cat ${ASTER_ROOT_DIR}/VERSION )
+ASTROS_ROOT_DIR=${SCRIPT_DIR}/../../..
+ASTROS_RUST_VERSION=$( grep -m1 -o 'nightly-[0-9]\+-[0-9]\+-[0-9]\+' ${ASTROS_ROOT_DIR}/rust-toolchain.toml )
+VERSION=$( cat ${ASTROS_ROOT_DIR}/VERSION )
 DOCKERFILE=${SCRIPT_DIR}/Dockerfile
 
 if [ "$1" = "intel-tdx" ]; then
@@ -20,6 +20,6 @@ fi
 
 docker build \
     -t ${IMAGE_NAME} \
-    --build-arg ASTER_RUST_VERSION=${ASTER_RUST_VERSION} \
+    --build-arg ASTROS_RUST_VERSION=${ASTROS_RUST_VERSION} \
     -f ${DOCKERFILE} \
     ${SCRIPT_DIR} 

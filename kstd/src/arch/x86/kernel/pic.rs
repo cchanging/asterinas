@@ -11,14 +11,14 @@ use crate::{
     trap::IrqLine,
 };
 
-static MASTER_CMD: IoPort<u8, WriteOnlyAccess> = unsafe { IoPort::new(0x20) };
-static MASTER_DATA: IoPort<u8, WriteOnlyAccess> = unsafe { IoPort::new(0x21) };
+static MASTROS_CMD: IoPort<u8, WriteOnlyAccess> = unsafe { IoPort::new(0x20) };
+static MASTROS_DATA: IoPort<u8, WriteOnlyAccess> = unsafe { IoPort::new(0x21) };
 static SLAVE_CMD: IoPort<u8, WriteOnlyAccess> = unsafe { IoPort::new(0xA0) };
 static SLAVE_DATA: IoPort<u8, WriteOnlyAccess> = unsafe { IoPort::new(0xA1) };
 
 const IRQ_OFFSET: u8 = 0x20;
 
-static MASK_MASTER: AtomicU8 = AtomicU8::new(0x00);
+static MASK_MASTROS: AtomicU8 = AtomicU8::new(0x00);
 static MASK_SLAVE: AtomicU8 = AtomicU8::new(0x00);
 static CHANGE_LOCK: AtomicBool = AtomicBool::new(false);
 
@@ -27,7 +27,7 @@ pub fn init() {
     if CHANGE_LOCK.load(Relaxed) {
         return;
     }
-    let mastros_mask = !(MASK_MASTER.load(Relaxed));
+    let mastros_mask = !(MASK_MASTROS.load(Relaxed));
     let slave_mask = !(MASK_SLAVE.load(Relaxed));
     info!(
         "PIC init, master mask:{:x} slave_mask:{:x}",
@@ -45,7 +45,7 @@ pub fn allocate_irq(index: u8) -> Option<IrqLine> {
         if index >= 8 {
             MASK_SLAVE.fetch_or(1 << (index - 8), Relaxed);
         } else {
-            MASK_MASTER.fetch_or(1 << (index), Relaxed);
+            MASK_MASTROS.fetch_or(1 << (index), Relaxed);
         }
         Some(irq)
     } else {
@@ -85,29 +85,29 @@ pub fn disable_temp() {
 #[inline(always)]
 pub fn set_mask(mastros_mask: u8, slave_mask: u8) {
     // Start initialization
-    MASTER_CMD.write(0x11);
+    MASTROS_CMD.write(0x11);
     SLAVE_CMD.write(0x11);
 
     // Set offsets
     // map master PIC vector 0x00~0x07 to 0x20~0x27 IRQ number
-    MASTER_DATA.write(IRQ_OFFSET);
+    MASTROS_DATA.write(IRQ_OFFSET);
     // map slave PIC vector 0x00~0x07 to 0x28~0x2f IRQ number
     SLAVE_DATA.write(IRQ_OFFSET + 0x08);
 
     // Set up cascade, there is slave at IRQ2
-    MASTER_DATA.write(4);
+    MASTROS_DATA.write(4);
     SLAVE_DATA.write(2);
 
     // Set up interrupt mode (1 is 8086/88 mode, 2 is auto EOI)
-    MASTER_DATA.write(1);
+    MASTROS_DATA.write(1);
     SLAVE_DATA.write(1);
 
     // mask interrupts
-    MASTER_DATA.write(mastros_mask);
+    MASTROS_DATA.write(mastros_mask);
     SLAVE_DATA.write(slave_mask);
 }
 
 #[inline(always)]
 pub(crate) fn ack() {
-    MASTER_CMD.write(0x20);
+    MASTROS_CMD.write(0x20);
 }

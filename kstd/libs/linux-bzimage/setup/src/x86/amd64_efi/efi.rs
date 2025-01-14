@@ -231,13 +231,13 @@ fn efi_phase_runtime(memory_map: MemoryMapOwned, boot_params: &mut BootParams) -
     unsafe {
         use crate::console::{print_hex, print_str};
         print_str("[EFI stub] Entering Astros entrypoint at ");
-        print_hex(super::ASTER_ENTRY_POINT as u64);
+        print_hex(super::ASTROS_ENTRY_POINT as u64);
         print_str("\n");
     }
 
     unsafe {
         super::call_astros_entrypoint(
-            super::ASTER_ENTRY_POINT as u64,
+            super::ASTROS_ENTRY_POINT as u64,
             boot_params as *const _ as u64,
         )
     }

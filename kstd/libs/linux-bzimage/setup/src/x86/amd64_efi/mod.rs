@@ -11,7 +11,7 @@ global_asm!(include_str!("header.S"));
 
 global_asm!(include_str!("setup.S"));
 
-pub const ASTER_ENTRY_POINT: u32 = 0x8001200;
+pub const ASTROS_ENTRY_POINT: u32 = 0x8001200;
 
 unsafe fn call_astros_entrypoint(entrypoint: u64, boot_params_ptr: u64) -> ! {
     asm!("mov rsi, {}", in(reg) boot_params_ptr);

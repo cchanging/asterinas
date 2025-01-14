@@ -5,9 +5,9 @@
 set -e
 
 BENCHMARK_PATH=$1
-ASTERINAS_GUEST_CMD=$2
+ASTROSINAS_GUEST_CMD=$2
 LINUX_GUEST_CMD=$3
-ASTERINAS_OUTPUT=$4
+ASTROSINAS_OUTPUT=$4
 LINUX_OUTPUT=$5
 # Message to monitor in the log file to determine whether the VM is ready
 # It should align with bench_runner.sh
@@ -76,7 +76,7 @@ run_benchmark() {
 }
 
 # Run the benchmark on the Astros VM
-run_benchmark "${ASTERINAS_GUEST_CMD}" "${ASTERINAS_OUTPUT}" "/tmp/astros.log" "${READY_MESSAGE}" 
+run_benchmark "${ASTROSINAS_GUEST_CMD}" "${ASTROSINAS_OUTPUT}" "/tmp/astros.log" "${READY_MESSAGE}" 
 
 # Wait for the Astros QEMU process to exit
 wait

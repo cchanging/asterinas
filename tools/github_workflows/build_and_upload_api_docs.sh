@@ -40,9 +40,9 @@ validate_parameter() {
 
 # Build documentation of kstd
 build_api_docs() {
-    cd "${ASTER_SRC_DIR}"
+    cd "${ASTROS_SRC_DIR}"
     make install_ksdk
-    cd "${ASTER_SRC_DIR}/kstd"
+    cd "${ASTROS_SRC_DIR}/kstd"
     cargo ksdk doc
 }
 
@@ -83,7 +83,7 @@ update_nightly_doc() {
     cd "${WORK_DIR}/${CLONED_REPO_DIR}"
     git checkout --orphan new_branch
     rm -rf *
-    cp -r ${ASTER_SRC_DIR}/target/x86_64-unknown-none/doc/* ./
+    cp -r ${ASTROS_SRC_DIR}/target/x86_64-unknown-none/doc/* ./
     generate_redirect_index_html "https://astros.github.io/api-docs-nightly/kstd"
     git add .
     git commit -am "Update nightly API docs"
@@ -96,10 +96,10 @@ update_nightly_doc() {
 # Update the release documentation and upload
 update_release_doc() {
     cd "${WORK_DIR}/${CLONED_REPO_DIR}"
-    VERSION=$(cat "${ASTER_SRC_DIR}/VERSION")
+    VERSION=$(cat "${ASTROS_SRC_DIR}/VERSION")
     git rm -rf --ignore-unmatch "${VERSION}"
     mkdir "${VERSION}"
-    cp -r ${ASTER_SRC_DIR}/target/x86_64-unknown-none/doc/* ${VERSION}/
+    cp -r ${ASTROS_SRC_DIR}/target/x86_64-unknown-none/doc/* ${VERSION}/
     generate_redirect_index_html "https://astros.github.io/api-docs/${VERSION}/kstd"
     git add .
     git commit -am "Update API docs to v${VERSION}"
@@ -116,8 +116,8 @@ fi
 # Validate and retrieve script parameters
 validate_parameter "$@"
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ASTER_SRC_DIR=${SCRIPT_DIR}/../..
-WORK_DIR=${ASTER_SRC_DIR}/..
+ASTROS_SRC_DIR=${SCRIPT_DIR}/../..
+WORK_DIR=${ASTROS_SRC_DIR}/..
 SSH_KEY_FILE=$(realpath "$2")
 CLONED_REPO_DIR=temp_api_docs
 KNOWN_HOSTS_FILE="${WORK_DIR}/known_hosts"

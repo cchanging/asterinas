@@ -23,7 +23,7 @@ parse_raw_results() {
     # Extract and sanitize numeric results
     local linux_result astros_result
     linux_result=$(awk "/${search_pattern}/ {print \$$result_index}" "${LINUX_OUTPUT}" | tr -d '\r' | sed 's/[^0-9.]*//g' | sed -n "${nth_occurrence}p")
-    astros_result=$(awk "/${search_pattern}/ {print \$$result_index}" "${ASTER_OUTPUT}" | tr -d '\r' | sed 's/[^0-9.]*//g' | sed -n "${nth_occurrence}p")
+    astros_result=$(awk "/${search_pattern}/ {print \$$result_index}" "${ASTROS_OUTPUT}" | tr -d '\r' | sed 's/[^0-9.]*//g' | sed -n "${nth_occurrence}p")
 
     # Ensure both results are valid
     if [ -z "${linux_result}" ] || [ -z "${astros_result}" ]; then
@@ -113,7 +113,7 @@ run_benchmark() {
     case "${run_mode}" in
         "guest_only")
             echo "Running benchmark ${benchmark} on Astros..."
-            eval "$astros_cmd" | tee ${ASTER_OUTPUT}
+            eval "$astros_cmd" | tee ${ASTROS_OUTPUT}
             prepare_fs
             echo "Running benchmark ${benchmark} on Linux..."
             eval "$linux_cmd" | tee ${LINUX_OUTPUT}
@@ -124,7 +124,7 @@ run_benchmark() {
                 "${BENCHMARK_ROOT}/${benchmark}" \
                 "${astros_cmd}" \
                 "${linux_cmd}" \
-                "${ASTER_OUTPUT}" \
+                "${ASTROS_OUTPUT}" \
                 "${LINUX_OUTPUT}"
             ;;
         *)
@@ -151,7 +151,7 @@ parse_results() {
 # Clean up temporary files
 cleanup() {
     echo "Cleaning up..."
-    rm -f "${LINUX_OUTPUT}" "${ASTER_OUTPUT}" "${RESULT_TEMPLATE}"
+    rm -f "${LINUX_OUTPUT}" "${ASTROS_OUTPUT}" "${RESULT_TEMPLATE}"
 }
 
 # Main function to coordinate the benchmark run

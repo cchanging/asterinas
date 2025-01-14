@@ -14,14 +14,14 @@ cd <astros dir>
 # Build Docker image
 docker buildx build \
     -f tools/docker/Dockerfile \
-    --build-arg ASTER_RUST_VERSION=${RUST_VERSION} \
-    -t astros/astros:${ASTER_VERSION} \
+    --build-arg ASTROS_RUST_VERSION=${RUST_VERSION} \
+    -t astros/astros:${ASTROS_VERSION} \
     .
 ```
 
 The meanings of the two environment variables in the command are as follows:
 
-- `${ASTER_VERSION}`: Represents the version number of Astros. You can find this in the `VERSION` file.
+- `${ASTROS_VERSION}`: Represents the version number of Astros. You can find this in the `VERSION` file.
 - `${RUST_VERSION}`: Denotes the required Rust toolchain version, as specified in the `rust-toolchain` file.
 
 For Intel TDX Docker Image, you can execute the following command:
@@ -34,8 +34,8 @@ cd <astros dir>
 # Build Docker image
 docker buildx build \
     -f tools/docker/Dockerfile \
-    --build-arg ASTER_RUST_VERSION=${RUST_VERSION} \
-    -t astros/astros:${ASTER_VERSION}-tdx \
+    --build-arg ASTROS_RUST_VERSION=${RUST_VERSION} \
+    -t astros/astros:${ASTROS_VERSION}-tdx \
     .
 ```
 

@@ -10,7 +10,7 @@ global_asm!(include_str!("setup.S"));
 
 use crate::console::{print_hex, print_str};
 
-pub const ASTER_ENTRY_POINT: u32 = 0x8001000;
+pub const ASTROS_ENTRY_POINT: u32 = 0x8001000;
 
 #[export_name = "_bzimage_entry_32"]
 extern "cdecl" fn bzimage_entry(boot_params_ptr: u32) -> ! {
@@ -31,7 +31,7 @@ extern "cdecl" fn bzimage_entry(boot_params_ptr: u32) -> ! {
     crate::loader::load_elf(payload);
 
     // SAFETY: the entrypoint and the ptr is valid.
-    unsafe { call_astros_entrypoint(ASTER_ENTRY_POINT, boot_params_ptr.try_into().unwrap()) };
+    unsafe { call_astros_entrypoint(ASTROS_ENTRY_POINT, boot_params_ptr.try_into().unwrap()) };
 }
 
 unsafe fn call_astros_entrypoint(entrypoint: u32, boot_params_ptr: u32) -> ! {

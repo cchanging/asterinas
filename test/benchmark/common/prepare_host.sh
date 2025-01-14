@@ -9,7 +9,7 @@ set -o pipefail
 BENCHMARK_ROOT="${BENCHMARK_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." &>/dev/null && pwd)}"
 # Set the log file
 LINUX_OUTPUT="${BENCHMARK_ROOT}/linux_output.txt"
-ASTER_OUTPUT="${BENCHMARK_ROOT}/astros_output.txt"
+ASTROS_OUTPUT="${BENCHMARK_ROOT}/astros_output.txt"
 # Dependencies for Linux
 LINUX_DEPENDENCIES_DIR="/opt/linux_binary_cache"
 LINUX_KERNEL="${LINUX_DEPENDENCIES_DIR}/vmlinuz"

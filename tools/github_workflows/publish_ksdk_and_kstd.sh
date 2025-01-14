@@ -9,7 +9,7 @@ set -e
 # Usage: publish_ksdk_and_kstd.sh [--dry-run | --token REGISTRY_TOKEN]
 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ASTER_SRC_DIR=${SCRIPT_DIR}/../..
+ASTROS_SRC_DIR=${SCRIPT_DIR}/../..
 
 # Print help message
 print_help() {
@@ -45,7 +45,7 @@ done
 # optional target $2. If the target is not specified, cargo will decide
 # the target automatically.
 do_publish_for() {
-    pushd $ASTER_SRC_DIR/$1
+    pushd $ASTROS_SRC_DIR/$1
     TARGET_ARGS=""
     if [ -n "$2" ]; then
         TARGET_ARGS="--target $2"
@@ -57,7 +57,7 @@ do_publish_for() {
         # the crate version is not already published on crates.io,
         # otherwise, the check will fail.
         # Therefore, we modify the crate version to ensure it is not published.
-        current_version=$(cat $ASTER_SRC_DIR/VERSION)
+        current_version=$(cat $ASTROS_SRC_DIR/VERSION)
         next_patched_version=$(echo "$current_version" | awk -F. '{printf "%d.%d.%d\n", $1, $2, $3 + 1}')
         pattern="^version = \"[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\"$"
         sed -i "0,/${pattern}/s/${pattern}/version = \"${next_patched_version}\"/1" Cargo.toml

@@ -141,7 +141,7 @@ impl CapabilityMsixData {
         dev.location()
             .write16(cap_ptr + 2, dev.location().read16(cap_ptr + 2) | 0x8000);
         // disable INTx, enable Bus master.
-        dev.set_command(dev.command() | Command::INTERRUPT_DISABLE | Command::BUS_MASTER);
+        dev.set_command(dev.command() | Command::INTERRUPT_DISABLE | Command::BUS_MASTROS);
 
         let mut irqs = Vec::with_capacity(table_size as usize);
         for i in 0..table_size {
