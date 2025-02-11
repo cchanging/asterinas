@@ -41,7 +41,7 @@
 //! results, such as unexpected bytes being copied, but do not cause soundness problems.
 
 use alloc::vec;
-use core::marker::PhantomData;
+use core::{intrinsics::transmute_unchecked, marker::PhantomData};
 
 use align_ext::AlignExt;
 use const_assert::{Assert, IsTrue};
@@ -950,3 +950,28 @@ const fn is_pod_once<T: Pod>() -> bool {
 
     size == 1 || size == 2 || size == 4 || size == 8
 }
+
+/// A marker trait for POD types that incorporates the functionality of [`PodOnce`],
+/// while also enforcing that their size must be equal to `usize`.
+///
+/// # Safety
+///
+/// Types that implement this trait must have the same size as `usize`.
+pub unsafe trait PodUsize: PodOnce {
+    /// Converts the `PodUsize` into its corresponding `usize` value.
+    fn as_usize(self) -> usize {
+        // SAFETY: `Self` is `Pod` and has the same memory representation as `usize`.
+        unsafe { transmute_unchecked(self) }
+    }
+
+    /// Converts a usize `val` into a `PodUsize`.
+    fn from_usize(val: usize) -> Self {
+        // SAFETY: `Self` is `Pod` and has the same memory representation as `usize`,
+        // and it is also valid at `Self` type since `Self` type is POD.
+        unsafe { transmute_unchecked(val) }
+    }
+}
+
+// SAFETY: we only implement `PodUsize` for POD types that have the same size as `usize`.
+unsafe impl<T: PodOnce> PodUsize for T where Assert<{ size_of::<T>() == size_of::<usize>() }>: IsTrue
+{}
