@@ -21,6 +21,8 @@ ostd = { path = "../../../ostd" }
 component = { path = "../../libs/comp-sys/component" }
 log = "0.4"
 int-to-c-enum = { path = "../../libs/int-to-c-enum" }
+tinybmp = "0.3.1"
+embedded-graphics = "0.7.1"
 
 [lints]
 workspace = true
