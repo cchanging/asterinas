@@ -243,7 +243,7 @@ FN_TEST(poll_shutdown_readwrite)
 
 	int err = 0;
 	socklen_t errlen = sizeof(err);
-	// FIXME: This socket error should be `EPIPE`, but in Asterinas it is
+	// FIXME: This socket error should be `EPIPE`, but in Astros it is
 	// `ECONNRESET`. See the Linux implementation for details:
 	// <https://github.com/torvalds/linux/blob/848e076317446f9c663771ddec142d7c2eb4cb43/net/ipv4/tcp_input.c#L4553-L4555>.
 	//

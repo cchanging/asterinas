@@ -2,7 +2,7 @@
 
 use core::sync::atomic::{AtomicBool, Ordering};
 
-use aster_virtio::device::socket::connect::{ConnectionInfo, VsockEvent};
+use astros_virtio::device::socket::connect::{ConnectionInfo, VsockEvent};
 
 use super::connected::ConnectionID;
 use crate::{

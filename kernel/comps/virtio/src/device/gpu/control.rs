@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::Pod;
+use kstd::Pod;
 
 use super::header::{VirtioGpuCtrlHdr, VirtioGpuCtrlType};
 

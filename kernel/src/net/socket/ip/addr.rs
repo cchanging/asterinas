@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_bigtcp::wire::{IpAddress, IpEndpoint, Ipv4Address};
+use astros_bigtcp::wire::{IpAddress, IpEndpoint, Ipv4Address};
 
 use crate::{net::socket::SocketAddr, prelude::*, return_errno_with_message};
 

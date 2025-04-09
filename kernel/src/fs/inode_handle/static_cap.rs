@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_rights::{Read, TRightSet, TRights, Write};
-use aster_rights_proc::require;
+use astros_rights::{Read, TRightSet, TRights, Write};
+use astros_rights_proc::require;
 
 use super::*;
 use crate::prelude::*;

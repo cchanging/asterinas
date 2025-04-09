@@ -19,8 +19,8 @@ use core::{
 };
 
 use align_ext::AlignExt;
-use aster_rights::Full;
-use ostd::mm::{vm_space::VmItem, UntypedMem, VmIo, MAX_USERSPACE_VADDR};
+use astros_rights::Full;
+use kstd::mm::{vm_space::VmItem, UntypedMem, VmIo, MAX_USERSPACE_VADDR};
 
 use self::aux_vec::{AuxKey, AuxVec};
 use super::ProcessVmarGuard;

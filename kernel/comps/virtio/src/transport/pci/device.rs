@@ -3,9 +3,9 @@
 use alloc::boxed::Box;
 use core::fmt::Debug;
 
-use aster_util::{field_ptr, safe_ptr::SafePtr};
+use astros_util::{field_ptr, safe_ptr::SafePtr};
 use log::{info, warn};
-use ostd::{
+use kstd::{
     bus::{
         pci::{
             bus::PciDevice, capability::CapabilityData, cfg_space::Bar,

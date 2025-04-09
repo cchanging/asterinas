@@ -2,7 +2,7 @@
 
 use alloc::{sync::Arc, vec::Vec};
 
-use ostd::{
+use kstd::{
     bus::{
         BusProbeError,
         pci::{

@@ -9,7 +9,7 @@ use alloc::{
 use core::ops::Range;
 
 use bitvec::{array::BitArray, prelude::Lsb0};
-use ostd::{
+use kstd::{
     mm::{
         Daddr, DmaDirection, DmaStream, FrameAllocOptions, HasDaddr, Infallible, VmReader,
         VmWriter, PAGE_SIZE,
@@ -95,7 +95,7 @@ impl DmaPool {
     }
 
     /// Allocates a `DmaSegment` from the pool
-    pub fn alloc_segment(self: &Arc<Self>) -> Result<DmaSegment, ostd::Error> {
+    pub fn alloc_segment(self: &Arc<Self>) -> Result<DmaSegment, kstd::Error> {
         // Lock order: pool.avail_pages -> pool.all_pages
         //             pool.avail_pages -> page.allocated_segments
         let mut avail_pages = self.avail_pages.disable_irq().lock();
@@ -150,12 +150,12 @@ impl DmaPage {
         direction: DmaDirection,
         is_cache_coherent: bool,
         pool: Weak<DmaPool>,
-    ) -> Result<Self, ostd::Error> {
+    ) -> Result<Self, kstd::Error> {
         let dma_stream = {
             let segment = FrameAllocOptions::new().alloc_segment(1)?;
 
             DmaStream::map(segment.into(), direction, is_cache_coherent)
-                .map_err(|_| ostd::Error::AccessDenied)?
+                .map_err(|_| kstd::Error::AccessDenied)?
         };
 
         Ok(Self {
@@ -234,21 +234,21 @@ impl DmaSegment {
         self.size
     }
 
-    pub fn reader(&self) -> Result<VmReader<'_, Infallible>, ostd::Error> {
+    pub fn reader(&self) -> Result<VmReader<'_, Infallible>, kstd::Error> {
         let offset = self.start_addr - self.dma_stream.daddr();
         let mut reader = self.dma_stream.reader()?;
         reader.skip(offset).limit(self.size);
         Ok(reader)
     }
 
-    pub fn writer(&self) -> Result<VmWriter<'_, Infallible>, ostd::Error> {
+    pub fn writer(&self) -> Result<VmWriter<'_, Infallible>, kstd::Error> {
         let offset = self.start_addr - self.dma_stream.daddr();
         let mut writer = self.dma_stream.writer()?;
         writer.skip(offset).limit(self.size);
         Ok(writer)
     }
 
-    pub fn sync(&self, byte_range: Range<usize>) -> Result<(), ostd::Error> {
+    pub fn sync(&self, byte_range: Range<usize>) -> Result<(), kstd::Error> {
         let offset = self.daddr() - self.dma_stream.daddr();
         let range = byte_range.start + offset..byte_range.end + offset;
         self.dma_stream.sync(range)
@@ -292,7 +292,7 @@ impl Drop for DmaSegment {
 mod test {
     use alloc::vec::Vec;
 
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
 

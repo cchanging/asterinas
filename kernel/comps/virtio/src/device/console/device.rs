@@ -3,9 +3,9 @@
 use alloc::{boxed::Box, fmt::Debug, string::ToString, sync::Arc, vec::Vec};
 use core::hint::spin_loop;
 
-use aster_console::{AnyConsoleDevice, ConsoleCallback};
+use astros_console::{AnyConsoleDevice, ConsoleCallback};
 use log::debug;
-use ostd::{
+use kstd::{
     mm::{DmaDirection, DmaStream, DmaStreamSlice, FrameAllocOptions, VmReader},
     sync::{Rcu, SpinLock},
     trap::TrapFrame,
@@ -136,7 +136,7 @@ impl ConsoleDevice {
         transport.finish_init();
         drop(transport);
 
-        aster_console::register_device(DEVICE_NAME.to_string(), device);
+        astros_console::register_device(DEVICE_NAME.to_string(), device);
 
         Ok(())
     }

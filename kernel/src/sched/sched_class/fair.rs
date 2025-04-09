@@ -6,7 +6,7 @@ use core::{
     sync::atomic::{AtomicU64, Ordering::Relaxed},
 };
 
-use ostd::{
+use kstd::{
     cpu::{num_cpus, CpuId},
     task::{
         scheduler::{EnqueueFlags, UpdateFlags},

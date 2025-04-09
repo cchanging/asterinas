@@ -4,7 +4,7 @@
 
 use alloc::format;
 
-use ostd::{
+use kstd::{
     sync::LocalIrqDisabled,
     trap::{disable_local, in_interrupt_context},
 };

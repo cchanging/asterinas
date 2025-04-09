@@ -4,18 +4,18 @@
 >
 > --- Linus Torvalds
 
-Asterinas is dedicated to maintaining compatibility with the Linux ABI,
+Astros is dedicated to maintaining compatibility with the Linux ABI,
 ensuring that applications and administrative tools
-designed for Linux can seamlessly operate within Asterinas.
+designed for Linux can seamlessly operate within Astros.
 While we prioritize compatibility,
-it is important to note that Asterinas does not,
+it is important to note that Astros does not,
 nor will it in the future,
 support the loading of Linux kernel modules.
 
 ## System Calls
 
 At the time of writing,
-Asterinas implements 204 out of the 336 system calls
+Astros implements 204 out of the 336 system calls
 provided by Linux on x86-64 architecture.
 
 | Numbers | Names            | Is Implemented  |

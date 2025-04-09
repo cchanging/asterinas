@@ -5,7 +5,7 @@ use core::{
     time::Duration,
 };
 
-use ostd::{
+use kstd::{
     sync::{Waiter, Waker},
     task::Task,
 };
@@ -117,7 +117,7 @@ impl Pollee {
         // We will store `task_ptr` in `state` to indicate that we're checking the events. But we
         // need to make sure it's a negative value.
         const {
-            use ostd::mm::KERNEL_VADDR_RANGE;
+            use kstd::mm::KERNEL_VADDR_RANGE;
             assert!((KERNEL_VADDR_RANGE.start as isize) < 0);
         }
         let task_ptr = Task::current().unwrap().as_ref() as *const _ as isize;
@@ -393,7 +393,7 @@ pub trait Pollable {
 
 #[cfg(ktest)]
 mod test {
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
 

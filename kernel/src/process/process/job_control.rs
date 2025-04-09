@@ -2,7 +2,7 @@
 
 #![expect(unused_variables)]
 
-use ostd::sync::WaitQueue;
+use kstd::sync::WaitQueue;
 
 use crate::{
     prelude::*,

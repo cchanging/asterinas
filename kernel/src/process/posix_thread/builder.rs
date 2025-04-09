@@ -2,7 +2,7 @@
 
 #![expect(dead_code)]
 
-use ostd::{
+use kstd::{
     cpu::{context::UserContext, CpuSet},
     sync::RwArc,
     task::Task,

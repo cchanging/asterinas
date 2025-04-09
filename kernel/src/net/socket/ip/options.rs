@@ -2,7 +2,7 @@
 
 use core::num::NonZeroU8;
 
-use aster_bigtcp::socket::NeedIfacePoll;
+use astros_bigtcp::socket::NeedIfacePoll;
 
 use crate::{
     impl_socket_options, match_sock_option_mut, match_sock_option_ref,

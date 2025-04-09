@@ -9,10 +9,10 @@ use core::{
 };
 
 use align_ext::AlignExt;
-use aster_block::bio::{BioStatus, BioWaiter};
-use aster_rights::Full;
+use astros_block::bio::{BioStatus, BioWaiter};
+use astros_rights::Full;
 use lru::LruCache;
-use ostd::{
+use kstd::{
     impl_untyped_frame_meta_for,
     mm::{Frame, FrameAllocOptions, UFrame, VmIo},
 };

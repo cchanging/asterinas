@@ -2,12 +2,12 @@
 
 use alloc::collections::BTreeSet;
 
-use aster_virtio::device::socket::{
+use astros_virtio::device::socket::{
     connect::{ConnectionInfo, VsockEvent, VsockEventType},
     device::SocketDevice,
     error::SocketError,
 };
-use ostd::sync::LocalIrqDisabled;
+use kstd::sync::LocalIrqDisabled;
 
 use super::{
     addr::VsockSocketAddr,

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_rights::Rights;
+use astros_rights::Rights;
 
 use crate::prelude::*;
 

@@ -6,8 +6,8 @@
 //! When create a process from elf file, we will use the elf_load_info to construct the VmSpace
 
 use align_ext::AlignExt;
-use aster_rights::Full;
-use ostd::mm::VmIo;
+use astros_rights::Full;
+use kstd::mm::VmIo;
 use xmas_elf::program::{self, ProgramHeader64};
 
 use super::elf_file::Elf;

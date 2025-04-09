@@ -1,8 +1,8 @@
-# Asterinas Benchmark Collection
+# Astros Benchmark Collection
 
-The Asterinas Benchmark Collection evaluates the performance of Asterinas in comparison to Linux across a range of benchmarking tools (e.g., LMbench, Sysbench, iPerf) and real-world applications (e.g., Nginx, Redis, SQLite, Memcached). These benchmarks are conducted under various configurations, such as within a single virtual machine (VM) or between a VM and its host.
+The Astros Benchmark Collection evaluates the performance of Astros in comparison to Linux across a range of benchmarking tools (e.g., LMbench, Sysbench, iPerf) and real-world applications (e.g., Nginx, Redis, SQLite, Memcached). These benchmarks are conducted under various configurations, such as within a single virtual machine (VM) or between a VM and its host.
 
-The benchmarks are run automatically on a nightly basis through continuous integration (CI) pipelines. Results, presented in clear and visually appealing figures and tables, are available [here](https://asterinas.github.io/benchmark/).
+The benchmarks are run automatically on a nightly basis through continuous integration (CI) pipelines. Results, presented in clear and visually appealing figures and tables, are available [here](https://astros.github.io/benchmark/).
 
 ## File Organization
 
@@ -10,16 +10,16 @@ The benchmarks are run automatically on a nightly basis through continuous integ
 
 The benchmark collection is organized into benchmark suites, each dedicated to a specific benchmarking tool or application. These suites focus on comparing the performance of different operating systems using a particular methodology. Currently, there are eight benchmark suites, each located in its own directory:
 
-- [lmbench](https://github.com/asterinas/asterinas/tree/main/test/benchmark/lmbench)
-- [sysbench](https://github.com/asterinas/asterinas/tree/main/test/benchmark/sysbench)
-- [fio](https://github.com/asterinas/asterinas/tree/main/test/benchmark/fio)
-- [iperf](https://github.com/asterinas/asterinas/tree/main/test/benchmark/iperf)
-- [sqlite](https://github.com/asterinas/asterinas/tree/main/test/benchmark/sqlite)
-- [redis](https://github.com/asterinas/asterinas/tree/main/test/benchmark/redis)
-- [nginx](https://github.com/asterinas/asterinas/tree/main/test/benchmark/nginx)
-- [memcached](https://github.com/asterinas/asterinas/tree/main/test/benchmark/memcached)
+- [lmbench](https://github.com/astros/astros/tree/main/test/benchmark/lmbench)
+- [sysbench](https://github.com/astros/astros/tree/main/test/benchmark/sysbench)
+- [fio](https://github.com/astros/astros/tree/main/test/benchmark/fio)
+- [iperf](https://github.com/astros/astros/tree/main/test/benchmark/iperf)
+- [sqlite](https://github.com/astros/astros/tree/main/test/benchmark/sqlite)
+- [redis](https://github.com/astros/astros/tree/main/test/benchmark/redis)
+- [nginx](https://github.com/astros/astros/tree/main/test/benchmark/nginx)
+- [memcached](https://github.com/astros/astros/tree/main/test/benchmark/memcached)
 
-Each suite has a corresponding web page (e.g., [LMbench results](https://asterinas.github.io/benchmark/lmbench/)) that publishes the latest performance data. At the top of each page, a summary table showcases the most recent results, configured using the `summary.json` file in the suite's directory.
+Each suite has a corresponding web page (e.g., [LMbench results](https://astros.github.io/benchmark/lmbench/)) that publishes the latest performance data. At the top of each page, a summary table showcases the most recent results, configured using the `summary.json` file in the suite's directory.
 
 ### Benchmark Jobs
 
@@ -31,19 +31,19 @@ Each benchmark suite is divided into benchmark jobs, which perform specific benc
 └── <bench_job_b>/
 ```
 
-Benchmark jobs can be executed using the `bench_linux_and_aster.sh` script located in the `test/benchmark/` directory:
+Benchmark jobs can be executed using the `bench_linux_and_astros.sh` script located in the `test/benchmark/` directory:
 
 ```bash
-./bench_linux_and_aster.sh <bench_suite>/<bench_job>
+./bench_linux_and_astros.sh <bench_suite>/<bench_job>
 ```
 
-For example, to measure the latency of the `getppid` system call on both Linux and Asterinas, run:
+For example, to measure the latency of the `getppid` system call on both Linux and Astros, run:
 
 ```bash
-./bench_linux_and_aster.sh lmbench/process_getppid_lat
+./bench_linux_and_astros.sh lmbench/process_getppid_lat
 ```
 
-The script starts a VM running either Linux or Asterinas as the guest OS and invokes the `run.sh` script located in the benchmark job's directory to execute the benchmark:
+The script starts a VM running either Linux or Astros as the guest OS and invokes the `run.sh` script located in the benchmark job's directory to execute the benchmark:
 
 ```plaintext
 <bench_suite>/
@@ -90,7 +90,7 @@ Each YAML file in the `bench_results/` directory describes a specific result's m
 
 ## Adding New Benchmark Jobs
 
-To seamlessly integrate new benchmarks into the Asterinas Benchmark Collection, follow the steps below. These instructions are tailored to the directory structure outlined earlier, where benchmarks are organized under specific suites and jobs.
+To seamlessly integrate new benchmarks into the Astros Benchmark Collection, follow the steps below. These instructions are tailored to the directory structure outlined earlier, where benchmarks are organized under specific suites and jobs.
 
 ### Step 1: Add the Directory Structure
 
@@ -149,13 +149,13 @@ result_extraction:
   result_index: 2
 
 chart:
-  title: "[Ext2] The bandwidth of sequential writes (IOMMU disabled on Asterinas)"
+  title: "[Ext2] The bandwidth of sequential writes (IOMMU disabled on Astros)"
   description: "fio -filename=/ext2/fio-test -size=1G -bs=1M -direct=1"
   unit: "MB/s"
   legend: "Average file write bandwidth on {system}"
 
 runtime_config:
-  aster_scheme: "null"
+  astros_scheme: "null"
 ```
 
 ```yaml
@@ -178,7 +178,7 @@ chart:
 
 ### Step 3: Update Suite's `summary.json`
 
-Asterinas is an increasingly continuous improvement project. Consequently, while some benchmarks have been incorporated into the Benchmark Collection, their optimization is still ongoing. We do not wish to display these benchmarks on the overview charts. Therefore, we define the benchmarks that should be shown in the `summary.json` file. Only the benchmarks in the `summary.json` file can be displayed on the overview charts. Note that the standalone benchmark results are still available in the respective benchmark suite's page.
+Astros is an increasingly continuous improvement project. Consequently, while some benchmarks have been incorporated into the Benchmark Collection, their optimization is still ongoing. We do not wish to display these benchmarks on the overview charts. Therefore, we define the benchmarks that should be shown in the `summary.json` file. Only the benchmarks in the `summary.json` file can be displayed on the overview charts. Note that the standalone benchmark results are still available in the respective benchmark suite's page.
 
 To include a new benchmark in the suite's summary table, we need to update the `summary.json` file at the root of the suite. Taking `sqlite` for example:
 
@@ -196,7 +196,7 @@ To include a new benchmark in the suite's summary table, we need to update the `
 
 ### Step 4: Update the CI Configuration
 
-Asterinas employs GitHub Actions for continuous integration (CI) to automatically execute benchmark collection every day. To incorporate the new benchmark into the CI pipeline, it is necessary to update `<bench_suite>/<bench_job>` within the `.github/benchmarks.yml` file.
+Astros employs GitHub Actions for continuous integration (CI) to automatically execute benchmark collection every day. To incorporate the new benchmark into the CI pipeline, it is necessary to update `<bench_suite>/<bench_job>` within the `.github/benchmarks.yml` file.
 
 ```yaml
 strategy:
@@ -211,11 +211,11 @@ strategy:
 
 Before committing the changes, it is essential to test the new benchmark job locally to ensure it runs correctly. This step helps identify any issues or errors that may arise during the benchmark execution. 
 
-Firstly, we can run the benchmark locally to ensure it works as expected. The following command should finally generate the `result_<bench_suite>-<bench_job>.json` under `asterinas/`. 
+Firstly, we can run the benchmark locally to ensure it works as expected. The following command should finally generate the `result_<bench_suite>-<bench_job>.json` under `astros/`. 
 
 ```bash
-cd asterinas/
-bash test/benchmark/bench_linux_and_aster.sh <bench_suite>/<bench_job>
+cd astros/
+bash test/benchmark/bench_linux_and_astros.sh <bench_suite>/<bench_job>
 ```
 
 Secondly, we can validate modifications by running the CI pipeline on our own repository. To do this, we need to modify the `runs-on` field from `self-hosted` to `ubuntu-latest` on `.github/benchmarks.yml`. Then, we can manually trigger the CI pipeline on our own repository to ensure the new benchmark is correctly executed. After validation, we can reverse the `runs-on` field back to `self-hosted`.
@@ -243,7 +243,7 @@ chart:                        # Chart configuration
   legend: "Average TCP Bandwidth over virtio-net between Host Linux and Guest {system}" # Chart legend with dynamic placeholder {system} supported
 
 runtime_config:              # Runtime configuration
-  aster_scheme: "null"       # Corresponds to Makefile parameters, IOMMU is enabled by default (SCHEME=iommu)
+  astros_scheme: "null"       # Corresponds to Makefile parameters, IOMMU is enabled by default (SCHEME=iommu)
   smp: 1                     # Number of CPUs to allocate to the VM
   mem: 8G                  # Memory size in GB to allocate to the VM
 ```

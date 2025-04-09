@@ -6,7 +6,7 @@
 use alloc::sync::Arc;
 use core::sync::atomic::{AtomicU64, Ordering};
 
-use ostd::{
+use kstd::{
     arch::{read_tsc, timer::TIMER_FREQ, tsc_freq},
     timer,
 };

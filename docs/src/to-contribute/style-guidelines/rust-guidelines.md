@@ -9,7 +9,7 @@ It is necessary to add documentation to all public APIs,
 including crates, modules, structs, traits, functions, macros, and more.
 The use of the `#[warn(missing_docs)]` lint enforces this rule.
 
-Asterinas adheres to the API style guidelines of the Rust community.
+Astros adheres to the API style guidelines of the Rust community.
 The recommended API documentation style can be found at
 [How to write documentation - The rustdoc book](https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html).
 

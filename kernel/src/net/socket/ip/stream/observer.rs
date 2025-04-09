@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_bigtcp::socket::{SocketEventObserver, SocketEvents};
+use astros_bigtcp::socket::{SocketEventObserver, SocketEvents};
 
 use crate::{events::IoEvents, process::signal::Pollee};
 

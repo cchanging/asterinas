@@ -11,7 +11,7 @@ jobs:
   basic-test:
     runs-on: ubuntu-latest
     container:
-      image: asterinas/asterinas:0.14.1-20250326
+      image: astros/astros:0.14.1-20250326
       options: --device=/dev/kvm --privileged
     strategy:
       matrix:
@@ -28,7 +28,7 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     container:
-      image: asterinas/asterinas:0.14.1-20250326
+      image: astros/astros:0.14.1-20250326
       options: --device=/dev/kvm --privileged
     strategy:
       matrix:
@@ -90,19 +90,19 @@ jobs:
           syscall_test_dir: ${{ matrix.syscall_test_dir }}
           boot_protocol: ${{ matrix.boot_protocol || 'linux-efi-handover64' }}
 
-  osdk-test:
+  ksdk-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ['asterinas/asterinas:0.14.1-20250326', 'asterinas/osdk:0.14.1-20250326']
+        image: ['astros/astros:0.14.1-20250326', 'astros/ksdk:0.14.1-20250326']
       fail-fast: false
     container:
       image: ${{ matrix.image }}
       options: --device=/dev/kvm --privileged
     steps:
       - uses: actions/checkout@v4
-      - name: Run OSDK tests
+      - name: Run KSDK tests
         uses: ./.github/actions/test
         with:
-          auto_test: 'osdk'
+          auto_test: 'ksdk'
           intel_tdx: false

@@ -21,13 +21,13 @@ use aes_gcm::{
 };
 use ctr::cipher::{NewCipher, StreamCipher};
 pub use hashbrown::{HashMap, HashSet};
-pub use ostd::sync::{Mutex, MutexGuard, RwLock, SpinLock};
-use ostd::{
+pub use kstd::sync::{Mutex, MutexGuard, RwLock, SpinLock};
+use kstd::{
     arch::read_random,
     sync::{self, PreemptDisabled, WaitQueue},
     task::{Task, TaskOptions},
 };
-use ostd_pod::Pod;
+use kstd_pod::Pod;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -57,7 +57,7 @@ impl CurrentThread {
 /// A `Condvar` (Condition Variable) is a synchronization primitive that can block threads
 /// until a certain condition becomes true.
 ///
-/// This is a copy from `aster-nix`.
+/// This is a copy from `astros-nix`.
 pub struct Condvar {
     waitqueue: Arc<WaitQueue>,
     counter: SpinLock<Inner>,

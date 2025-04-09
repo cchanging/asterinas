@@ -2,7 +2,7 @@
 
 use core::fmt;
 
-use ostd::sync::{RwMutexWriteGuard, WaitQueue, Waiter, Waker};
+use kstd::sync::{RwMutexWriteGuard, WaitQueue, Waiter, Waker};
 
 use self::range::FileRangeChange;
 pub use self::{

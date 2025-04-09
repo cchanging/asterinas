@@ -5,7 +5,7 @@ pub mod driver;
 
 use alloc::sync::Arc;
 
-use ostd::bus::pci::PCI_BUS;
+use kstd::bus::pci::PCI_BUS;
 use spin::Once;
 
 use self::driver::NVMePciDriver;

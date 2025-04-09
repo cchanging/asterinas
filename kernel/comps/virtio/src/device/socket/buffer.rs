@@ -2,8 +2,8 @@
 
 use alloc::{collections::linked_list::LinkedList, sync::Arc};
 
-use aster_network::dma_pool::DmaPool;
-use ostd::{
+use astros_network::dma_pool::DmaPool;
+use kstd::{
     mm::{DmaDirection, DmaStream},
     sync::{LocalIrqDisabled, SpinLock},
 };

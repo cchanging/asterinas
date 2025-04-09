@@ -4,10 +4,10 @@ alert:
 chart:
   description: fio -filename=/ext2/fio-test -size=1G -bs=1M -direct=1
   legend: Average file read bandwidth on {system}
-  title: '[Ext2] The bandwidth of sequential reads (IOMMU disabled on Asterinas)'
+  title: '[Ext2] The bandwidth of sequential reads (IOMMU disabled on Astros)'
   unit: MB/s
 result_extraction:
   result_index: 2
   search_pattern: bw=[0-9]+
 runtime_config:
-  aster_scheme: 'null'
+  astros_scheme: 'null'

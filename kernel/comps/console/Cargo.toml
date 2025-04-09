@@ -1,5 +1,5 @@
 [package]
-name = "aster-console"
+name = "astros-console"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 spin = "0.9.4"
-ostd = { path = "../../../ostd" }
+kstd = { path = "../../../kstd" }
 component = { path = "../../libs/comp-sys/component" }
 
 [lints]

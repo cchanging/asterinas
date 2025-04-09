@@ -1,0 +1,65 @@
+[package]
+name = "kstd"
+version = "0.14.1"
+edition = "2021"
+description = "Rust OS framework that facilitates the development of and innovation in OS kernels"
+license = "MPL-2.0"
+readme = "README.md"
+repository = "https://github.com/astros/astros"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+# Settings for publishing docs in docs.rs
+[package.metadata.docs.rs]
+default-target = "x86_64-unknown-none"
+targets = ["x86_64-unknown-none"]
+
+[dependencies]
+align_ext = { path = "libs/align_ext", version = "0.1.0" }
+bit_field = "0.10.1"
+buddy_system_allocator = { version = "0.10", default-features = false, features = ["alloc"] }
+bitflags = "1.3"
+cfg-if = "1.0"
+gimli = { version = "0.28", default-features = false, features = ["read-core"] }
+id-alloc = { path = "libs/id-alloc", version = "0.1.0" }
+inherit-methods-macro = { git = "https://github.com/astros/inherit-methods-macro", rev = "98f7e3e", version = "0.1.0" }
+int-to-c-enum = { path = "../kernel/libs/int-to-c-enum", version = "0.1.0" }
+intrusive-collections = { version = "0.9.6", features = ["nightly"] }
+linux-boot-params = { version = "0.14.1", path = "libs/linux-bzimage/boot-params" }
+log = "0.4"
+num = { version = "0.4", default-features = false }
+num-derive = { version = "0.4", default-features = false }
+num-traits = { version = "0.2", default-features = false }
+kstd-macros = { version = "0.14.1", path = "libs/kstd-macros" }
+kstd-test = { version = "0.14.1", path = "libs/kstd-test" }
+kstd-pod = { git = "https://github.com/astros/kstd-pod", rev = "c4644be", version = "0.1.1" }
+spin = "0.9.4"
+smallvec = "1.13.2"
+unwinding = { version = "0.2.5", default-features = false, features = ["fde-gnu-eh-frame-hdr", "hide-trace", "panic", "personality", "unwinder"] }
+volatile = "0.6.1"
+xarray = { git = "https://github.com/astros/xarray", version = "0.1.0" }
+
+[target.x86_64-unknown-none.dependencies]
+x86_64 = "0.14.13"
+x86 = "0.52.0"
+acpi = "=5.2.0" # This upstream often bump minor versions with API changes
+multiboot2 = "0.23.0"
+iced-x86 = { version = "1.21.0", default-features = false, features = [
+    "no_std",
+    "decoder",
+    "gas",
+], optional = true }
+tdx-guest = { version = "0.2.1", optional = true }
+
+[target.riscv64gc-unknown-none-elf.dependencies]
+riscv = { version = "0.11.1", features = ["s-mode"] }
+sbi-rt = "0.0.3"
+fdt = { version = "0.1.5", features = ["pretty-printing"] }
+
+[features]
+default = ["cvm_guest"]
+# The guest OS support for Confidential VMs (CVMs), e.g., Intel TDX
+cvm_guest = ["dep:tdx-guest", "dep:iced-x86"]
+
+[lints]
+workspace = true

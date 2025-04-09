@@ -1,4 +1,4 @@
-# This file defines the code owners of the Asterinas main repo
+# This file defines the code owners of the Astros main repo
 #
 # Feel free to volunteer as a code owner
 # when you have contributed enough to and acquired enough knowledge
@@ -9,12 +9,12 @@
 #=============================================================================
 * @tatetian
 
-# The top-level sub-projects of Asterinas are listed below:
+# The top-level sub-projects of Astros are listed below:
 #
-# 1. The Asterinas book
-# 2. The Asterinas kernel
-# 3. The Asterinas OSDK
-# 4. The Asterinas OSTD
+# 1. The Astros book
+# 2. The Astros kernel
+# 3. The Astros KSDK
+# 4. The Astros KSTD
 #
 # Guidelines:
 # - The following sections are organized by sub-projects.
@@ -24,13 +24,13 @@
 #   the code owners are listed in alphabetical order.
 
 #=============================================================================
-# The Asterinas book
+# The Astros book
 #=============================================================================
 
 /book/                          @tatetian
 
 #=============================================================================
-# The Asterinas kernel
+# The Astros kernel
 #=============================================================================
 
 # Sub-project code owners
@@ -52,36 +52,36 @@
 /kernel/comps/virtio/           @sdww0
 
 #=============================================================================
-# The Asterinas OSDK
+# The Astros KSDK
 #=============================================================================
 
 # Sub-project code owners
-/osdk/                          @StevenJiang1110 @junyang-zh
+/ksdk/                          @StevenJiang1110 @junyang-zh
 
 #=============================================================================
-# The Asterinas OSTD
+# The Astros KSTD
 #=============================================================================
 
 # Sub-project code owners
-/ostd/                          @lrh2000 @junyang-zh @sdww0
+/kstd/                          @lrh2000 @junyang-zh @sdww0
 
 # Module code owners
-/ostd/src/bus/                  @sdww0
-/ostd/src/logger.rs             @cchanging
-/ostd/src/timer/                @cchanging
+/kstd/src/bus/                  @sdww0
+/kstd/src/logger.rs             @cchanging
+/kstd/src/timer/                @cchanging
 
 #=============================================================================
 # Other
 #=============================================================================
 
 /.github/                       @grief8
-/osdk/tools/docker/             @grief8
+/ksdk/tools/docker/             @grief8
 /test/                          @grief8
 /tools/                         @grief8
 /triagebot.toml                 @grief8
 
 /Makefile                       @junyang-zh
-/OSDK.toml                      @junyang-zh
+/KSDK.toml                      @junyang-zh
 
 # The following critical files are singled out
 /CODEOWNERS                     @tatetian

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_bigtcp::time::Duration;
+use astros_bigtcp::time::Duration;
 
 use crate::prelude::*;
 

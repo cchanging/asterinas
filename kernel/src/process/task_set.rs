@@ -2,7 +2,7 @@
 
 //! Task sets.
 
-use ostd::task::{CurrentTask, Task};
+use kstd::task::{CurrentTask, Task};
 
 use crate::prelude::*;
 

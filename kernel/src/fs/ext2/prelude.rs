@@ -6,13 +6,13 @@ pub(super) use core::{
 };
 
 pub(super) use align_ext::AlignExt;
-pub(super) use aster_block::{
+pub(super) use astros_block::{
     bio::{BioDirection, BioSegment, BioStatus, BioWaiter},
     id::Bid,
     BlockDevice, BLOCK_SIZE,
 };
-pub(super) use aster_rights::Full;
-pub(super) use ostd::{
+pub(super) use astros_rights::Full;
+pub(super) use kstd::{
     mm::{Frame, FrameAllocOptions, Segment, USegment, VmIo},
     sync::{RwMutex, RwMutexReadGuard, RwMutexWriteGuard},
 };

@@ -9,7 +9,7 @@ mod static_cap;
 
 use core::sync::atomic::{AtomicU32, Ordering};
 
-use aster_rights::Rights;
+use astros_rights::Rights;
 use inherit_methods_macro::inherit_methods;
 
 use crate::{

@@ -5,7 +5,7 @@
 use alloc::{boxed::Box, sync::Arc};
 use core::fmt;
 
-use ostd::{
+use kstd::{
     arch::read_tsc as sched_clock,
     cpu::{all_cpus, CpuId, PinCurrentCpu},
     sync::SpinLock,
@@ -44,11 +44,11 @@ type SchedEntity = (Arc<Task>, Arc<Thread>);
 pub fn init() {
     let scheduler = Box::leak(Box::new(ClassScheduler::new()));
 
-    // Inject the scheduler into the ostd for actual scheduling work.
+    // Inject the scheduler into the kstd for actual scheduling work.
     inject_scheduler(scheduler);
 
     // Set the scheduler into the system for statistics.
-    // We set this after injecting the scheduler into ostd,
+    // We set this after injecting the scheduler into kstd,
     // so that the loadavg statistics are updated after the scheduler is used.
     set_stats_from_scheduler(scheduler);
 }

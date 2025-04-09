@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-//! The input devices of Asterinas.
+//! The input devices of Astros.
 #![no_std]
 #![deny(unsafe_code)]
 #![feature(fn_traits)]
@@ -14,7 +14,7 @@ use core::{any::Any, fmt::Debug};
 
 use component::{init_component, ComponentInitError};
 use key::{Key, KeyStatus};
-use ostd::sync::SpinLock;
+use kstd::sync::SpinLock;
 use spin::Once;
 
 #[derive(Debug, Clone, Copy)]

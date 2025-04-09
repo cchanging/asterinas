@@ -7,7 +7,7 @@ use alloc::{
 use core::sync::atomic::{AtomicBool, Ordering};
 
 use keyable_arc::{KeyableArc, KeyableWeak};
-use ostd::sync::{LocalIrqDisabled, Mutex, MutexGuard, SpinLock, SpinLockGuard};
+use kstd::sync::{LocalIrqDisabled, Mutex, MutexGuard, SpinLock, SpinLockGuard};
 
 use super::{EpollEvent, EpollFlags};
 use crate::{

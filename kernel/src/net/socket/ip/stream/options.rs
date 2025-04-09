@@ -19,5 +19,5 @@ impl_socket_options!(
 ///
 /// The linux value can be found at `/proc/sys/net/ipv4/tcp_keepalive_intvl`,
 /// which is by default 75 seconds for most Linux distributions.
-pub(super) const KEEPALIVE_INTERVAL: aster_bigtcp::time::Duration =
-    aster_bigtcp::time::Duration::from_secs(75);
+pub(super) const KEEPALIVE_INTERVAL: astros_bigtcp::time::Duration =
+    astros_bigtcp::time::Duration::from_secs(75);

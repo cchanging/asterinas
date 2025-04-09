@@ -2,9 +2,9 @@
 
 use core::ops::Range;
 
-use aster_rights::{Dup, Rights, TRightSet, TRights, Write};
-use aster_rights_proc::require;
-use ostd::mm::{UFrame, VmIo};
+use astros_rights::{Dup, Rights, TRightSet, TRights, Write};
+use astros_rights_proc::require;
+use kstd::mm::{UFrame, VmIo};
 
 use super::{CommitFlags, Vmo, VmoRightsOp};
 use crate::prelude::*;
@@ -126,13 +126,13 @@ impl<R: TRights> Vmo<TRightSet<R>> {
 }
 
 impl<R: TRights> VmIo for Vmo<TRightSet<R>> {
-    fn read(&self, offset: usize, writer: &mut VmWriter) -> ostd::Result<()> {
+    fn read(&self, offset: usize, writer: &mut VmWriter) -> kstd::Result<()> {
         self.check_rights(Rights::READ)?;
         self.0.read(offset, writer)?;
         Ok(())
     }
 
-    fn write(&self, offset: usize, reader: &mut VmReader) -> ostd::Result<()> {
+    fn write(&self, offset: usize, reader: &mut VmReader) -> kstd::Result<()> {
         self.check_rights(Rights::WRITE)?;
         self.0.write(offset, reader)?;
         Ok(())

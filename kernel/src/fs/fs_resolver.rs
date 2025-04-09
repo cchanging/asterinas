@@ -2,7 +2,7 @@
 
 use alloc::str;
 
-use ostd::task::Task;
+use kstd::task::Task;
 
 use super::{
     file_table::{get_file_fast, FileDesc},

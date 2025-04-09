@@ -5,7 +5,7 @@ use core::{
     ops::{Add, Sub},
 };
 
-use ostd::{const_assert, Pod};
+use kstd::{const_assert, Pod};
 
 /// The block index used in the filesystem.
 pub type Bid = BlockId<BLOCK_SIZE>;

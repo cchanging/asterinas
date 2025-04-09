@@ -1,0 +1,16 @@
+[package]
+name = "astros-util"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+kstd = { path = "../../../kstd" }
+typeflags-util = { path = "../typeflags-util" }
+astros-rights-proc = { path = "../astros-rights-proc" }
+astros-rights = { path = "../astros-rights" }
+inherit-methods-macro = { git = "https://github.com/astros/inherit-methods-macro", rev = "98f7e3e" }
+
+[lints]
+workspace = true

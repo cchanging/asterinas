@@ -220,7 +220,7 @@ FN_TEST(bind_reuseaddr)
 
 	TEST_ERRNO(bind(sk2, psaddr, addrlen), EADDRINUSE);
 
-	// FIXME: The test will fail in Asterinas since it doesn't check
+	// FIXME: The test will fail in Astros since it doesn't check
 	// if the previous socket was bound with `SO_REUSEADDR`
 	//
 	// TEST_SUCC(setsockopt(sk1, SOL_SOCKET, SO_REUSEADDR, &disable,

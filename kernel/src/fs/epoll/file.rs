@@ -4,7 +4,7 @@ use alloc::{collections::btree_set::BTreeSet, sync::Arc};
 use core::{borrow::Borrow, time::Duration};
 
 use keyable_arc::KeyableWeak;
-use ostd::sync::Mutex;
+use kstd::sync::Mutex;
 
 use super::{
     entry::{Entry, EntryKey, ReadySet},
@@ -272,7 +272,7 @@ impl FileLike for EpollFile {
         Metadata::new_file(
             0,
             InodeMode::from_bits_truncate(0o600),
-            aster_block::BLOCK_SIZE,
+            astros_block::BLOCK_SIZE,
         )
     }
 }

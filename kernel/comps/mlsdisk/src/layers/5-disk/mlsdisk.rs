@@ -15,8 +15,8 @@ use core::{
     sync::atomic::{AtomicBool, Ordering},
 };
 
-use ostd::mm::VmIo;
-use ostd_pod::Pod;
+use kstd::mm::VmIo;
+use kstd_pod::Pod;
 
 use super::{
     bio::{BioReq, BioReqQueue, BioResp, BioType},
@@ -69,12 +69,12 @@ struct DiskInner<D: BlockSet> {
     write_sync_region: RwLock<()>,
 }
 
-impl<D: BlockSet + 'static> aster_block::BlockDevice for MlsDisk<D> {
+impl<D: BlockSet + 'static> astros_block::BlockDevice for MlsDisk<D> {
     fn enqueue(
         &self,
-        bio: aster_block::bio::SubmittedBio,
-    ) -> core::result::Result<(), aster_block::bio::BioEnqueueError> {
-        use aster_block::bio::{BioStatus, BioType, SubmittedBio};
+        bio: astros_block::bio::SubmittedBio,
+    ) -> core::result::Result<(), astros_block::bio::BioEnqueueError> {
+        use astros_block::bio::{BioStatus, BioType, SubmittedBio};
 
         if bio.type_() == BioType::Discard {
             warn!("discard operation not supported");
@@ -155,8 +155,8 @@ impl<D: BlockSet + 'static> aster_block::BlockDevice for MlsDisk<D> {
         Ok(())
     }
 
-    fn metadata(&self) -> aster_block::BlockDeviceMeta {
-        use aster_block::{BlockDeviceMeta, BLOCK_SIZE, SECTOR_SIZE};
+    fn metadata(&self) -> astros_block::BlockDeviceMeta {
+        use astros_block::{BlockDeviceMeta, BLOCK_SIZE, SECTOR_SIZE};
 
         BlockDeviceMeta {
             max_nr_segments_per_bio: usize::MAX,

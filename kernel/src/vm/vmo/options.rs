@@ -5,8 +5,8 @@
 //! Options for allocating root and child VMOs.
 
 use align_ext::AlignExt;
-use aster_rights::{Rights, TRightSet, TRights};
-use ostd::{
+use astros_rights::{Rights, TRightSet, TRights};
+use kstd::{
     collections::xarray::XArray,
     mm::{FrameAllocOptions, UFrame, USegment},
 };
@@ -20,7 +20,7 @@ use crate::{prelude::*, vm::vmo::Vmo_};
 ///
 /// Creating a VMO as a _dynamic_ capability with full access rights:
 /// ```
-/// use aster_nix::vm::{PAGE_SIZE, VmoOptions};
+/// use astros_nix::vm::{PAGE_SIZE, VmoOptions};
 ///
 /// let vmo = VmoOptions::new(PAGE_SIZE)
 ///     .alloc()
@@ -29,8 +29,8 @@ use crate::{prelude::*, vm::vmo::Vmo_};
 ///
 /// Creating a VMO as a _static_ capability with all access rights:
 /// ```
-/// use aster_nix::prelude::*;
-/// use aster_nix::vm::{PAGE_SIZE, VmoOptions};
+/// use astros_nix::prelude::*;
+/// use astros_nix::vm::{PAGE_SIZE, VmoOptions};
 ///
 /// let vmo = VmoOptions::<Full>::new(PAGE_SIZE)
 ///     .alloc()
@@ -41,7 +41,7 @@ use crate::{prelude::*, vm::vmo::Vmo_};
 /// physically contiguous:
 ///
 /// ```
-/// use aster_nix::vm::{PAGE_SIZE, VmoOptions, VmoFlags};
+/// use astros_nix::vm::{PAGE_SIZE, VmoOptions, VmoFlags};
 ///
 /// let vmo = VmoOptions::new(10 * PAGE_SIZE)
 ///     .flags(VmoFlags::RESIZABLE)
@@ -158,8 +158,8 @@ fn committed_pages_if_continuous(flags: VmoFlags, size: usize) -> Result<XArray<
 
 #[cfg(ktest)]
 mod test {
-    use aster_rights::Full;
-    use ostd::{mm::VmIo, prelude::*};
+    use astros_rights::Full;
+    use kstd::{mm::VmIo, prelude::*};
 
     use super::*;
 

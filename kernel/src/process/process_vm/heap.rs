@@ -3,7 +3,7 @@
 use core::sync::atomic::{AtomicUsize, Ordering};
 
 use align_ext::AlignExt;
-use aster_rights::Full;
+use astros_rights::Full;
 
 use crate::{
     prelude::*,

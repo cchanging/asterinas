@@ -6,9 +6,9 @@ use core::{
     time::Duration,
 };
 
-use aster_rights::ReadOp;
+use astros_rights::ReadOp;
 use id_alloc::IdAlloc;
-use ostd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
+use kstd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
 use spin::Once;
 
 use super::{

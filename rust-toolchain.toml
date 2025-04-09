@@ -1,4 +1,4 @@
-# One should also update osdk/src/commands/new/rust-toolchain.toml.template
+# One should also update ksdk/src/commands/new/rust-toolchain.toml.template
 # when updating this
 [toolchain]
 channel = "nightly-2025-02-01"

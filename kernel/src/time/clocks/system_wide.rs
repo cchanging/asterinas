@@ -3,8 +3,8 @@
 use alloc::sync::Arc;
 use core::time::Duration;
 
-use aster_time::read_monotonic_time;
-use ostd::{cpu::PinCurrentCpu, cpu_local, sync::SpinLock, task::disable_preempt, timer::Jiffies};
+use astros_time::read_monotonic_time;
+use kstd::{cpu::PinCurrentCpu, cpu_local, sync::SpinLock, task::disable_preempt, timer::Jiffies};
 use paste::paste;
 use spin::Once;
 
@@ -226,13 +226,13 @@ macro_rules! define_timer_managers {
             $(
                 let clock = paste! {[<$clock_id _INSTANCE>].get().unwrap().clone()};
                 let timer_manager = TimerManager::new(clock);
-                for cpu in ostd::cpu::all_cpus() {
+                for cpu in kstd::cpu::all_cpus() {
                     paste! {
                         [<$clock_id _MANAGER>].get_on_cpu(cpu).call_once(|| timer_manager.clone());
                     }
                 }
                 let callback = || {
-                    let preempt_guard = ostd::task::disable_preempt();
+                    let preempt_guard = kstd::task::disable_preempt();
                     let cpu = preempt_guard.current_cpu();
                     paste! {
                         [<$clock_id _MANAGER>].get_on_cpu(cpu).get().unwrap().process_expired_timers();
@@ -308,7 +308,7 @@ pub(super) fn init() {
 /// to avoid functions like this one.
 pub fn init_for_ktest() {
     // If `spin::Once` has initialized, this closure will not be executed.
-    for cpu in ostd::cpu::all_cpus() {
+    for cpu in kstd::cpu::all_cpus() {
         CLOCK_REALTIME_MANAGER.get_on_cpu(cpu).call_once(|| {
             let clock = RealTimeClock { _private: () };
             TimerManager::new(Arc::new(clock))

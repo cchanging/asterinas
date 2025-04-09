@@ -6,14 +6,14 @@ use alloc::{
     vec::Vec,
 };
 
-use aster_block::{
+use astros_block::{
     BlockDeviceMeta,
     bio::{BioEnqueueError, BioStatus, BioType, SubmittedBio, bio_segment_pool_init},
     request_queue::{BioRequest, BioRequestSingleQueue},
 };
-use aster_util::safe_ptr::SafePtr;
+use astros_util::safe_ptr::SafePtr;
 use log::info;
-use ostd::{
+use kstd::{
     mm::{DmaCoherent, FrameAllocOptions, HasDaddr},
     sync::SpinLock,
 };
@@ -26,7 +26,7 @@ use crate::{
     nvme_regs::NVMeDoorBellRegs,
 };
 
-pub const BLOCK_SIZE: usize = ostd::mm::PAGE_SIZE;
+pub const BLOCK_SIZE: usize = kstd::mm::PAGE_SIZE;
 
 #[derive(Debug)]
 pub struct NVMeBlockDevice {
@@ -34,7 +34,7 @@ pub struct NVMeBlockDevice {
     queue: BioRequestSingleQueue,
 }
 
-impl aster_block::BlockDevice for NVMeBlockDevice {
+impl astros_block::BlockDevice for NVMeBlockDevice {
     fn enqueue(&self, bio: SubmittedBio) -> Result<(), BioEnqueueError> {
         self.queue.enqueue(bio)
     }
@@ -77,7 +77,7 @@ impl NVMeBlockDevice {
 
         device.create_io_queues();
 
-        aster_block::register_device(device_id, block_device);
+        astros_block::register_device(device_id, block_device);
 
         bio_segment_pool_init();
         Ok(())
@@ -580,11 +580,11 @@ impl NVMeDeviceInner {
 mod test {
     use alloc::vec;
 
-    use aster_block::{
+    use astros_block::{
         bio::{Bio, BioDirection, BioSegment},
         id::{Bid, Sid},
     };
-    use ostd::{
+    use kstd::{
         mm::{UntypedMem, VmIo},
         prelude::ktest,
     };
@@ -637,7 +637,7 @@ mod test {
     #[ktest]
     fn write_then_read() {
         let device_name = "nvme0";
-        let device = aster_block::get_device(device_name).expect("NVMe device not found");
+        let device = astros_block::get_device(device_name).expect("NVMe device not found");
         let device_arc = Arc::clone(&device);
 
         let nvme_block_device = device_arc

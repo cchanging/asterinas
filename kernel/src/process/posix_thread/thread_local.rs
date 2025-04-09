@@ -2,8 +2,8 @@
 
 use core::cell::{Cell, RefCell};
 
-use aster_rights::Full;
-use ostd::{mm::Vaddr, sync::RwArc, task::CurrentTask};
+use astros_rights::Full;
+use kstd::{mm::Vaddr, sync::RwArc, task::CurrentTask};
 
 use super::RobustListHead;
 use crate::{fs::file_table::FileTable, process::signal::SigStack, vm::vmar::Vmar};

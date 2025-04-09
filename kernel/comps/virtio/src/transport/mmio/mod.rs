@@ -2,7 +2,7 @@
 
 use alloc::sync::Arc;
 
-use ostd::bus::mmio::MMIO_BUS;
+use kstd::bus::mmio::MMIO_BUS;
 use spin::Once;
 
 use self::driver::VirtioMmioDriver;

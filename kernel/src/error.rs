@@ -125,7 +125,7 @@ pub enum Errno {
     ETOOMANYREFS = 109,   /* Too many references: cannot splice */
     ETIMEDOUT = 110,      /* Connection timed out */
     ECONNREFUSED = 111,   /* Connection refused */
-    EHOSTDOWN = 112,      /* Host is down */
+    EHKSTDOWN = 112,      /* Host is down */
     EHOSTUNREACH = 113,   /* No route to host */
     EALREADY = 114,       /* Operation already in progress */
     EINPROGRESS = 115,    /* Operation now in progress */
@@ -190,55 +190,55 @@ impl AsRef<Error> for Error {
     }
 }
 
-impl From<ostd::Error> for Error {
-    fn from(ostd_error: ostd::Error) -> Self {
-        match ostd_error {
-            ostd::Error::AccessDenied => Error::new(Errno::EFAULT),
-            ostd::Error::NoMemory => Error::new(Errno::ENOMEM),
-            ostd::Error::InvalidArgs => Error::new(Errno::EINVAL),
-            ostd::Error::IoError => Error::new(Errno::EIO),
-            ostd::Error::NotEnoughResources => Error::new(Errno::EBUSY),
-            ostd::Error::PageFault => Error::new(Errno::EFAULT),
-            ostd::Error::Overflow => Error::new(Errno::EOVERFLOW),
-            ostd::Error::MapAlreadyMappedVaddr => Error::new(Errno::EINVAL),
-            ostd::Error::KVirtAreaAllocError => Error::new(Errno::ENOMEM),
+impl From<kstd::Error> for Error {
+    fn from(kstd_error: kstd::Error) -> Self {
+        match kstd_error {
+            kstd::Error::AccessDenied => Error::new(Errno::EFAULT),
+            kstd::Error::NoMemory => Error::new(Errno::ENOMEM),
+            kstd::Error::InvalidArgs => Error::new(Errno::EINVAL),
+            kstd::Error::IoError => Error::new(Errno::EIO),
+            kstd::Error::NotEnoughResources => Error::new(Errno::EBUSY),
+            kstd::Error::PageFault => Error::new(Errno::EFAULT),
+            kstd::Error::Overflow => Error::new(Errno::EOVERFLOW),
+            kstd::Error::MapAlreadyMappedVaddr => Error::new(Errno::EINVAL),
+            kstd::Error::KVirtAreaAllocError => Error::new(Errno::ENOMEM),
         }
     }
 }
 
-impl From<(ostd::Error, usize)> for Error {
+impl From<(kstd::Error, usize)> for Error {
     // Used in fallible memory read/write API
-    fn from(ostd_error: (ostd::Error, usize)) -> Self {
-        Error::from(ostd_error.0)
+    fn from(kstd_error: (kstd::Error, usize)) -> Self {
+        Error::from(kstd_error.0)
     }
 }
 
-impl From<aster_block::bio::BioEnqueueError> for Error {
-    fn from(error: aster_block::bio::BioEnqueueError) -> Self {
+impl From<astros_block::bio::BioEnqueueError> for Error {
+    fn from(error: astros_block::bio::BioEnqueueError) -> Self {
         match error {
-            aster_block::bio::BioEnqueueError::IsFull => {
+            astros_block::bio::BioEnqueueError::IsFull => {
                 Error::with_message(Errno::EBUSY, "The request queue is full")
             }
-            aster_block::bio::BioEnqueueError::Refused => {
+            astros_block::bio::BioEnqueueError::Refused => {
                 Error::with_message(Errno::EBUSY, "Refuse to enqueue the bio")
             }
-            aster_block::bio::BioEnqueueError::TooBig => {
+            astros_block::bio::BioEnqueueError::TooBig => {
                 Error::with_message(Errno::EINVAL, "Bio is too big")
             }
         }
     }
 }
 
-impl From<aster_block::bio::BioStatus> for Error {
-    fn from(err_status: aster_block::bio::BioStatus) -> Self {
+impl From<astros_block::bio::BioStatus> for Error {
+    fn from(err_status: astros_block::bio::BioStatus) -> Self {
         match err_status {
-            aster_block::bio::BioStatus::NotSupported => {
+            astros_block::bio::BioStatus::NotSupported => {
                 Error::with_message(Errno::EIO, "I/O operation is not supported")
             }
-            aster_block::bio::BioStatus::NoSpace => {
+            astros_block::bio::BioStatus::NoSpace => {
                 Error::with_message(Errno::ENOSPC, "Insufficient space on device")
             }
-            aster_block::bio::BioStatus::IoError => {
+            astros_block::bio::BioStatus::IoError => {
                 Error::with_message(Errno::EIO, "I/O operation fails")
             }
             status => panic!("Can not convert the status: {:?} to an error", status),
@@ -304,16 +304,16 @@ impl From<cpio_decoder::error::Error> for Error {
     }
 }
 
-impl From<Error> for ostd::Error {
+impl From<Error> for kstd::Error {
     fn from(error: Error) -> Self {
         match error.errno {
-            Errno::EACCES => ostd::Error::AccessDenied,
-            Errno::EIO => ostd::Error::IoError,
-            Errno::ENOMEM => ostd::Error::NoMemory,
-            Errno::EFAULT => ostd::Error::PageFault,
-            Errno::EINVAL => ostd::Error::InvalidArgs,
-            Errno::EBUSY => ostd::Error::NotEnoughResources,
-            _ => ostd::Error::InvalidArgs,
+            Errno::EACCES => kstd::Error::AccessDenied,
+            Errno::EIO => kstd::Error::IoError,
+            Errno::ENOMEM => kstd::Error::NoMemory,
+            Errno::EFAULT => kstd::Error::PageFault,
+            Errno::EINVAL => kstd::Error::InvalidArgs,
+            Errno::EBUSY => kstd::Error::NotEnoughResources,
+            _ => kstd::Error::InvalidArgs,
         }
     }
 }

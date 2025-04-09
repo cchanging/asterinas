@@ -31,7 +31,7 @@ impl FileOps for MemInfoFileOps {
         let total = crate::vm::mem_total();
         // An estimation of how much memory is available for starting new
         // applications, without disk operations.
-        let available = osdk_frame_allocator::load_total_free_size();
+        let available = ksdk_frame_allocator::load_total_free_size();
 
         // Convert the values to KiB.
         let total = total / 1024;

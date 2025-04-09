@@ -1,0 +1,35 @@
+name: Publish KSDK and KSTD
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - VERSION
+      - kstd/**
+      - ksdk/**
+  push:
+    branches:
+      - main
+    paths: 
+      - VERSION
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container: astros/astros:0.14.1-20250326
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish KSTD and KSDK (dry run)
+        # On pull request, set `--dry-run` to check whether they can be published
+        if: github.event_name == 'pull_request'
+        run: |
+          ./tools/github_workflows/publish_ksdk_and_kstd.sh --dry-run
+      
+      - name: Publish KSTD and KSDK
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          ./tools/github_workflows/publish_ksdk_and_kstd.sh --token ${REGISTRY_TOKEN}

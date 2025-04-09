@@ -4,7 +4,7 @@
 
 use core::time::Duration;
 
-use aster_util::slot_vec::SlotVec;
+use astros_util::slot_vec::SlotVec;
 use id_alloc::IdAlloc;
 
 use self::{ptmx::Ptmx, slave::PtySlaveInode};

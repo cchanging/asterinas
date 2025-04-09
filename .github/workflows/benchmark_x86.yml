@@ -107,23 +107,23 @@ jobs:
       max-parallel: 1
     timeout-minutes: 60
     container: 
-      image: asterinas/asterinas:0.14.1-20250326
+      image: astros/astros:0.14.1-20250326
       options: --device=/dev/kvm --privileged
 
     steps:
       - uses: actions/checkout@v4
       - name: Set up the environment
         run: |
-          chmod +x test/benchmark/bench_linux_and_aster.sh
+          chmod +x test/benchmark/bench_linux_and_astros.sh
           # Set up git due to the network issue on the self-hosted runner
-          git config --global --add safe.directory /__w/asterinas/asterinas
+          git config --global --add safe.directory /__w/astros/astros
           git config --global http.sslVerify false
           git config --global http.version HTTP/1.1
 
       - name: Run benchmarks
         run: |
-          make install_osdk
-          bash test/benchmark/bench_linux_and_aster.sh "${{ matrix.benchmarks }}"
+          make install_ksdk
+          bash test/benchmark/bench_linux_and_astros.sh "${{ matrix.benchmarks }}"
           BENCHMARK_ARTIFACT=results_$(echo "${{ matrix.benchmarks }}" | tr '/' '-')
           echo "BENCHMARK_ARTIFACT=$BENCHMARK_ARTIFACT" >> $GITHUB_ENV
 
@@ -222,12 +222,12 @@ jobs:
           done
 
       - name: Store benchmark results
-        uses: asterinas/github-action-benchmark@v5
+        uses: astros/github-action-benchmark@v5
         with:
           # Use glob pattern to find all generated config files
           output-file-path: "configs/config_*.json"
           github-token: ${{ secrets.BENCHMARK_SECRET }}
-          gh-repository: 'github.com/asterinas/benchmark'
+          gh-repository: 'github.com/astros/benchmark'
           auto-push: true
           comment-on-alert: true
           fail-on-alert: false

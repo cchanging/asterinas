@@ -7,7 +7,7 @@ mod block_log;
 mod block_ring;
 mod block_set;
 
-use ostd::const_assert;
+use kstd::const_assert;
 
 pub use self::{
     block_buf::{Buf, BufMut, BufRef},

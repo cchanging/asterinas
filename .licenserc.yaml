@@ -25,7 +25,7 @@ header:
       Assembly: 
         extensions:
           - ".S"
-        comment_style_id: SlashAsterisk
+        comment_style_id: SlashAstrosisk
 
   # Files under cargo-component are licensed under Apache-2.0 or MIT license.
   - paths:

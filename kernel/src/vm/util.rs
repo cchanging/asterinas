@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::mm::{Frame, FrameAllocOptions, UFrame, UntypedMem};
+use kstd::mm::{Frame, FrameAllocOptions, UFrame, UntypedMem};
 
 use crate::prelude::*;
 

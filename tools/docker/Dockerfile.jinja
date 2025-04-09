@@ -33,8 +33,8 @@ RUN pip3 install yq tomli
 #= Download dependency =====================================================
 
 WORKDIR /opt/linux_binary_cache
-RUN wget https://raw.githubusercontent.com/asterinas/linux_vdso/2a6d2db/vdso64.so -O vdso64.so
-RUN wget https://raw.githubusercontent.com/asterinas/linux_binary_cache/14598b6/vmlinuz-5.15.0-105 \
+RUN wget https://raw.githubusercontent.com/astros/linux_vdso/2a6d2db/vdso64.so -O vdso64.so
+RUN wget https://raw.githubusercontent.com/astros/linux_binary_cache/14598b6/vmlinuz-5.15.0-105 \
         -O vmlinuz
 
 #= Build benchmark =========================================================
@@ -54,7 +54,7 @@ RUN wget https://github.com/akopytov/sysbench/archive/1.0.20.tar.gz \
 RUN git clone https://github.com/nicktehrany/membench.git
 RUN git clone https://github.com/esnet/iperf.git
 RUN git clone https://github.com/kdlucas/byte-unixbench.git
-RUN git clone https://github.com/asterinas/lmbench.git
+RUN git clone https://github.com/astros/lmbench.git
 RUN wget https://www.iozone.org/src/current/iozone3_506.tar
 RUN tar -x -f iozone3_506.tar
 RUN git clone -b fio-3.37 https://github.com/axboe/fio.git
@@ -376,8 +376,8 @@ FROM build-grub as grub
 # in the GRUB release. The Ubuntu release notoriously modifies the GRUB source code and enforce
 # EFI handover boot, which is deprecated. So we have to build GRUB from source.
 WORKDIR /root
-# See also: https://github.com/asterinas/asterinas/pull/1710
-RUN git clone --single-branch -b asterinas/2.12 https://github.com/asterinas/grub.git \
+# See also: https://github.com/astros/astros/pull/1710
+RUN git clone --single-branch -b astros/2.12 https://github.com/astros/grub.git \
     && git -C grub checkout 0633bc8
 # Fetch and install the Unicode font data for grub.
 RUN wget -O unifont.pcf.gz https://unifoundry.com/pub/unifont/unifont-15.1.04/font-builds/unifont-15.1.04.pcf.gz \ 
@@ -419,15 +419,15 @@ RUN make defconfig \
     && sed -i "s/# CONFIG_FEATURE_SH_STANDALONE is not set/CONFIG_FEATURE_SH_STANDALONE=y/g" .config \ 
     && make -j
 
-#= The final stages to produce the Asterinas development image ====================
+#= The final stages to produce the Astros development image ====================
 
 FROM build-base as rust
 
 # Install Rust with both nightly and stable
 ENV PATH="/root/.cargo/bin:${PATH}"
-ARG ASTER_RUST_VERSION
+ARG ASTROS_RUST_VERSION
 RUN curl https://sh.rustup.rs -sSf | \ 
-        sh -s -- --default-toolchain ${ASTER_RUST_VERSION} -y \ 
+        sh -s -- --default-toolchain ${ASTROS_RUST_VERSION} -y \ 
     && rustup toolchain install stable \ 
     && rm -rf /root/.cargo/registry && rm -rf /root/.cargo/git \ 
     && cargo -V \ 
@@ -441,7 +441,7 @@ RUN cargo install \
 
 FROM rust
 
-# Install all Asterinas dependent packages
+# Install all Astros dependent packages
 RUN apt update && apt-get install -y --no-install-recommends \ 
     bridge-utils \ 
     clang-format       `# formatting general tests` \ 
@@ -477,7 +477,7 @@ RUN apt clean && rm -rf /var/lib/apt/lists/*
 
 # Prepare the system call test suite
 COPY --from=syscall_test /root/syscall_test/build/syscall_test_bins /root/syscall_test_bins
-ENV ASTER_PREBUILT_SYSCALL_TEST=/root/syscall_test_bins
+ENV ASTROS_PREBUILT_SYSCALL_TEST=/root/syscall_test_bins
 
 {% if not intel_tdx %}
 # Install QEMU built from the previous stages
@@ -512,9 +512,9 @@ COPY --from=build-applications /usr/local/memcached /usr/local/memcached
 COPY --from=build-applications /usr/local/apache2 /usr/local/apache2
 COPY --from=build-applications /usr/local/wrk /usr/local/wrk
 
-# Add the path of Asterinas tools
-ENV PATH="/root/asterinas/target/bin:${PATH}"
+# Add the path of Astros tools
+ENV PATH="/root/astros/target/bin:${PATH}"
 
-VOLUME [ "/root/asterinas" ]
+VOLUME [ "/root/astros" ]
 
-WORKDIR /root/asterinas
+WORKDIR /root/astros

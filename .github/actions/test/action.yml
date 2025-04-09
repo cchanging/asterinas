@@ -1,12 +1,12 @@
 name: 'Test'
-description: 'Run tests for Asterinas'
+description: 'Run tests for Astros'
 branding:
   icon: 'check-circle'
   color: 'green'
 inputs:
   # Test Configuration
   auto_test:
-    description: 'Test type (general, osdk, boot, syscall, test)'
+    description: 'Test type (general, ksdk, boot, syscall, test)'
     required: true
   release:
     description: 'Whether to run in release mode'
@@ -70,7 +70,7 @@ runs:
         fi
 
     - name: Run integration test
-      if: ${{ !(inputs.auto_test == 'general' || inputs.auto_test == 'osdk') }}
+      if: ${{ !(inputs.auto_test == 'general' || inputs.auto_test == 'ksdk') }}
       shell: bash
       run: |
         CMD="make run AUTO_TEST=${{ inputs.auto_test }}"
@@ -87,13 +87,13 @@ runs:
         echo "Executing: $CMD"
         eval $CMD
 
-    - name: Run OSDK tests
-      if: ${{ inputs.auto_test == 'osdk' }}
+    - name: Run KSDK tests
+      if: ${{ inputs.auto_test == 'ksdk' }}
       shell: bash
       run: |
-        [[ "${{ !contains(matrix.container, 'osdk') }}" == "true" ]] && make check_osdk
+        [[ "${{ !contains(matrix.container, 'ksdk') }}" == "true" ]] && make check_ksdk
         if [[ "${{ inputs.intel_tdx }}" == "true" ]]; then
-          RUSTUP_HOME=/root/.rustup make test_osdk INTEL_TDX=1
+          RUSTUP_HOME=/root/.rustup make test_ksdk INTEL_TDX=1
         else
-          RUSTUP_HOME=/root/.rustup make test_osdk
+          RUSTUP_HOME=/root/.rustup make test_ksdk
         fi

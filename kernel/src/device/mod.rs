@@ -18,7 +18,7 @@ cfg_if! {
     }
 }
 
-use ostd::if_tdx_enabled;
+use kstd::if_tdx_enabled;
 pub use pty::{new_pty_pair, PtyMaster, PtySlave};
 pub use random::Random;
 pub use urandom::Urandom;

@@ -8,14 +8,14 @@ use alloc::{
 };
 use core::{fmt::Debug, iter, mem};
 
-use aster_input::{
+use astros_input::{
     key::{Key, KeyStatus},
     InputEvent,
 };
-use aster_util::{field_ptr, safe_ptr::SafePtr};
+use astros_util::{field_ptr, safe_ptr::SafePtr};
 use bitflags::bitflags;
 use log::{debug, info};
-use ostd::{
+use kstd::{
     io::IoMem,
     mm::{DmaDirection, DmaStream, FrameAllocOptions, HasDaddr, VmIo, PAGE_SIZE},
     offset_of,
@@ -141,7 +141,7 @@ impl InputDevice {
         transport.finish_init();
         drop(transport);
 
-        aster_input::register_device(super::DEVICE_NAME.to_string(), device);
+        astros_input::register_device(super::DEVICE_NAME.to_string(), device);
 
         Ok(())
     }
@@ -293,7 +293,7 @@ impl<T, M: HasDaddr> DmaBuf for SafePtr<T, M> {
     }
 }
 
-impl aster_input::InputDevice for InputDevice {
+impl astros_input::InputDevice for InputDevice {
     fn register_callbacks(&self, function: &'static (dyn Fn(InputEvent) + Send + Sync)) {
         self.callbacks.write().push(Arc::new(function))
     }

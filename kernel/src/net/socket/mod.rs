@@ -172,7 +172,7 @@ impl<T: Socket + 'static> FileLike for T {
         Metadata::new_socket(
             0,
             InodeMode::from_bits_truncate(0o140777),
-            aster_block::BLOCK_SIZE,
+            astros_block::BLOCK_SIZE,
         )
     }
 }

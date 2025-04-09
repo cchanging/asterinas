@@ -2,8 +2,8 @@
 
 use alloc::{boxed::Box, vec, vec::Vec};
 
-use aster_softirq::{softirq_id::TIMER_SOFTIRQ_ID, SoftIrqLine};
-use ostd::{sync::RcuOption, timer};
+use astros_softirq::{softirq_id::TIMER_SOFTIRQ_ID, SoftIrqLine};
+use kstd::{sync::RcuOption, timer};
 
 #[allow(clippy::type_complexity)]
 #[allow(clippy::box_collection)]

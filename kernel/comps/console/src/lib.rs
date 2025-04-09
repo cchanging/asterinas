@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-//! The console device of Asterinas.
+//! The console device of Astros.
 #![no_std]
 #![deny(unsafe_code)]
 #![feature(fn_traits)]
@@ -11,7 +11,7 @@ use alloc::{collections::BTreeMap, fmt::Debug, string::String, sync::Arc, vec::V
 use core::any::Any;
 
 use component::{init_component, ComponentInitError};
-use ostd::{
+use kstd::{
     mm::{Infallible, VmReader},
     sync::{LocalIrqDisabled, SpinLock, SpinLockGuard},
 };

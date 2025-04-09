@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::mm::{Infallible, VmSpace};
+use kstd::mm::{Infallible, VmSpace};
 
 use crate::prelude::*;
 

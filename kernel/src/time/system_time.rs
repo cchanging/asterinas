@@ -2,7 +2,7 @@
 
 use core::time::Duration;
 
-use aster_time::{read_monotonic_time, read_start_time};
+use astros_time::{read_monotonic_time, read_start_time};
 use spin::Once;
 use time::{Date, Month, PrimitiveDateTime, Time};
 
@@ -81,8 +81,8 @@ impl SystemTime {
     }
 }
 
-/// convert ostd::time::Time to System time
-fn convert_system_time(system_time: aster_time::SystemTime) -> Result<SystemTime> {
+/// convert kstd::time::Time to System time
+fn convert_system_time(system_time: astros_time::SystemTime) -> Result<SystemTime> {
     let month = match Month::try_from(system_time.month) {
         Ok(month) => month,
         Err(_) => return_errno_with_message!(Errno::EINVAL, "unknown month in system time"),

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-//! The framebuffer of Asterinas.
+//! The framebuffer of Astros.
 #![no_std]
 #![deny(unsafe_code)]
 
@@ -14,7 +14,7 @@ use core::{
 
 use component::{init_component, ComponentInitError};
 use font8x8::UnicodeFonts;
-use ostd::{
+use kstd::{
     boot::{boot_info, memory_region::MemoryRegionType},
     io::IoMem,
     mm::{VmIo, PAGE_SIZE},

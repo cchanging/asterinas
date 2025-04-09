@@ -2,7 +2,7 @@
 
 use core::sync::atomic::{AtomicBool, Ordering};
 
-use aster_bigtcp::{
+use astros_bigtcp::{
     socket::{NeedIfacePoll, RawTcpOption, RawTcpSetOption},
     wire::IpEndpoint,
 };
@@ -14,7 +14,7 @@ use options::{
     Congestion, DeferAccept, Inq, KeepIdle, MaxSegment, NoDelay, SynCnt, UserTimeout, WindowClamp,
     KEEPALIVE_INTERVAL,
 };
-use ostd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
+use kstd::sync::{PreemptDisabled, RwLockReadGuard, RwLockWriteGuard};
 use takeable::Takeable;
 use util::{Retrans, TcpOptionSet};
 

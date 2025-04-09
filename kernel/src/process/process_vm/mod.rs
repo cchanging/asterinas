@@ -12,9 +12,9 @@
 mod heap;
 mod init_stack;
 
-use aster_rights::Full;
+use astros_rights::Full;
 pub use heap::Heap;
-use ostd::{sync::MutexGuard, task::disable_preempt};
+use kstd::{sync::MutexGuard, task::disable_preempt};
 
 pub use self::{
     heap::USER_HEAP_SIZE_LIMIT,

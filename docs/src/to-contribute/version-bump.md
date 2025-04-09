@@ -2,18 +2,18 @@
 
 ## Version Numbers
 
-Currently, Asterinas regularly releases two main artifacts
+Currently, Astros regularly releases two main artifacts
 for the Rust OS developer community:
-the [OSDK](https://crates.io/crates/cargo-osdk) and [OSTD](https://crates.io/crates/ostd).
+the [KSDK](https://crates.io/crates/cargo-ksdk) and [KSTD](https://crates.io/crates/kstd).
 To support development with these tools,
 we also publish companion Docker images on DockerHub,
-(i.e., [`asterinas/osdk`](https://hub.docker.com/r/asterinas/osdk)).
-While the Asterinas kernel is not yet ready for public binary release,
+(i.e., [`astros/ksdk`](https://hub.docker.com/r/astros/ksdk)).
+While the Astros kernel is not yet ready for public binary release,
 its development Docker images
-(i.e., [`asterinas/asterinas`](https://hub.docker.com/r/asterinas/asterinas))
+(i.e., [`astros/astros`](https://hub.docker.com/r/astros/astros))
 are released regularly.
 
-All released crates for OSDK and OSTD share the same version number,
+All released crates for KSDK and KSTD share the same version number,
 which is stored in the `VERSION` file at the project root.
 The current content of this file is shown below.
 

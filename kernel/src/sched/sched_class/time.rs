@@ -10,7 +10,7 @@ use spin::Once;
 fn tsc_factors() -> (u64, u64) {
     static FACTORS: Once<(u64, u64)> = Once::new();
     *FACTORS.call_once(|| {
-        let freq = ostd::arch::tsc_freq();
+        let freq = kstd::arch::tsc_freq();
         assert_ne!(freq, 0);
         let mut a = 1_000_000_000;
         let mut b = freq;

@@ -4,7 +4,7 @@
 
 use core::time::Duration;
 
-use aster_util::slot_vec::SlotVec;
+use astros_util::slot_vec::SlotVec;
 use inherit_methods_macro::inherit_methods;
 
 use super::{Common, ProcFS};

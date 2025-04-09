@@ -6,7 +6,7 @@
 use core::ops::Range;
 
 use align_ext::AlignExt;
-use aster_rights::Full;
+use astros_rights::Full;
 use bitvec::prelude::*;
 
 use super::{

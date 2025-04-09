@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-//! The logger implementation for Asterinas.
+//! The logger implementation for Astros.
 //!
 //! This logger now has the most basic logging functionality, controls the output
 //! based on the globally set log level. Different log levels will be represented
@@ -18,13 +18,13 @@ extern crate alloc;
 
 use component::{init_component, ComponentInitError};
 
-mod aster_logger;
+mod astros_logger;
 mod console;
 
 pub use console::_print;
 
 #[init_component]
 fn init() -> Result<(), ComponentInitError> {
-    aster_logger::init();
+    astros_logger::init();
     Ok(())
 }

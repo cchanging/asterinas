@@ -2,7 +2,7 @@
 
 [Introduction](README.md)
 
-# Asterinas Kernel
+# Astros Kernel
 
 * [Getting Started](kernel/README.md)
 * [Advanced Build and Test Instructions](kernel/advanced-instructions.md)
@@ -11,31 +11,31 @@
 * [Linux Compatibility](kernel/linux-compatibility.md)
 * [Roadmap](kernel/roadmap.md)
 
-# Asterinas OSTD
+# Astros KSTD
 
-* [An Overview of OSTD](ostd/README.md)
-* [Example: Writing a Kernel in 100 Lines of Safe Rust](ostd/a-100-line-kernel.md)
+* [An Overview of KSTD](kstd/README.md)
+* [Example: Writing a Kernel in 100 Lines of Safe Rust](kstd/a-100-line-kernel.md)
 * [Example: Writing a Driver in 100 Lines of Safe Rust]()
 * [Soundness Analysis]()
 
-# Asterinas OSDK
+# Astros KSDK
 
-* [OSDK User Guide](osdk/guide/README.md)
-    * [Why OSDK](osdk/guide/why.md)
-    * [Creating an OS Project](osdk/guide/create-project.md)
-    * [Testing or Running an OS Project](osdk/guide/run-project.md)
-    * [Working in a Workspace](osdk/guide/work-in-workspace.md)
-    * [Advanced Topics](osdk/guide/advanced_topics.md)
-        * [Intel TDX](osdk/guide/intel-tdx.md)
-* [OSDK User Reference](osdk/reference/README.md)
-    * [Commands](osdk/reference/commands/README.md)
-        * [cargo osdk new](osdk/reference/commands/new.md)
-        * [cargo osdk build](osdk/reference/commands/build.md)
-        * [cargo osdk run](osdk/reference/commands/run.md)
-        * [cargo osdk test](osdk/reference/commands/test.md)
-        * [cargo osdk debug](osdk/reference/commands/debug.md)
-        * [cargo osdk profile](osdk/reference/commands/profile.md)
-    * [Manifest](osdk/reference/manifest.md)
+* [KSDK User Guide](ksdk/guide/README.md)
+    * [Why KSDK](ksdk/guide/why.md)
+    * [Creating an OS Project](ksdk/guide/create-project.md)
+    * [Testing or Running an OS Project](ksdk/guide/run-project.md)
+    * [Working in a Workspace](ksdk/guide/work-in-workspace.md)
+    * [Advanced Topics](ksdk/guide/advanced_topics.md)
+        * [Intel TDX](ksdk/guide/intel-tdx.md)
+* [KSDK User Reference](ksdk/reference/README.md)
+    * [Commands](ksdk/reference/commands/README.md)
+        * [cargo ksdk new](ksdk/reference/commands/new.md)
+        * [cargo ksdk build](ksdk/reference/commands/build.md)
+        * [cargo ksdk run](ksdk/reference/commands/run.md)
+        * [cargo ksdk test](ksdk/reference/commands/test.md)
+        * [cargo ksdk debug](ksdk/reference/commands/debug.md)
+        * [cargo ksdk profile](ksdk/reference/commands/profile.md)
+    * [Manifest](ksdk/reference/manifest.md)
 
 # How to Contribute
 
@@ -54,4 +54,4 @@
 
 * [RFC Overview]()
     * [RFC-0001: RFC Process]()
-    * [RFC-0002: Operating System Development Kit (OSDK)]()
+    * [RFC-0002: Kernel Software Development Kit (KSDK)]()

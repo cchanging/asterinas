@@ -4,9 +4,9 @@
 
 use core::{any::TypeId, time::Duration};
 
-use aster_rights::Full;
+use astros_rights::Full;
 use core2::io::{Error as IoError, ErrorKind as IoErrorKind, Result as IoResult, Write};
-use ostd::task::Task;
+use kstd::task::Task;
 
 use super::{
     AccessMode, DirentVisitor, FallocMode, FileSystem, IoctlCmd, XattrName, XattrNamespace,

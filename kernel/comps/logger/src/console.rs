@@ -14,7 +14,7 @@ impl Write for VirtioConsolesPrinter {
         // We must call `all_devices_lock` instead of `all_devices` here, as `all_devices` invokes
         // the clone method of String and Arc, which may lead to a deadlock when there is low memory
         // in the heap (The heap allocator will log a message when memory is low.).
-        let devices = aster_console::all_devices_lock();
+        let devices = astros_console::all_devices_lock();
         for (_, device) in devices.iter() {
             device.send(s.as_bytes());
         }

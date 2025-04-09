@@ -15,11 +15,11 @@ extern crate alloc;
 use alloc::{collections::BTreeMap, string::String, sync::Arc, vec::Vec};
 use core::{any::Any, fmt::Debug};
 
-use aster_bigtcp::device::DeviceCapabilities;
+use astros_bigtcp::device::DeviceCapabilities;
 pub use buffer::{RxBuffer, TxBuffer, RX_BUFFER_POOL, TX_BUFFER_LEN};
 use component::{init_component, ComponentInitError};
 pub use dma_pool::DmaSegment;
-use ostd::{
+use kstd::{
     sync::{LocalIrqDisabled, SpinLock},
     Pod,
 };

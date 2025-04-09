@@ -17,16 +17,16 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    container: asterinas/asterinas:0.14.1-20250326
+    container: astros/astros:0.14.1-20250326
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: 'asterinas/asterinas'
-          path: 'asterinas'
+          repository: 'astros/astros'
+          path: 'astros'
       
       - name: Build the website
         run: |
-          cd asterinas/docs
+          cd astros/docs
           mdbook build
 
       - name: Deploy website
@@ -41,11 +41,11 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           GIT_SSH_COMMAND="ssh -i ./book_publish_key -o UserKnownHostsFile=./known_hosts" \
-            git clone git@github.com:asterinas/book.git temp_book
+            git clone git@github.com:astros/book.git temp_book
           cd temp_book
           git checkout --orphan newBranch
           git rm -rf *
-          cp -r ../asterinas/docs/book/* ./
+          cp -r ../astros/docs/book/* ./
           git add -A
           git commit -am "Update website"
           git branch -D main

@@ -1,21 +1,21 @@
 [package]
-name = "aster-mlsdisk"
+name = "astros-mlsdisk"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-inherit-methods-macro = {git = "https://github.com/asterinas/inherit-methods-macro", rev = "98f7e3e"}
-ostd-pod = { git = "https://github.com/asterinas/ostd-pod", rev = "c4644be", version = "0.1.1" }
+inherit-methods-macro = {git = "https://github.com/astros/inherit-methods-macro", rev = "98f7e3e"}
+kstd-pod = { git = "https://github.com/astros/kstd-pod", rev = "c4644be", version = "0.1.1" }
 component = { path = "../../libs/comp-sys/component" }
-aster-block = { path = "../block" }
-ostd = { path = "../../../ostd" }
+astros-block = { path = "../block" }
+kstd = { path = "../../../kstd" }
 # Enable `force-soft` feature to disable `AES-NI` and `CLMUL` intrinsics, ensuring that the implementation
 # relies solely on software, and in the software implementation, unsafe code is rarely used.
 # FIXME: to utilize `AES-NI` and `CLMUL` intrinsics, some specific flags must be added to `RUSTFLAGS`,
 # i.e. `-Ctarget-cpu=sandybridge -Ctarget-feature=+aes,+sse2,+sse4.1,+ssse3`.
-# This suggests that `Asterinas` should support saving and restoring the `FPU` state within the kernel context,
+# This suggests that `Astros` should support saving and restoring the `FPU` state within the kernel context,
 # a capability it currently lacks.
 aes-gcm = { version = "0.9.4", features = ["force-soft"] }
 bittle = "0.5.6"

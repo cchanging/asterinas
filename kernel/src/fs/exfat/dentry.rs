@@ -2,8 +2,8 @@
 
 use core::{fmt::Display, ops::Range};
 
-use aster_rights::Full;
-use ostd::mm::VmIo;
+use astros_rights::Full;
+use kstd::mm::VmIo;
 
 use super::{
     constants::{EXFAT_FILE_NAME_LEN, MAX_NAME_LENGTH},
@@ -673,7 +673,7 @@ impl ExfatName {
         match value {
             0..0x20 => false, // Control Code
             0x22 => false,    // Quotation Mark
-            0x2A => false,    // Asterisk
+            0x2A => false,    // Astrosisk
             0x2F => false,    // Forward slash
             0x3A => false,    // Colon
             0x3C => false,    // Less-than sign

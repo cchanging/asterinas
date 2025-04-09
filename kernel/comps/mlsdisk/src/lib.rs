@@ -19,13 +19,13 @@ extern crate alloc;
 use alloc::{string::ToString, sync::Arc, vec};
 use core::ops::Range;
 
-use aster_block::{
+use astros_block::{
     bio::{Bio, BioDirection, BioSegment, BioStatus, BioType},
     id::Sid,
     BlockDevice, SECTOR_SIZE,
 };
 use component::{init_component, ComponentInitError};
-use ostd::{mm::VmIo, prelude::*};
+use kstd::{mm::VmIo, prelude::*};
 
 pub use self::{
     error::{Errno, Error},
@@ -40,14 +40,14 @@ pub use self::{
 #[init_component]
 fn init() -> core::result::Result<(), ComponentInitError> {
     // FIXME: add a virtio-blk-pci device in qemu and a image file.
-    let Some(device) = aster_block::get_device("raw_mlsdisk") else {
+    let Some(device) = astros_block::get_device("raw_mlsdisk") else {
         return Err(ComponentInitError::Unknown);
     };
     let raw_disk = RawDisk::new(device);
     let root_key = AeadKey::random();
     let device =
         MlsDisk::create(raw_disk, root_key, None).map_err(|_| ComponentInitError::Unknown)?;
-    aster_block::register_device("mlsdisk".to_string(), Arc::new(device));
+    astros_block::register_device("mlsdisk".to_string(), Arc::new(device));
     Ok(())
 }
 
@@ -127,11 +127,11 @@ impl BlockSet for RawDisk {
 
 #[cfg(ktest)]
 mod test {
-    use aster_block::{
+    use astros_block::{
         bio::{BioEnqueueError, BioStatus, BioType, SubmittedBio},
         BlockDevice, BlockDeviceMeta, SECTOR_SIZE,
     };
-    use ostd::{
+    use kstd::{
         mm::{FrameAllocOptions, Segment, VmIo},
         prelude::*,
     };

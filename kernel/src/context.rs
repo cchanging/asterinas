@@ -4,8 +4,8 @@
 
 use core::{cell::Ref, mem};
 
-use aster_rights::Full;
-use ostd::{
+use astros_rights::Full;
+use kstd::{
     mm::{Fallible, Infallible, VmReader, VmWriter},
     task::{CurrentTask, Task},
 };
@@ -49,7 +49,7 @@ pub struct CurrentUserSpace<'a>(Ref<'a, Option<Vmar<Full>>>);
 #[macro_export]
 macro_rules! current_userspace {
     () => {
-        CurrentUserSpace::new(&ostd::task::Task::current().unwrap())
+        CurrentUserSpace::new(&kstd::task::Task::current().unwrap())
     };
 }
 
@@ -273,7 +273,7 @@ const fn is_addr_aligned(addr: usize) -> bool {
 
 #[cfg(ktest)]
 mod test {
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
 

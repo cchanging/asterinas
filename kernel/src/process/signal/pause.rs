@@ -2,7 +2,7 @@
 
 use core::sync::atomic::Ordering;
 
-use ostd::sync::{WaitQueue, Waiter};
+use kstd::sync::{WaitQueue, Waiter};
 
 use super::sig_mask::SigMask;
 use crate::{
@@ -225,7 +225,7 @@ pub fn with_signal_blocked<R>(ctx: &Context, mask: SigMask, operate: impl FnOnce
 mod test {
     use core::sync::atomic::AtomicBool;
 
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
     use crate::thread::{kernel_thread::ThreadOptions, Thread};

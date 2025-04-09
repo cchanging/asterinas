@@ -5,7 +5,7 @@ use core::hint::spin_loop;
 
 use embedded_graphics::pixelcolor::Rgb888;
 use log::info;
-use ostd::{
+use kstd::{
     early_println,
     mm::{DmaDirection, DmaStream, DmaStreamSlice, FrameAllocOptions, HasPaddr, VmIo},
     sync::SpinLock,
@@ -459,7 +459,7 @@ impl GPUDevice {
         // alloc continuous memory for framebuffer
         // Each pixel is 4 bytes (32 bits) in RGBA format.
         let size: usize = rect.width() as usize * rect.height() as usize * 4;
-        // let fracme_num = size / 4096 + 1; // TODO: (Taojie) use Asterinas API to represent page size.
+        // let fracme_num = size / 4096 + 1; // TODO: (Taojie) use Astros API to represent page size.
         // let frame_buffer_dma = {
         //     let vm_segment = FrameAllocOptions::new().alloc_segment(fracme_num).unwrap();
         //     DmaStream::map(vm_segment.into(), DmaDirection::ToDevice, false).unwrap()

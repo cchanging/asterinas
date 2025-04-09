@@ -2,7 +2,7 @@
 
 use alloc::format;
 
-use ostd::task::Task;
+use kstd::task::Task;
 
 use crate::{
     current_userspace,

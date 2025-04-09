@@ -8,7 +8,7 @@ use core::{
 };
 
 use bitvec::{bitarr, BitArr};
-use ostd::{
+use kstd::{
     cpu::CpuId,
     task::{
         scheduler::{EnqueueFlags, UpdateFlags},

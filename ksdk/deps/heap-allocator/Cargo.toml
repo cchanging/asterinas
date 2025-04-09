@@ -1,0 +1,15 @@
+[package]
+name = "ksdk-heap-allocator"
+version = "0.14.1"
+edition = "2021"
+description = "The default slab-based heap allocator shipped with KSDK."
+license = "MPL-2.0"
+repository ="https://github.com/astros/astros"
+readme = "README.md"
+
+[dependencies]
+log = "0.4"
+kstd = { version = "0.14.1", path = "../../../kstd" }
+
+[lints]
+workspace = true

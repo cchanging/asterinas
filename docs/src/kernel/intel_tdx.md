@@ -1,8 +1,8 @@
 # Intel TDX
 
-Asterinas can serve as a secure guest OS for Intel TDX-protected virtual machines (VMs).
+Astros can serve as a secure guest OS for Intel TDX-protected virtual machines (VMs).
 This documentation describes
-how Asterinas can be run and tested easily on a TDX-enabled Intel server.
+how Astros can be run and tested easily on a TDX-enabled Intel server.
 
 Intel TDX (Trust Domain Extensions) is a Trusted Execution Environment (TEE) technology
 that enhances VM security
@@ -10,7 +10,7 @@ by creating isolated, hardware-enforced trust domains
 with encrypted memory, secure initialization, and attestation mechanisms.
 For more information about Intel TDX, jump to the last section.
 
-## Why choose Asterinas for Intel TDX
+## Why choose Astros for Intel TDX
 
 VM TEEs such as Intel TDX deserve a more secure option for its guest OS than Linux.
 Linux,
@@ -25,11 +25,11 @@ These untrusted inputs create new attack surfaces
 that can be exploited through memory safety vulnerabilities,
 known as Iago attacks.
 
-Asterinas offers greater memory safety than Linux,
+Astros offers greater memory safety than Linux,
 particularly against Iago attacks.
 Thanks to its framekernel architecture,
-the memory safety of Asterinas relies solely on the Asterinas Framework,
-excluding the safe device drivers built on top of the Asterinas Framework
+the memory safety of Astros relies solely on the Astros Framework,
+excluding the safe device drivers built on top of the Astros Framework
 that may handle untrusted inputs from the host.
 For more information, see [our talk on OC3'24](https://www.youtube.com/watch?v=3AQ5lpXujGo).
 
@@ -55,29 +55,29 @@ The following result is an example:
 
 `TDX module initialized` means TDX module is loaded successfully.
 
-## Build and run Asterinas
+## Build and run Astros
 
 1. Download the latest source code.
 
 ```bash
-git clone https://github.com/asterinas/asterinas
+git clone https://github.com/astros/astros
 ```
 
 2. Run a Docker container as the development environment.
 
 ```bash
-docker run -it --privileged --network=host --device=/dev/kvm -v $(pwd)/asterinas:/root/asterinas asterinas/asterinas:0.14.1-20250326-tdx
+docker run -it --privileged --network=host --device=/dev/kvm -v $(pwd)/astros:/root/astros astros/astros:0.14.1-20250326-tdx
 ```
 
 3. Inside the container,
-go to the project folder to build and run Asterinas.
+go to the project folder to build and run Astros.
 
 ```bash
 make run INTEL_TDX=1
 ```
 
 If everything goes well,
-Asterinas is now up and running inside a TD.
+Astros is now up and running inside a TD.
 
 ## Using GDB to Debug
 
@@ -86,7 +86,7 @@ In this mode, the host VMM can use Intel TDX module functions
 to read and modify TD VCPU state and TD private memory,
 which are not accessible when the TD is non-debuggable.
 
-Start Asterinas in a GDB-enabled TD and wait for debugging connection:
+Start Astros in a GDB-enabled TD and wait for debugging connection:
 
 ```bash
 make gdb_server INTEL_TDX=1

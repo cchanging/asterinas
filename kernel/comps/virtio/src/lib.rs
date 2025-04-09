@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-//! The virtio of Asterinas.
+//! The virtio of Astros.
 #![no_std]
 #![deny(unsafe_code)]
 #![feature(trait_alias)]
@@ -24,7 +24,7 @@ use device::{
     VirtioDeviceType,
 };
 use log::error;
-use ostd::early_println;
+use kstd::early_println;
 use transport::{mmio::VIRTIO_MMIO_DRIVER, pci::VIRTIO_PCI_DRIVER, DeviceStatus};
 
 use crate::transport::VirtioTransport;

@@ -2,8 +2,8 @@
 
 use core::sync::atomic::{AtomicBool, Ordering};
 
-use aster_bigtcp::wire::IpEndpoint;
-use ostd::sync::PreemptDisabled;
+use astros_bigtcp::wire::IpEndpoint;
+use kstd::sync::PreemptDisabled;
 use takeable::Takeable;
 
 use self::{bound::BoundDatagram, unbound::UnboundDatagram};

@@ -4,7 +4,7 @@
 
 use core::sync::atomic::Ordering;
 
-use ostd::{
+use kstd::{
     cpu::{AtomicCpuSet, CpuSet},
     task::Task,
 };
@@ -37,8 +37,8 @@ fn post_schedule_handler() {
 }
 
 pub(super) fn init() {
-    ostd::task::inject_post_schedule_handler(post_schedule_handler);
-    ostd::arch::trap::inject_user_page_fault_handler(exception::page_fault_handler);
+    kstd::task::inject_post_schedule_handler(post_schedule_handler);
+    kstd::arch::trap::inject_user_page_fault_handler(exception::page_fault_handler);
 }
 
 /// A thread is a wrapper on top of task.

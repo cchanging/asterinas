@@ -10,8 +10,8 @@ pub mod vm_mapping;
 use core::{num::NonZeroUsize, ops::Range};
 
 use align_ext::AlignExt;
-use aster_rights::Rights;
-use ostd::mm::{tlb::TlbFlushOp, PageFlags, PageProperty, VmSpace, MAX_USERSPACE_VADDR};
+use astros_rights::Rights;
+use kstd::mm::{tlb::TlbFlushOp, PageFlags, PageProperty, VmSpace, MAX_USERSPACE_VADDR};
 
 use self::{
     interval_set::{Interval, IntervalSet},

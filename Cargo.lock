@@ -77,19 +77,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
 
 [[package]]
-name = "aster-bigtcp"
+name = "astros-bigtcp"
 version = "0.1.0"
 dependencies = [
  "bitflags 1.3.2",
  "jhash",
- "ostd",
+ "kstd",
  "smoltcp",
  "spin",
  "takeable",
 ]
 
 [[package]]
-name = "aster-block"
+name = "astros-block"
 version = "0.1.0"
 dependencies = [
  "align_ext",
@@ -97,57 +97,57 @@ dependencies = [
  "component",
  "int-to-c-enum",
  "log",
- "ostd",
+ "kstd",
  "spin",
 ]
 
 [[package]]
-name = "aster-console"
+name = "astros-console"
 version = "0.1.0"
 dependencies = [
  "component",
- "ostd",
+ "kstd",
  "spin",
 ]
 
 [[package]]
-name = "aster-framebuffer"
+name = "astros-framebuffer"
 version = "0.1.0"
 dependencies = [
  "component",
  "font8x8",
  "log",
- "ostd",
+ "kstd",
  "spin",
 ]
 
 [[package]]
-name = "aster-input"
+name = "astros-input"
 version = "0.1.0"
 dependencies = [
  "component",
  "int-to-c-enum",
- "ostd",
+ "kstd",
  "spin",
 ]
 
 [[package]]
-name = "aster-logger"
+name = "astros-logger"
 version = "0.1.0"
 dependencies = [
- "aster-console",
+ "astros-console",
  "component",
  "log",
- "ostd",
+ "kstd",
  "owo-colors 3.5.0",
 ]
 
 [[package]]
-name = "aster-mlsdisk"
+name = "astros-mlsdisk"
 version = "0.1.0"
 dependencies = [
  "aes-gcm",
- "aster-block",
+ "astros-block",
  "bittle",
  "component",
  "ctr",
@@ -156,42 +156,42 @@ dependencies = [
  "lending-iterator",
  "log",
  "lru",
- "ostd",
- "ostd-pod",
+ "kstd",
+ "kstd-pod",
  "postcard",
  "serde",
 ]
 
 [[package]]
-name = "aster-network"
+name = "astros-network"
 version = "0.1.0"
 dependencies = [
- "aster-bigtcp",
+ "astros-bigtcp",
  "bitvec",
  "component",
- "ostd",
+ "kstd",
  "spin",
 ]
 
 [[package]]
-name = "aster-nix"
+name = "astros-nix"
 version = "0.1.0"
 dependencies = [
  "align_ext",
- "aster-bigtcp",
- "aster-block",
- "aster-console",
- "aster-input",
- "aster-logger",
- "aster-mlsdisk",
- "aster-network",
- "aster-nvme",
- "aster-rights",
- "aster-rights-proc",
- "aster-softirq",
- "aster-time",
- "aster-util",
- "aster-virtio",
+ "astros-bigtcp",
+ "astros-block",
+ "astros-console",
+ "astros-input",
+ "astros-logger",
+ "astros-mlsdisk",
+ "astros-network",
+ "astros-nvme",
+ "astros-rights",
+ "astros-rights-proc",
+ "astros-softirq",
+ "astros-time",
+ "astros-util",
+ "astros-virtio",
  "atomic-integer-wrapper",
  "bitflags 1.3.2",
  "bitvec",
@@ -212,9 +212,9 @@ dependencies = [
  "libflate",
  "log",
  "lru",
- "osdk-frame-allocator",
- "osdk-heap-allocator",
- "ostd",
+ "ksdk-frame-allocator",
+ "ksdk-heap-allocator",
+ "kstd",
  "paste",
  "rand",
  "riscv",
@@ -228,14 +228,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "aster-nvme"
+name = "astros-nvme"
 version = "0.1.0"
 dependencies = [
  "align_ext",
- "aster-bigtcp",
- "aster-block",
- "aster-rights",
- "aster-util",
+ "astros-bigtcp",
+ "astros-block",
+ "astros-rights",
+ "astros-util",
  "bit_field",
  "bitflags 1.3.2",
  "bytes",
@@ -243,23 +243,23 @@ dependencies = [
  "id-alloc",
  "int-to-c-enum",
  "log",
- "ostd",
+ "kstd",
  "spin",
  "typeflags-util",
 ]
 
 [[package]]
-name = "aster-rights"
+name = "astros-rights"
 version = "0.1.0"
 dependencies = [
- "aster-rights-proc",
+ "astros-rights-proc",
  "bitflags 1.3.2",
  "typeflags",
  "typeflags-util",
 ]
 
 [[package]]
-name = "aster-rights-proc"
+name = "astros-rights-proc"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
@@ -268,56 +268,56 @@ dependencies = [
 ]
 
 [[package]]
-name = "aster-softirq"
+name = "astros-softirq"
 version = "0.1.0"
 dependencies = [
  "component",
  "intrusive-collections",
- "ostd",
+ "kstd",
  "spin",
 ]
 
 [[package]]
-name = "aster-time"
+name = "astros-time"
 version = "0.1.0"
 dependencies = [
- "aster-util",
+ "astros-util",
  "chrono",
  "component",
  "log",
- "ostd",
+ "kstd",
  "spin",
 ]
 
 [[package]]
-name = "aster-util"
+name = "astros-util"
 version = "0.1.0"
 dependencies = [
- "aster-rights",
- "aster-rights-proc",
+ "astros-rights",
+ "astros-rights-proc",
  "inherit-methods-macro",
- "ostd",
+ "kstd",
  "typeflags-util",
 ]
 
 [[package]]
-name = "aster-virtio"
+name = "astros-virtio"
 version = "0.1.0"
 dependencies = [
- "aster-bigtcp",
- "aster-block",
- "aster-console",
- "aster-input",
- "aster-network",
- "aster-rights",
- "aster-util",
+ "astros-bigtcp",
+ "astros-block",
+ "astros-console",
+ "astros-input",
+ "astros-network",
+ "astros-rights",
+ "astros-util",
  "bitflags 1.3.2",
  "component",
  "embedded-graphics",
  "id-alloc",
  "int-to-c-enum",
  "log",
- "ostd",
+ "kstd",
  "spin",
  "tinybmp",
  "typeflags-util",
@@ -539,7 +539,7 @@ checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
 [[package]]
 name = "ctor"
 version = "0.1.25"
-source = "git+https://github.com/asterinas/rust-ctor#e30a5d960a3eccf79a7caddfa4de43b5dce424a0"
+source = "git+https://github.com/astros/rust-ctor#e30a5d960a3eccf79a7caddfa4de43b5dce424a0"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -953,7 +953,7 @@ dependencies = [
 [[package]]
 name = "inherit-methods-macro"
 version = "0.1.0"
-source = "git+https://github.com/asterinas/inherit-methods-macro?rev=98f7e3e#98f7e3eb9efdac98faf5a7076f154f30894b9b02"
+source = "git+https://github.com/astros/inherit-methods-macro?rev=98f7e3e#98f7e3eb9efdac98faf5a7076f154f30894b9b02"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -989,7 +989,7 @@ dependencies = [
 [[package]]
 name = "inventory"
 version = "0.3.3"
-source = "git+https://github.com/asterinas/inventory?rev=9dce587#9dce58712d1cd1e51ff067634d42b5c5fea29f48"
+source = "git+https://github.com/astros/inventory?rev=9dce587#9dce58712d1cd1e51ff067634d42b5c5fea29f48"
 dependencies = [
  "ctor",
  "ghost",
@@ -1334,32 +1334,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
 
 [[package]]
-name = "osdk-frame-allocator"
+name = "ksdk-frame-allocator"
 version = "0.14.1"
 dependencies = [
  "log",
- "ostd",
+ "kstd",
  "paste",
 ]
 
 [[package]]
-name = "osdk-heap-allocator"
+name = "ksdk-heap-allocator"
 version = "0.14.1"
 dependencies = [
  "log",
- "ostd",
+ "kstd",
 ]
 
 [[package]]
-name = "osdk-test-kernel"
+name = "ksdk-test-kernel"
 version = "0.14.1"
 dependencies = [
- "ostd",
+ "kstd",
  "owo-colors 4.1.0",
 ]
 
 [[package]]
-name = "ostd"
+name = "kstd"
 version = "0.14.1"
 dependencies = [
  "acpi",
@@ -1381,9 +1381,9 @@ dependencies = [
  "num",
  "num-derive",
  "num-traits",
- "ostd-macros",
- "ostd-pod",
- "ostd-test",
+ "kstd-macros",
+ "kstd-pod",
+ "kstd-test",
  "riscv",
  "sbi-rt",
  "smallvec",
@@ -1397,7 +1397,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ostd-macros"
+name = "kstd-macros"
 version = "0.14.1"
 dependencies = [
  "proc-macro2",
@@ -1407,17 +1407,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "ostd-pod"
+name = "kstd-pod"
 version = "0.1.1"
-source = "git+https://github.com/asterinas/ostd-pod?rev=c4644be#c4644be401cae1e046a810574078b64e35924f5f"
+source = "git+https://github.com/astros/kstd-pod?rev=c4644be#c4644be401cae1e046a810574078b64e35924f5f"
 dependencies = [
- "ostd-pod-derive",
+ "kstd-pod-derive",
 ]
 
 [[package]]
-name = "ostd-pod-derive"
+name = "kstd-pod-derive"
 version = "0.1.1"
-source = "git+https://github.com/asterinas/ostd-pod?rev=c4644be#c4644be401cae1e046a810574078b64e35924f5f"
+source = "git+https://github.com/astros/kstd-pod?rev=c4644be#c4644be401cae1e046a810574078b64e35924f5f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1425,7 +1425,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ostd-test"
+name = "kstd-test"
 version = "0.14.1"
 
 [[package]]
@@ -1697,7 +1697,7 @@ checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
 [[package]]
 name = "smoltcp"
 version = "0.11.0"
-source = "git+https://github.com/asterinas/smoltcp?tag=r_2024-11-08_f07e5b5#b10671de8aac3694e16b8f57418aa90f2891af3b"
+source = "git+https://github.com/astros/smoltcp?tag=r_2024-11-08_f07e5b5#b10671de8aac3694e16b8f57418aa90f2891af3b"
 dependencies = [
  "bitflags 1.3.2",
  "byteorder",
@@ -2049,7 +2049,7 @@ dependencies = [
 [[package]]
 name = "xarray"
 version = "0.1.0"
-source = "git+https://github.com/asterinas/xarray#1dad5d9b74aac30193bd242a97077b4c54933830"
+source = "git+https://github.com/astros/xarray#1dad5d9b74aac30193bd242a97077b4c54933830"
 dependencies = [
  "smallvec",
 ]

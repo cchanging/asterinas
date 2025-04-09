@@ -1,5 +1,5 @@
-# The OSDK manifest at the Asterinas root virtual workspace 
-# provides default OSDK settings for all packages.
+# The KSDK manifest at the Astros root virtual workspace 
+# provides default KSDK settings for all packages.
 
 # The common options for build, run and test
 [boot]

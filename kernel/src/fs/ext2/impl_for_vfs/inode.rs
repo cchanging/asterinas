@@ -4,7 +4,7 @@
 
 use core::time::Duration;
 
-use aster_rights::Full;
+use astros_rights::Full;
 
 use crate::{
     fs::{

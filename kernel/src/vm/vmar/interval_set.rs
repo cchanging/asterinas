@@ -230,7 +230,7 @@ mod tests {
     use alloc::{vec, vec::Vec};
     use core::ops::Range;
 
-    use ostd::prelude::ktest;
+    use kstd::prelude::ktest;
 
     use super::*;
 

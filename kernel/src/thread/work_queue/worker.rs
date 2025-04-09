@@ -2,7 +2,7 @@
 
 #![expect(dead_code)]
 
-use ostd::{
+use kstd::{
     cpu::{CpuId, CpuSet},
     task::Task,
 };

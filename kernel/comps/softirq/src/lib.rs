@@ -10,7 +10,7 @@ use alloc::boxed::Box;
 use core::sync::atomic::{AtomicU8, Ordering};
 
 use component::{init_component, ComponentInitError};
-use ostd::{cpu_local_cell, trap::register_bottom_half_handler};
+use kstd::{cpu_local_cell, trap::register_bottom_half_handler};
 use spin::Once;
 
 pub mod softirq_id;

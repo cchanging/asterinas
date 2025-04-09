@@ -2,7 +2,7 @@
 
 # SPDX-License-Identifier: MPL-2.0
 
-# This script is used to generate QEMU arguments for OSDK.
+# This script is used to generate QEMU arguments for KSDK.
 # Usage: `qemu_args.sh [scheme]`
 #  - scheme: "normal", "microvm" or "iommu";
 # Other arguments are configured via environmental variables:

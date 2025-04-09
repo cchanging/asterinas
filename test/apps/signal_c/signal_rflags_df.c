@@ -25,7 +25,7 @@ void sigint_handler(int signum)
 	signaled = 1; // Update volatile variable to notify main
 }
 
-// A regression test for the DF flag bug fixed in https://github.com/asterinas/asterinas/pull/1638.
+// A regression test for the DF flag bug fixed in https://github.com/astros/astros/pull/1638.
 // Also checks PR #1637 when dynamically linked. If calling a function from a shared library mapped
 // via mmap triggers a page fault and #1637 is not fixed, it may cause kernel panic.
 int main()

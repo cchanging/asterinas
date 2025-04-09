@@ -3,7 +3,7 @@
 use core::{fmt::Debug, hint::spin_loop};
 
 use log::info;
-use ostd::bus::{
+use kstd::bus::{
     BusProbeError,
     pci::{PciDeviceId, bus::PciDevice, cfg_space::Bar, common_device::PciCommonDevice},
 };

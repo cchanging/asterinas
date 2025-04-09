@@ -1,35 +1,35 @@
 [package]
-name = "aster-nix"
+name = "astros-nix"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-align_ext = { path = "../ostd/libs/align_ext" }
-aster-input = { path = "comps/input" }
-aster-block = { path = "comps/block" }
-aster-network = { path = "comps/network" }
-aster-console = { path = "comps/console" }
-aster-softirq = { path = "comps/softirq" }
-aster-logger = { path = "comps/logger" }
-aster-mlsdisk = { path = "comps/mlsdisk" }
-aster-time = { path = "comps/time" }
-aster-virtio = { path = "comps/virtio" }
-aster-nvme = { path = "comps/nvme" }
-aster-rights = { path = "libs/aster-rights" }
+align_ext = { path = "../kstd/libs/align_ext" }
+astros-input = { path = "comps/input" }
+astros-block = { path = "comps/block" }
+astros-network = { path = "comps/network" }
+astros-console = { path = "comps/console" }
+astros-softirq = { path = "comps/softirq" }
+astros-logger = { path = "comps/logger" }
+astros-mlsdisk = { path = "comps/mlsdisk" }
+astros-time = { path = "comps/time" }
+astros-virtio = { path = "comps/virtio" }
+astros-nvme = { path = "comps/nvme" }
+astros-rights = { path = "libs/astros-rights" }
 component = { path = "libs/comp-sys/component" }
 controlled = { path = "libs/comp-sys/controlled" }
-osdk-frame-allocator = { path = "../osdk/deps/frame-allocator" }
-osdk-heap-allocator = { path = "../osdk/deps/heap-allocator" }
-ostd = { path = "../ostd" }
+ksdk-frame-allocator = { path = "../ksdk/deps/frame-allocator" }
+ksdk-heap-allocator = { path = "../ksdk/deps/heap-allocator" }
+kstd = { path = "../kstd" }
 typeflags = { path = "libs/typeflags" }
 typeflags-util = { path = "libs/typeflags-util" }
-aster-rights-proc = { path = "libs/aster-rights-proc" }
-aster-util = { path = "libs/aster-util" }
-aster-bigtcp = { path = "libs/aster-bigtcp" }
+astros-rights-proc = { path = "libs/astros-rights-proc" }
+astros-util = { path = "libs/astros-util" }
+astros-bigtcp = { path = "libs/astros-bigtcp" }
 atomic-integer-wrapper = { path = "libs/atomic-integer-wrapper" }
-id-alloc = { path = "../ostd/libs/id-alloc" }
+id-alloc = { path = "../kstd/libs/id-alloc" }
 int-to-c-enum = { path = "libs/int-to-c-enum" }
 cpio-decoder = { path = "libs/cpio-decoder" }
 intrusive-collections = "0.9.5"
@@ -55,7 +55,7 @@ rand = { version = "0.8.5", default-features = false, features = [
     "small_rng",
     "std_rng",
 ] }
-inherit-methods-macro = { git = "https://github.com/asterinas/inherit-methods-macro", rev = "98f7e3e" }
+inherit-methods-macro = { git = "https://github.com/astros/inherit-methods-macro", rev = "98f7e3e" }
 getset = "0.1.2"
 takeable = "0.2.2"
 cfg-if = "1.0"
@@ -69,7 +69,7 @@ riscv = { version = "0.11.1", features = ["s-mode"] }
 [features]
 all = ["cvm_guest"]
 
-cvm_guest = ["dep:tdx-guest", "ostd/cvm_guest"]
+cvm_guest = ["dep:tdx-guest", "kstd/cvm_guest"]
 
 [lints]
 workspace = true

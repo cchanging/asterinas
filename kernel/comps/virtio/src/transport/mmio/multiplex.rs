@@ -3,9 +3,9 @@
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use core::fmt::Debug;
 
-use aster_rights::{ReadOp, TRightSet, WriteOp};
-use aster_util::safe_ptr::SafePtr;
-use ostd::{
+use astros_rights::{ReadOp, TRightSet, WriteOp};
+use astros_util::safe_ptr::SafePtr;
+use kstd::{
     io::IoMem,
     sync::RwLock,
     trap::{IrqCallbackFunction, IrqLine, TrapFrame},

@@ -2,7 +2,7 @@
 use alloc::fmt;
 use core::ptr;
 
-use ostd::sync::{WaitQueue, Waiter, Waker};
+use kstd::sync::{WaitQueue, Waiter, Waker};
 
 use crate::{
     fs::{file_handle::FileLike, inode_handle::InodeHandle},

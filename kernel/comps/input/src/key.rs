@@ -68,7 +68,7 @@ pub enum Key {
     Slash = 53,
     RightShift = 54,
     /// Keypad asterisk, Symbol: *
-    KpAsterisk = 55,
+    KpAstrosisk = 55,
     LeftAlt = 56,
     Space = 57,
     Capslock = 58,

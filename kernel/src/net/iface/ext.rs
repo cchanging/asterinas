@@ -5,7 +5,7 @@ use crate::net::socket::ip::{datagram::DatagramObserver, stream::StreamObserver}
 
 pub struct BigtcpExt;
 
-impl aster_bigtcp::ext::Ext for BigtcpExt {
+impl astros_bigtcp::ext::Ext for BigtcpExt {
     type ScheduleNextPoll = PollScheduler;
 
     type TcpEventObserver = StreamObserver;

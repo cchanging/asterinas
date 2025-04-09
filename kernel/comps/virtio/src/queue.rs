@@ -8,11 +8,11 @@ use core::{
     sync::atomic::{fence, Ordering},
 };
 
-use aster_rights::{Dup, TRightSet, TRights, Write};
-use aster_util::{field_ptr, safe_ptr::SafePtr};
+use astros_rights::{Dup, TRightSet, TRights, Write};
+use astros_util::{field_ptr, safe_ptr::SafePtr};
 use bitflags::bitflags;
 use log::debug;
-use ostd::{
+use kstd::{
     mm::{DmaCoherent, FrameAllocOptions, PodOnce},
     offset_of, Pod,
 };

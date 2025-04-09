@@ -1,17 +1,17 @@
 # template
 [components]
-nix = { name = "aster-nix" }
-virtio = { name = "aster-virtio" }
-input = { name = "aster-input" }
-block = { name = "aster-block" }
-console = { name = "aster-console" }
-softirq = { name = "aster-softirq" }
-logger = { name = "aster-logger" }
-time = { name = "aster-time" }
-framebuffer = { name = "aster-framebuffer" }
-network = { name = "aster-network" }
-mlsdisk = { name = "aster-mlsdisk" }
-nvme = { name = "aster-nvme" }
+nix = { name = "astros-nix" }
+virtio = { name = "astros-virtio" }
+input = { name = "astros-input" }
+block = { name = "astros-block" }
+console = { name = "astros-console" }
+softirq = { name = "astros-softirq" }
+logger = { name = "astros-logger" }
+time = { name = "astros-time" }
+framebuffer = { name = "astros-framebuffer" }
+network = { name = "astros-network" }
+mlsdisk = { name = "astros-mlsdisk" }
+nvme = { name = "astros-nvme" }
 
 [whitelist]
 [whitelist.nix.main]

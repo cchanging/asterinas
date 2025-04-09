@@ -2,7 +2,7 @@
 
 use alloc::sync::Arc;
 
-use ostd::task::{
+use kstd::task::{
     scheduler::{EnqueueFlags, UpdateFlags},
     Task,
 };

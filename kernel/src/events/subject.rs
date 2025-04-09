@@ -3,7 +3,7 @@
 use core::sync::atomic::{AtomicUsize, Ordering};
 
 use keyable_arc::KeyableWeak;
-use ostd::sync::LocalIrqDisabled;
+use kstd::sync::LocalIrqDisabled;
 
 use super::{Events, EventsFilter, Observer};
 use crate::prelude::*;

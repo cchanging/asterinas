@@ -9,13 +9,13 @@ BENCHMARK_ROOT="/benchmark"
 READY_MESSAGE="The VM is ready for the benchmark."
 
 BENCHMARK_NAME=$1
-SYSTEM="${2:-asterinas}"
+SYSTEM="${2:-astros}"
 echo "Running benchmark: ${BENCHMARK_NAME} on ${SYSTEM}"
 
 print_help() {
     echo "Usage: $0 <benchmark_name> <system_type>"
     echo "  benchmark_name: The name of the benchmark to run."
-    echo "  system_type: The type of system to run the benchmark on. 'linux' or 'asterinas'."
+    echo "  system_type: The type of system to run the benchmark on. 'linux' or 'astros'."
 }
 
 # Validate arguments
@@ -52,11 +52,11 @@ prepare_system() {
         ifconfig eth0 10.0.2.15
         # Mount ext2
         mount -t ext2 /dev/vda /ext2
-    elif [ "$SYSTEM" = "asterinas" ]; then
-        # Asterinas-specific preparation (if any)
+    elif [ "$SYSTEM" = "astros" ]; then
+        # Astros-specific preparation (if any)
         :
     else
-        echo "Error: Unknown system type. Please set SYSTEM to 'linux' or 'asterinas'."
+        echo "Error: Unknown system type. Please set SYSTEM to 'linux' or 'astros'."
         exit 1
     fi
 }

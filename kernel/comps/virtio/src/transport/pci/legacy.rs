@@ -3,9 +3,9 @@
 use alloc::boxed::Box;
 use core::fmt::Debug;
 
-use aster_util::safe_ptr::SafePtr;
+use astros_util::safe_ptr::SafePtr;
 use log::{info, warn};
-use ostd::{
+use kstd::{
     bus::{
         pci::{capability::CapabilityData, cfg_space::Bar, common_device::PciCommonDevice},
         BusProbeError,

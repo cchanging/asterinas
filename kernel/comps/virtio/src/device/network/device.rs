@@ -5,13 +5,13 @@ use alloc::{
 };
 use core::{fmt::Debug, mem::size_of};
 
-use aster_bigtcp::device::{Checksum, DeviceCapabilities, Medium};
-use aster_network::{
+use astros_bigtcp::device::{Checksum, DeviceCapabilities, Medium};
+use astros_network::{
     AnyNetworkDevice, EthernetAddr, RxBuffer, TxBuffer, VirtioNetError, RX_BUFFER_POOL,
 };
-use aster_util::slot_vec::SlotVec;
+use astros_util::slot_vec::SlotVec;
 use log::{debug, warn};
-use ostd::{
+use kstd::{
     mm::DmaStream,
     sync::{LocalIrqDisabled, SpinLock},
     trap::TrapFrame,
@@ -127,10 +127,10 @@ impl NetworkDevice {
 
         /// Interrupt handlers if network device receives/sends some packet
         fn handle_send_event(_: &TrapFrame) {
-            aster_network::handle_send_irq(super::DEVICE_NAME);
+            astros_network::handle_send_irq(super::DEVICE_NAME);
         }
         fn handle_recv_event(_: &TrapFrame) {
-            aster_network::handle_recv_irq(super::DEVICE_NAME);
+            astros_network::handle_recv_irq(super::DEVICE_NAME);
         }
 
         device
@@ -148,7 +148,7 @@ impl NetworkDevice {
 
         device.transport.finish_init();
 
-        aster_network::register_device(
+        astros_network::register_device(
             super::DEVICE_NAME.to_string(),
             Arc::new(SpinLock::new(device)),
         );

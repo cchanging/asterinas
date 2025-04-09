@@ -24,7 +24,7 @@ pub fn sys_close(fd: FileDesc, ctx: &Context) -> Result<SyscallReturn> {
     // only for a small subset of file systems such as NFS. We currently have no support for such
     // file systems, so it's fine to just return zero.
     //
-    // For details, see the discussion at <https://github.com/asterinas/asterinas/issues/506> and
+    // For details, see the discussion at <https://github.com/astros/astros/issues/506> and
     // the "Dealing with error returns from close()" section at
     // <https://man7.org/linux/man-pages/man2/close.2.html>.
     Ok(SyscallReturn::Return(0))

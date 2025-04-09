@@ -4,7 +4,7 @@
 
 > The security of a microkernel, the speed of a monolithic kernel.
 
-Asterinas introduces a novel OS architecture called _framekernel_,
+Astros introduces a novel OS architecture called _framekernel_,
 which unleashes the full power of Rust
 to bring the best of both monolithic kernels and microkernels.
 
@@ -31,7 +31,7 @@ the single address space allows different parts of the kernel
 to communicate in the most efficient means,
 e.g., function calls and shared memory.
 Thanks to the framekernel architecture,
-Asterinas can offer both exceptional performance and enhanced safety.
+Astros can offer both exceptional performance and enhanced safety.
 
 ![A comparison between different OS architectures](../images/a_comparison_between_os_archs.svg)
 
@@ -75,8 +75,8 @@ as [zero-cost abstractions](https://monomorph.is/posts/zero-cost-abstractions/).
 
 Fortunately, our efforts
 to design and implement an OS framework meeting these standards
-have borne fruit in the form of the [Asterinas OSTD](../ostd/).
+have borne fruit in the form of the [Astros KSTD](../kstd/).
 Using this framework as a foundation,
-we have developed the Asterinas Kernel;
+we have developed the Astros Kernel;
 this framework also enables others to create their own framekernels,
 with different goals and tradeoffs.

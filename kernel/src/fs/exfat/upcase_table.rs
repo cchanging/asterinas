@@ -4,7 +4,7 @@
 #![expect(unused_variables)]
 
 use align_ext::AlignExt;
-use aster_rights::Full;
+use astros_rights::Full;
 
 use super::{
     constants::UNICODE_SIZE,

@@ -8,7 +8,7 @@ use core::{
 };
 
 use intrusive_collections::{intrusive_adapter, LinkedList, LinkedListAtomicLink};
-use ostd::{cpu::local::CpuLocal, cpu_local, trap};
+use kstd::{cpu::local::CpuLocal, cpu_local, trap};
 
 use super::{
     softirq_id::{TASKLESS_SOFTIRQ_ID, TASKLESS_URGENT_SOFTIRQ_ID},
@@ -43,7 +43,7 @@ use super::{
 ///
 /// Users can create a `Taskless` and schedule it at any place.
 /// ```rust
-/// #use ostd::softirq::Taskless;
+/// #use kstd::softirq::Taskless;
 ///
 /// #fn my_func() {}
 ///
@@ -196,7 +196,7 @@ fn taskless_softirq_handler(
 mod test {
     use core::sync::atomic::AtomicUsize;
 
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
 

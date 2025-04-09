@@ -81,7 +81,7 @@ $(VDSO_DIR):
 	
 $(BINARY_CACHE_DIR)/vdso64.so:
 	@mkdir -p $(BINARY_CACHE_DIR)
-	@$(ATOMIC_WGET) $@ "https://raw.githubusercontent.com/asterinas/linux_vdso/2a6d2db/vdso64.so"
+	@$(ATOMIC_WGET) $@ "https://raw.githubusercontent.com/astros/linux_vdso/2a6d2db/vdso64.so"
 
 $(INITRAMFS)/lib64:
 	@mkdir -p $@

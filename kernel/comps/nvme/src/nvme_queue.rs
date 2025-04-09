@@ -5,8 +5,8 @@ use core::{
     sync::atomic::{Ordering, fence},
 };
 
-use aster_util::{field_ptr, safe_ptr::SafePtr};
-use ostd::mm::{DmaCoherent, FrameAllocOptions};
+use astros_util::{field_ptr, safe_ptr::SafePtr};
+use kstd::mm::{DmaCoherent, FrameAllocOptions};
 
 use crate::nvme_cmd::{NVMeCommand, NVMeCompletion};
 

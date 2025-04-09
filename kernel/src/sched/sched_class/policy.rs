@@ -4,7 +4,7 @@ use core::sync::atomic::{AtomicU8, Ordering::Relaxed};
 
 use atomic_integer_wrapper::define_atomic_version_of_integer_like_type;
 use int_to_c_enum::TryFromInt;
-use ostd::sync::SpinLock;
+use kstd::sync::SpinLock;
 
 pub use super::real_time::{RealTimePolicy, RealTimePriority};
 use crate::sched::nice::Nice;

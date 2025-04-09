@@ -2,7 +2,7 @@
 
 use core::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 
-use ostd::sync::WaitQueue;
+use kstd::sync::WaitQueue;
 
 use super::{
     connected::{combine_io_events, Connected},

@@ -2,8 +2,8 @@
 
 use core::sync::atomic::{AtomicU32, Ordering};
 
-use aster_rights::{ReadOp, WriteOp};
-use ostd::sync::{RoArc, Waker};
+use astros_rights::{ReadOp, WriteOp};
+use kstd::sync::{RoArc, Waker};
 
 use super::{
     kill::SignalSenderIds,

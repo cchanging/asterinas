@@ -2,8 +2,8 @@
 
 #![expect(unused_variables)]
 
-use aster_rights::Full;
-use ostd::cpu::context::{CpuExceptionInfo, UserContext};
+use astros_rights::Full;
+use kstd::cpu::context::{CpuExceptionInfo, UserContext};
 
 use crate::{
     current_userspace,

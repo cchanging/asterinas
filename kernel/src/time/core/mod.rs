@@ -2,8 +2,8 @@
 
 use core::time::Duration;
 
-use aster_time::NANOS_PER_SECOND;
-use ostd::arch::timer::TIMER_FREQ;
+use astros_time::NANOS_PER_SECOND;
+use kstd::arch::timer::TIMER_FREQ;
 
 pub mod timer;
 

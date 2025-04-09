@@ -5,7 +5,7 @@ use core::{
     sync::atomic::{AtomicBool, Ordering},
 };
 
-use aster_bigtcp::{socket::RawTcpOption, wire::IpEndpoint};
+use astros_bigtcp::{socket::RawTcpOption, wire::IpEndpoint};
 
 use super::{connecting::ConnectingStream, listen::ListenStream, StreamObserver};
 use crate::{

@@ -8,7 +8,7 @@ use core::{
 
 use align_ext::AlignExt;
 use inherit_methods_macro::inherit_methods;
-use ostd::mm::{FrameAllocOptions, Segment, UntypedMem, VmIo};
+use kstd::mm::{FrameAllocOptions, Segment, UntypedMem, VmIo};
 
 use super::{MultiRead, MultiWrite};
 use crate::prelude::*;
@@ -24,7 +24,7 @@ use crate::prelude::*;
 /// # Example
 ///
 /// ```
-/// use ostd_pod::Pod;
+/// use kstd_pod::Pod;
 /// use ring_buffer::RingBuffer;
 ///
 /// #[derive(Pod)]
@@ -448,7 +448,7 @@ impl<T, R: Deref<Target = RingBuffer<T>>> Consumer<T, R> {
 
 #[cfg(ktest)]
 mod test {
-    use ostd::prelude::*;
+    use kstd::prelude::*;
 
     use super::*;
 

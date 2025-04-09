@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use ostd::{cpu::PinCurrentCpu, task::disable_preempt};
+use kstd::{cpu::PinCurrentCpu, task::disable_preempt};
 
 use super::SyscallReturn;
 use crate::prelude::*;
@@ -13,7 +13,7 @@ pub fn sys_getcpu(cpu: Vaddr, node: Vaddr, _tcache: Vaddr, ctx: &Context) -> Res
     debug!(
         "getcpu: cpuid = {}, total_cpus = {}",
         cpuid.as_usize(),
-        ostd::cpu::num_cpus()
+        kstd::cpu::num_cpus()
     );
     // Since cpu and node can be NULL, we need to check them before writing
     if cpu != 0 {

@@ -2,7 +2,7 @@
 
 use core::mem::size_of;
 
-use ostd::Pod;
+use kstd::Pod;
 
 pub(crate) const REQUEST_SIZE: usize = size_of::<VirtioGpuCtrlHdr>();
 

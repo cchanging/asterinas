@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_network::{DmaSegment, RxBuffer, TxBuffer};
-use ostd::mm::{DmaCoherent, DmaStream, DmaStreamSlice, HasDaddr};
+use astros_network::{DmaSegment, RxBuffer, TxBuffer};
+use kstd::mm::{DmaCoherent, DmaStream, DmaStreamSlice, HasDaddr};
 
 /// A DMA-capable buffer.
 ///

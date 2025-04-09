@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-//! The block devices of Asterinas.
+//! The block devices of Astros.
 //！
 //！This crate provides a number of base components for block devices, including
 //! an abstraction of block devices, as well as the registration and lookup of block devices.
@@ -41,7 +41,7 @@ mod prelude;
 pub mod request_queue;
 
 use component::{init_component, ComponentInitError};
-use ostd::sync::SpinLock;
+use kstd::sync::SpinLock;
 use spin::Once;
 
 use self::{
@@ -49,7 +49,7 @@ use self::{
     prelude::*,
 };
 
-pub const BLOCK_SIZE: usize = ostd::mm::PAGE_SIZE;
+pub const BLOCK_SIZE: usize = kstd::mm::PAGE_SIZE;
 pub const SECTOR_SIZE: usize = 512;
 
 pub trait BlockDevice: Send + Sync + Any + Debug {

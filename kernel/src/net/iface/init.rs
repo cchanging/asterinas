@@ -2,8 +2,8 @@
 
 use alloc::{borrow::ToOwned, sync::Arc};
 
-use aster_bigtcp::device::WithDevice;
-use ostd::sync::LocalIrqDisabled;
+use astros_bigtcp::device::WithDevice;
+use kstd::sync::LocalIrqDisabled;
 use spin::Once;
 
 use super::{poll::poll_ifaces, Iface};
@@ -23,32 +23,32 @@ pub fn init() {
         ifaces
     });
 
-    for (name, _) in aster_network::all_devices() {
+    for (name, _) in astros_network::all_devices() {
         let callback = || {
             // TODO: further check that the irq num is the same as iface's irq num
             let iface_virtio = &IFACES.get().unwrap()[0];
             iface_virtio.poll();
         };
-        aster_network::register_recv_callback(&name, callback);
-        aster_network::register_send_callback(&name, callback);
+        astros_network::register_recv_callback(&name, callback);
+        astros_network::register_send_callback(&name, callback);
     }
 
     poll_ifaces();
 }
 
 fn new_virtio() -> Option<Arc<Iface>> {
-    use aster_bigtcp::{
+    use astros_bigtcp::{
         iface::EtherIface,
         wire::{EthernetAddress, Ipv4Address, Ipv4Cidr},
     };
-    use aster_network::AnyNetworkDevice;
-    use aster_virtio::device::network::DEVICE_NAME;
+    use astros_network::AnyNetworkDevice;
+    use astros_virtio::device::network::DEVICE_NAME;
 
     const VIRTIO_ADDRESS: Ipv4Address = Ipv4Address::new(10, 0, 2, 15);
     const VIRTIO_ADDRESS_PREFIX_LEN: u8 = 24; // mask: 255.255.255.0
     const VIRTIO_GATEWAY: Ipv4Address = Ipv4Address::new(10, 0, 2, 2);
 
-    let virtio_net = aster_network::get_device(DEVICE_NAME)?;
+    let virtio_net = astros_network::get_device(DEVICE_NAME)?;
 
     let ether_addr = virtio_net.lock().mac_addr().0;
 
@@ -77,7 +77,7 @@ fn new_virtio() -> Option<Arc<Iface>> {
 }
 
 fn new_loopback() -> Arc<Iface> {
-    use aster_bigtcp::{
+    use astros_bigtcp::{
         device::{Loopback, Medium},
         iface::IpIface,
         wire::{Ipv4Address, Ipv4Cidr},

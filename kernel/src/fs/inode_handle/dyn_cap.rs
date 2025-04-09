@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_rights::TRights;
+use astros_rights::TRights;
 use inherit_methods_macro::inherit_methods;
 
 use super::*;

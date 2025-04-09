@@ -11,7 +11,7 @@ use core::{
     time::Duration,
 };
 
-use ostd::sync::SpinLock;
+use kstd::sync::SpinLock;
 
 use super::Clock;
 

@@ -4,7 +4,7 @@ use alloc::sync::Arc;
 use core::time::Duration;
 
 use log::trace;
-use ostd::timer::Jiffies;
+use kstd::timer::Jiffies;
 
 use super::{Iface, IFACES};
 use crate::{
@@ -50,7 +50,7 @@ fn spawn_background_poll_thread(iface: Arc<Iface>) {
             // we have opted to assign a high priority to the polling thread,
             // ensuring that the `poll` runs as soon as possible.
             // For a more in-depth discussion, please refer to the following link:
-            // <https://github.com/asterinas/asterinas/pull/630#discussion_r1496817030>.
+            // <https://github.com/astros/astros/pull/630#discussion_r1496817030>.
             if now_as_ms >= next_poll_at_ms {
                 iface.poll();
                 continue;

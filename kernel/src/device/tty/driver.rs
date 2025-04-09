@@ -2,7 +2,7 @@
 
 #![expect(dead_code)]
 
-use ostd::mm::{Infallible, VmReader};
+use kstd::mm::{Infallible, VmReader};
 use spin::Once;
 
 use crate::{
@@ -13,7 +13,7 @@ use crate::{
 pub static TTY_DRIVER: Once<Arc<TtyDriver>> = Once::new();
 
 pub(super) fn init() {
-    for (_, device) in aster_console::all_devices() {
+    for (_, device) in astros_console::all_devices() {
         device.register_callback(&console_input_callback)
     }
     let tty_driver = Arc::new(TtyDriver::new());

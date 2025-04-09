@@ -8,8 +8,8 @@
 use core::ops::Range;
 
 use align_ext::AlignExt;
-use aster_rights::Rights;
-use ostd::{
+use astros_rights::Rights;
+use kstd::{
     collections::xarray::{CursorMut, XArray},
     mm::{FrameAllocOptions, UFrame, UntypedMem, VmReader, VmWriter},
 };
@@ -66,7 +66,7 @@ pub use pager::Pager;
 /// # Implementation
 ///
 /// `Vmo` provides high-level APIs for address space management by wrapping
-/// around its low-level counterpart [`ostd::mm::UFrame`].
+/// around its low-level counterpart [`kstd::mm::UFrame`].
 /// Compared with `UFrame`,
 /// `Vmo` is easier to use (by offering more powerful APIs) and
 /// harder to misuse (thanks to its nature of being capability).

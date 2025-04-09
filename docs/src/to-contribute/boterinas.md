@@ -2,9 +2,9 @@
 
 ## Introduction
 
-`@boterinas` is a general-purpose bot designed for a wide variety of tasks in Asterinas. It streamlines maintenance tasks to enhance workflow efficiency. 
+`@boterinas` is a general-purpose bot designed for a wide variety of tasks in Astros. It streamlines maintenance tasks to enhance workflow efficiency. 
 
-Commands are issued by writing comments that start with the text `@boterinas`. The available commands depend on which repository you are using. The main Asterinas repository contains a `triagebot.toml` file where you can see which features are enabled. 
+Commands are issued by writing comments that start with the text `@boterinas`. The available commands depend on which repository you are using. The main Astros repository contains a `triagebot.toml` file where you can see which features are enabled. 
 
 Commands for GitHub issues or pull requests should be issued by writing `@boterinas` followed by the command anywhere in the comment. Note that `@boterinas` will ignore commands in Markdown code blocks, inline code spans, or blockquotes. You can enter multiple `@boterinas` commands in a single comment. 
 

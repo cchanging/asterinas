@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
-// A regression test for the futex lost wakeup bug fixed in https://github.com/asterinas/asterinas/pull/1642
+// A regression test for the futex lost wakeup bug fixed in https://github.com/astros/astros/pull/1642
 
 #include <pthread.h>
 #include <stdio.h>

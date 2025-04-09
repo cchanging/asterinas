@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use aster_bigtcp::{
+use astros_bigtcp::{
     errors::BindError,
     iface::BindPortConfig,
     wire::{IpAddress, IpEndpoint},

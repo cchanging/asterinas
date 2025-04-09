@@ -4,8 +4,8 @@
 
 use core::sync::atomic::{AtomicU8, Ordering};
 
-use aster_util::slot_vec::SlotVec;
-use ostd::sync::RwArc;
+use astros_util::slot_vec::SlotVec;
+use kstd::sync::RwArc;
 
 use super::{
     file_handle::FileLike,
@@ -280,7 +280,7 @@ macro_rules! get_file_fast {
     ($file_table:expr, $file_desc:expr) => {{
         use alloc::borrow::Cow;
 
-        use ostd::sync::RwArc;
+        use kstd::sync::RwArc;
 
         use crate::fs::file_table::{FileDesc, FileTable};
 

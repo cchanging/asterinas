@@ -2,7 +2,7 @@
 
 use core::cmp::min;
 
-use ostd::task::Task;
+use kstd::task::Task;
 
 use super::{ip::CSocketAddrInet, unix, vsock::CSocketAddrVm};
 use crate::{current_userspace, net::socket::SocketAddr, prelude::*};

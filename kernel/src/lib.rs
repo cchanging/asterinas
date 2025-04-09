@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
-//! Aster-nix is the Asterinas kernel, a safe, efficient unix-like
-//! operating system kernel built on top of OSTD and OSDK.
+//! astros-nix is the Astros kernel, a safe, efficient unix-like
+//! operating system kernel built on top of KSTD and KSDK.
 
 #![no_std]
 #![no_main]
@@ -31,7 +31,7 @@
 #![register_tool(component_access_control)]
 
 use kcmdline::KCmdlineArg;
-use ostd::{
+use kstd::{
     arch::qemu::{exit_qemu, QemuExitCode},
     boot::boot_info,
     cpu::{CpuId, CpuSet, PinCurrentCpu},
@@ -69,15 +69,15 @@ mod util;
 pub(crate) mod vdso;
 pub mod vm;
 
-#[ostd::main]
+#[kstd::main]
 #[controlled]
 pub fn main() {
-    ostd::early_println!("[kernel] OSTD initialized. Preparing components.");
+    kstd::early_println!("[kernel] KSTD initialized. Preparing components.");
     component::init_all(component::parse_metadata!()).unwrap();
     init();
 
     // Spawn all AP idle threads.
-    ostd::boot::smp::register_ap_entry(ap_init);
+    kstd::boot::smp::register_ap_entry(ap_init);
 
     // Spawn the first kernel thread on BSP.
     let mut affinity = CpuSet::new_empty();
@@ -105,17 +105,17 @@ pub fn init() {
 
 fn ap_init() {
     fn ap_idle_thread() {
-        let preempt_guard = ostd::task::disable_preempt();
+        let preempt_guard = kstd::task::disable_preempt();
         let cpu_id = preempt_guard.current_cpu();
         drop(preempt_guard);
         log::info!("Kernel idle thread for CPU #{} started.", cpu_id.as_usize());
 
         loop {
             crate::thread::Thread::yield_now();
-            ostd::cpu::sleep_for_interrupt();
+            kstd::cpu::sleep_for_interrupt();
         }
     }
-    let preempt_guard = ostd::task::disable_preempt();
+    let preempt_guard = kstd::task::disable_preempt();
     let cpu_id = preempt_guard.current_cpu();
     drop(preempt_guard);
 
@@ -154,7 +154,7 @@ fn init_thread() {
     // Wait till initproc become zombie.
     while !initproc.status().is_zombie() {
         crate::thread::Thread::yield_now();
-        ostd::cpu::sleep_for_interrupt();
+        kstd::cpu::sleep_for_interrupt();
     }
 
     // TODO: exit via qemu isa debug device should not be the only way.
@@ -170,10 +170,10 @@ fn print_banner() {
     println!("\x1B[36m");
     println!(
         r"
-   _   ___ _____ ___ ___ ___ _  _   _   ___
-  /_\ / __|_   _| __| _ \_ _| \| | /_\ / __|
- / _ \\__ \ | | | _||   /| || .` |/ _ \\__ \
-/_/ \_\___/ |_| |___|_|_\___|_|\_/_/ \_\___/
+   _   ___ _____ ___  ___  ___
+  /_\ / __|_   _| _ \| _ |/ __|
+ / _ \\__ \ | | |   /||_||\__ \
+/_/ \_\___/ |_| |_|_\|___|\___/
 "
     );
     println!("\x1B[0m");
