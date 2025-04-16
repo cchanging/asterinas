@@ -22,6 +22,7 @@ use crate::{
     fs::{
         device::Device,
         fs_resolver::{FsPath, AT_FDCWD},
+        notify::FsnotifyCommon,
         path::Path,
         registry::{FsProperties, FsType},
         utils::{
@@ -100,6 +101,8 @@ struct OverlayInode {
     fs: Weak<OverlayFs>,
     /// Weak self reference.
     self_: Weak<OverlayInode>,
+    /// Fsnotify common.
+    fsnotify_common: FsnotifyCommon,
 }
 
 impl OverlayFs {
@@ -179,6 +182,7 @@ impl FileSystem for OverlayFs {
                 .collect(),
             fs: self.self_.clone(),
             self_: weak.clone(),
+            fsnotify_common: FsnotifyCommon::new(),
         })
     }
 
@@ -278,6 +282,7 @@ impl OverlayInode {
             lowers: Vec::new(),
             fs: self.fs.clone(),
             self_: weak.clone(),
+            fsnotify_common: FsnotifyCommon::new(),
         });
         Ok(new_child)
     }
@@ -443,6 +448,10 @@ impl OverlayInode {
 
     pub fn type_(&self) -> InodeType {
         self.type_
+    }
+
+    pub fn fsnotify_common(&self) -> &FsnotifyCommon {
+        &self.fsnotify_common
     }
 
     pub fn page_cache(&self) -> Option<Vmo<Full>> {
@@ -696,6 +705,7 @@ impl OverlayInode {
             lowers: lower_children,
             fs: self.fs.clone(),
             self_: weak.clone(),
+            fsnotify_common: FsnotifyCommon::new(),
         });
 
         Ok(Some(child_ovl_inode))
@@ -958,6 +968,7 @@ impl Inode for OverlayInode {
     fn get_xattr(&self, name: XattrName, value_writer: &mut VmWriter) -> Result<usize>;
     fn list_xattr(&self, namespace: XattrNamespace, list_writer: &mut VmWriter) -> Result<usize>;
     fn remove_xattr(&self, name: XattrName) -> Result<()>;
+    fn fsnotify(&self) -> &FsnotifyCommon;
 }
 
 /// The index of the layer of an `OverlayFs`.
