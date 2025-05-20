@@ -2203,7 +2203,6 @@ impl InodeDesc {
         blocks
     }
 
-    #[inline]
     fn size_to_blocks(&self, size: usize) -> Ext2Bid {
         if self.type_ == InodeType::SymLink && size <= MAX_FAST_SYMLINK_LEN {
             return 0;
