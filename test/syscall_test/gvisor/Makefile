@@ -18,7 +18,6 @@ TESTS ?= \
 	fsync_test \
 	futex_test \
 	getdents_test \
-	inotify_test \
 	ioctl_test \
 	link_test \
 	lseek_test \
@@ -70,30 +69,50 @@ TESTS ?= \
 
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 CUR_DIR := $(patsubst %/,%,$(dir $(MKFILE_PATH)))
-INITRAMFS ?= $(CUR_DIR)/../build/initramfs
-RUN_BASH := $(CUR_DIR)/run_syscall_test.sh
-TARGET_DIR := $(INITRAMFS)/opt/syscall_test
-SYSCALL_TEST_SUITE ?= ltp
-GVISOR_DIR := $(INITRAMFS)/opt/gvisor
-LTP_DIR := $(INITRAMFS)/opt/ltp
+BUILD_DIR ?= $(CUR_DIR)/../../build
+ifdef ASTER_PREBUILT_SYSCALL_TEST
+	BIN_DIR := $(ASTER_PREBUILT_SYSCALL_TEST)
+else
+	BIN_DIR := $(BUILD_DIR)/syscall_test_bins
+	SRC_DIR := $(BUILD_DIR)/gvisor_src
+endif
+INITRAMFS ?= $(CUR_DIR)/../../build/initramfs
+TARGET_DIR := $(INITRAMFS)/opt/gvisor
+RUN_BASH := $(CUR_DIR)/run_gvisor_test.sh
+BLOCK_LIST := $(CUR_DIR)/blocklists
+EXFAT_BLOCK_LIST := $(CUR_DIR)/blocklists.exfat
 
 .PHONY: all
-all: $(TARGET_DIR)
+all: $(TESTS)
 
-$(TARGET_DIR): $(RUN_BASH) $(GVISOR_DIR) $(LTP_DIR)
+$(TESTS): $(BIN_DIR) $(TARGET_DIR)
+	@cp -f $</$@ $(TARGET_DIR)/tests
+
+ifndef ASTER_PREBUILT_SYSCALL_TEST
+$(BIN_DIR): $(SRC_DIR)
+	@if ! type bazel > /dev/null; then \
+		echo "bazel is not installed, please run tools/install_bazel.sh with sudo permission to install it."; \
+		exit 1; \
+	fi
 	@rm -rf $@ && mkdir -p $@
+	@cd $(SRC_DIR) && bazel build --test_tag_filters=native //test/syscalls/...
+	@cp $(SRC_DIR)/bazel-bin/test/syscalls/linux/*_test $@
+
+$(SRC_DIR):
+	@rm -rf $@ && mkdir -p $@
+	@cd $@ && git clone -b 20200921.0 https://github.com/asterinas/gvisor.git .
+endif
+
+$(TARGET_DIR): $(RUN_BASH) $(BLOCK_LIST) $(EXFAT_BLOCK_LIST)
+	@rm -rf $@ && mkdir -p $@
+	@# Prepare tests dir for test binaries
+	@mkdir $@/tests
+	@# Copy blocklists
+	@cp -rf $(BLOCK_LIST) $@
+	@# Copy exFAT specific blocklists
+	@cp -rf $(EXFAT_BLOCK_LIST) $@
 	@# Copy bash script
 	@cp -f $(RUN_BASH) $@
-
-$(GVISOR_DIR):
-ifeq ($(SYSCALL_TEST_SUITE), gvisor)
-	@$(MAKE) --no-print-directory -C gvisor
-endif
-
-$(LTP_DIR):
-ifeq ($(SYSCALL_TEST_SUITE), ltp)
-	@$(MAKE) --no-print-directory -C ltp
-endif
 
 .PHONY: clean
 clean:
