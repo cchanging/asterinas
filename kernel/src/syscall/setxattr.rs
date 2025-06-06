@@ -154,7 +154,7 @@ pub(super) fn lookup_dentry_for_xattr<'a>(
     }
 }
 
-pub(super) fn read_xattr_name_cstr_from_user<'a>(
+pub(super) fn read_xattr_name_cstr_from_user(
     name_ptr: Vaddr,
     user_space: &CurrentUserSpace,
 ) -> Result<CString> {
@@ -173,9 +173,10 @@ pub(super) fn parse_xattr_name(name_str: &str) -> Result<XattrName> {
         return_errno_with_message!(Errno::ERANGE, "xattr name empty or too long");
     }
 
-    let xattr_name = XattrName::try_from_full_name(name_str.as_ref()).ok_or(
-        Error::with_message(Errno::EOPNOTSUPP, "invalid xattr namespace"),
-    )?;
+    let xattr_name = XattrName::try_from_full_name(name_str).ok_or(Error::with_message(
+        Errno::EOPNOTSUPP,
+        "invalid xattr namespace",
+    ))?;
     Ok(xattr_name)
 }
 
@@ -184,18 +185,14 @@ pub(super) fn check_xattr_namespace(namespace: XattrNamespace, ctx: &Context) ->
     let permitted_capset = credentials.permitted_capset();
     let effective_capset = credentials.effective_capset();
 
-    match namespace {
-        XattrNamespace::Trusted => {
-            if !permitted_capset.contains(CapSet::SYS_ADMIN)
-                || !effective_capset.contains(CapSet::SYS_ADMIN)
-            {
-                return_errno_with_message!(
-                    Errno::EPERM,
-                    "try to access trusted xattr without CAP_SYS_ADMIN"
-                );
-            }
-        }
-        _ => {}
+    if namespace == XattrNamespace::Trusted
+        && (!permitted_capset.contains(CapSet::SYS_ADMIN)
+            || !effective_capset.contains(CapSet::SYS_ADMIN))
+    {
+        return_errno_with_message!(
+            Errno::EPERM,
+            "try to access trusted xattr without CAP_SYS_ADMIN"
+        );
     }
     Ok(())
 }

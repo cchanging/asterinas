@@ -116,7 +116,7 @@ struct Dirent {
     name: CString,
 }
 
-#[repr(packed)]
+#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
 struct DirentInner {
     d_ino: u64,
@@ -175,7 +175,7 @@ struct Dirent64 {
     name: CString,
 }
 
-#[repr(packed)]
+#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
 struct Dirent64Inner {
     d_ino: u64,
