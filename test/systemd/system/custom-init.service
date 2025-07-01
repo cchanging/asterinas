@@ -1,0 +1,11 @@
+[Unit]
+Description=Custom Initialization Process
+DefaultDependencies=no
+AllowIsolate=yes
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/busybox sh -i -l
+StandardInput=tty 
+StandardOutput=tty         
+StandardError=tty         
