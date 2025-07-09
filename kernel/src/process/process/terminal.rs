@@ -85,7 +85,9 @@ impl dyn Terminal {
 
             // Commands that are invalid or not supported
             _ => {
-                return_errno_with_message!(Errno::EINVAL, "the `ioctl` command is invalid")
+                crate::println!("todo: {:?}", cmd);
+                Ok(())
+                //return_errno_with_message!(Errno::EINVAL, "the `ioctl` command is invalid")
             }
         }
     }

@@ -1,0 +1,5 @@
+[Unit]
+Description=My Custom Target
+Requires=custom-init.service
+After=custom-init.service
+AllowIsolate=yes

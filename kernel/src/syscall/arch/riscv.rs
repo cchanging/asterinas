@@ -75,6 +75,7 @@ use crate::syscall::{
     pwritev::{sys_pwritev, sys_pwritev2, sys_writev},
     read::sys_read,
     readlink::sys_readlinkat,
+    reboot::sys_reboot,
     recvfrom::sys_recvfrom,
     recvmsg::sys_recvmsg,
     rename::sys_renameat,

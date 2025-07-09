@@ -5,7 +5,7 @@ use alloc::sync::{Arc, Weak};
 use ostd::sync::RwLock;
 
 use crate::{
-    fs::utils::{FileSystem, InnerNode, Inode, InodeMode, KernelFsInode, Metadata},
+    fs::{notify::FsnotifyCommon, utils::{FileSystem, InnerNode, Inode, InodeMode, KernelFsInode, Metadata}},
     Result,
 };
 
@@ -74,6 +74,10 @@ impl KernelFsInode for SysFsInode {
 
     fn this(&self) -> Arc<Self> {
         self.this.upgrade().expect("Weak ref invalid")
+    }
+
+    fn fsnotify_common(&self) -> &FsnotifyCommon {
+        &self.fsnotify_common
     }
 }
 

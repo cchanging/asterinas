@@ -33,6 +33,7 @@ INITRAMFS_ALL_DIRS := \
 	$(INITRAMFS)/bin \
 	$(INITRAMFS)/sbin \
 	$(INITRAMFS)/usr/bin \
+	$(INITRAMFS)/usr/lib \
 	$(INITRAMFS)/usr/local \
 	$(INITRAMFS)/benchmark \
 	$(INITRAMFS_EMPTY_DIRS)
@@ -70,6 +71,17 @@ $(INITRAMFS)/lib/x86_64-linux-gnu: | $(VDSO_LIB)
 	@cp -L /lib/x86_64-linux-gnu/libkrb5support.so.0 $@
 	@cp -L /lib/x86_64-linux-gnu/libkeyutils.so.1 $@
 	@cp -L /lib/x86_64-linux-gnu/libresolv.so.2 $@
+
+	
+	@cp -L /lib/x86_64-linux-gnu/libcap.so.2 $@
+	@cp -L /lib/x86_64-linux-gnu/librt.so.1 $@
+	@cp -L /lib/x86_64-linux-gnu/libmount.so.1 $@
+	@cp -L /lib/x86_64-linux-gnu/libselinux.so.1 $@
+	@cp -L /lib/x86_64-linux-gnu/libpcre2-8.so.0 $@
+	@cp -L /lib/x86_64-linux-gnu/libblkid.so.1 $@
+	@cp $(CUR_DIR)/../systemd/builddir/src/core/libsystemd-core-256.so $@
+	@cp $(CUR_DIR)/../systemd/builddir/src/shared/libsystemd-shared-256.so $@
+
 	@# required for LevelDB-db_bench_sqlite3
 	@cp -L /lib/x86_64-linux-gnu/libsqlite3.so $@
 	@# required for memcached
@@ -97,7 +109,8 @@ $(INITRAMFS)/lib64:
 
 $(INITRAMFS)/etc:
 	@mkdir -p $@
-	@cp $(CUR_DIR)/etc/* $@
+	@cp -r $(CUR_DIR)/etc/* $@
+	@cp -r $(CUR_DIR)/etc/systemd $@
 
 # Install busybox into /bin and /usr/bin.
 $(INITRAMFS)/bin:
@@ -113,6 +126,11 @@ $(INITRAMFS)/usr/bin: | $(INITRAMFS)/bin
 	@mkdir -p $@
 	@cp /usr/bin/busybox $@
 
+$(INITRAMFS)/usr/lib:
+	@mkdir -p $@
+	@mkdir -p $@/systemd
+	@cp -r $(CUR_DIR)/../systemd/builddir/systemd-executor $@/systemd
+
 $(INITRAMFS)/usr/local:
 	@mkdir -p $@
 	@cp -r /usr/local/nginx $@
@@ -122,6 +140,7 @@ $(INITRAMFS)/usr/local:
 .PHONY: $(INITRAMFS)/test
 $(INITRAMFS)/test:
 	@$(MAKE) --no-print-directory -C apps
+	@cp -rf $(CUR_DIR)/../systemd/builddir/systemd $@
 
 $(INITRAMFS)/benchmark: | $(INITRAMFS)/benchmark/bin
 	@cp -rf $(CUR_DIR)/benchmark/* $@

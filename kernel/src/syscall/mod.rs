@@ -93,6 +93,7 @@ mod pwrite64;
 mod pwritev;
 mod read;
 mod readlink;
+mod reboot;
 mod recvfrom;
 mod recvmsg;
 mod removexattr;

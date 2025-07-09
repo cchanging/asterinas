@@ -256,6 +256,11 @@ impl SysNode for CgroupUnifiedNode {
                     .write_fallible(&mut VmReader::from((context + "\n").as_bytes()))
                     .map_err(|_| Error::AttributeError)
             }
+            "cgroup.controllers" =>  {
+                writer
+                    .write_fallible(&mut VmReader::from(("\n").as_bytes()))
+                    .map_err(|_| Error::AttributeError)
+            }
             _ => {
                 // TODO: Add support for reading other attributes.
                 Err(Error::AttributeError)
@@ -301,6 +306,11 @@ impl SysNode for CgroupNormalNode {
     fn read_attr(&self, name: &str, writer: &mut VmWriter) -> Result<usize> {
         match name {
             "cgroup.procs" => self.read_procs(writer),
+            "cgroup.controllers" =>  {
+                writer
+                    .write_fallible(&mut VmReader::from(("\n").as_bytes()))
+                    .map_err(|_| Error::AttributeError)
+            }
             _ => {
                 // TODO: Add support for reading other attributes.
                 Err(Error::AttributeError)

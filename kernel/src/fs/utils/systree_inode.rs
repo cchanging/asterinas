@@ -15,11 +15,10 @@ use aster_systree::{
 use crate::{
     events::IoEvents,
     fs::{
-        device::Device,
-        utils::{
+        device::Device, notify::FsnotifyCommon, utils::{
             DirentVisitor, FallocMode, FileSystem, Inode, InodeMode, InodeType, IoctlCmd, Metadata,
             MknodType,
-        },
+        }
     },
     prelude::{VmReader, VmWriter},
     process::{signal::PollHandle, Gid, Uid},
@@ -49,6 +48,8 @@ pub(in crate::fs) trait KernelFsInode: Send + Sync + 'static {
         Self: Sized + 'static;
 
     fn inner_node(&self) -> &InnerNode;
+
+    fn fsnotify_common(&self) -> &FsnotifyCommon;
 
     fn metadata(&self) -> &Metadata;
 
@@ -561,6 +562,10 @@ impl<KInode: KernelFsInode + Send + Sync + 'static> Inode for KInode {
 
     default fn is_dentry_cacheable(&self) -> bool {
         true
+    }
+
+    default fn fsnotify(&self) -> &FsnotifyCommon {
+        self.fsnotify_common()
     }
 }
 

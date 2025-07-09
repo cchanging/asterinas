@@ -88,6 +88,7 @@ use crate::syscall::{
     pwritev::{sys_pwritev, sys_pwritev2, sys_writev},
     read::sys_read,
     readlink::{sys_readlink, sys_readlinkat},
+    reboot::sys_reboot,
     recvfrom::sys_recvfrom,
     recvmsg::sys_recvmsg,
     removexattr::{sys_fremovexattr, sys_lremovexattr, sys_removexattr},
@@ -299,6 +300,7 @@ impl_syscall_nums_and_dispatch_fn! {
     SYS_SYNC = 162             => sys_sync(args[..0]);
     SYS_MOUNT = 165            => sys_mount(args[..5]);
     SYS_UMOUNT2 = 166           => sys_umount(args[..2]);
+    SYS_REBOOT = 169           => sys_reboot(args[..4]);
     SYS_GETTID = 186           => sys_gettid(args[..0]);
     SYS_SETXATTR = 188         => sys_setxattr(args[..5]);
     SYS_LSETXATTR = 189        => sys_lsetxattr(args[..5]);

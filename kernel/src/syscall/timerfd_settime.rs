@@ -54,7 +54,7 @@ pub fn sys_timerfd_settime(
 
     if expire_time != Duration::ZERO {
         if flags.contains(TFDSetTimeFlags::TFD_TIMER_CANCEL_ON_SET) {
-            unimplemented!()
+            //unimplemented!()
         }
 
         let timeout = if flags.contains(TFDSetTimeFlags::TFD_TIMER_ABSTIME) {

@@ -148,6 +148,9 @@ fn do_new_mount(
     if fs_type.is_empty() {
         return_errno_with_message!(Errno::EINVAL, "fs_type is empty");
     }
+    if fs_type.to_str().is_ok_and(|string| string == "devtmpfs" ||  string == "cgroup" || string == "tmpfs" || string == "proc" || string == "sysfs") {
+        return Ok(());
+    }
     let fs = get_fs(fs_type, devname, data, ctx)?;
     target_dentry.mount(fs)?;
     Ok(())

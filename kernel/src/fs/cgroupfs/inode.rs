@@ -10,11 +10,9 @@ use ostd::sync::RwLock;
 use crate::{
     error::Errno,
     fs::{
-        cgroupfs::systree_node::{CgroupNormalNode, CgroupUnifiedNode},
-        path::{is_dot, is_dotdot},
-        utils::{
+        cgroupfs::systree_node::{CgroupNormalNode, CgroupUnifiedNode}, notify::FsnotifyCommon, path::{is_dot, is_dotdot}, utils::{
             FileSystem, InnerNode, Inode, InodeMode, InodeType, KernelFsInode, Metadata, NAME_MAX,
-        },
+        }
     },
     return_errno, return_errno_with_message, Result,
 };
@@ -31,6 +29,8 @@ pub struct CgroupInode {
     parent: Weak<CgroupInode>,
     /// Weak self-reference for cyclic data structures.
     this: Weak<CgroupInode>,
+    /// Fsnotify common.
+    fsnotify_common: FsnotifyCommon,
 }
 
 impl KernelFsInode for CgroupInode {
@@ -49,6 +49,7 @@ impl KernelFsInode for CgroupInode {
             mode: RwLock::new(mode),
             parent,
             this: this.clone(),
+            fsnotify_common: FsnotifyCommon::new(),
         })
     }
 
@@ -75,6 +76,10 @@ impl KernelFsInode for CgroupInode {
 
     fn this(&self) -> Arc<Self> {
         self.this.upgrade().expect("Weak ref invalid")
+    }
+
+    fn fsnotify_common(&self) -> &FsnotifyCommon {
+        &self.fsnotify_common
     }
 }
 
