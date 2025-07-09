@@ -22,5 +22,5 @@ Before=initrd-root-device.target systemd-hibernate-resume.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/systemd/lib/systemd/systemd-battery-check
+ExecStart=/etc/lib/systemd/systemd-battery-check
 FailureAction=poweroff-force

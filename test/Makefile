@@ -20,6 +20,7 @@ EXFAT_IMAGE := $(BUILD_DIR)/exfat.img
 INITRAMFS_EMPTY_DIRS := \
 	$(INITRAMFS)/root \
 	$(INITRAMFS)/tmp \
+	$(INITRAMFS)/var \
 	$(INITRAMFS)/opt \
 	$(INITRAMFS)/proc \
 	$(INITRAMFS)/dev \
@@ -107,10 +108,16 @@ $(INITRAMFS)/lib64:
 	@mkdir -p $@
 	@cp -L /lib64/ld-linux-x86-64.so.2 $@
 
+$(INITRAMFS)/var:
+	@mkdir -p $@
+	@mkdir -p $@/run
+	@mkdir -p $@/run/utmp
+
 $(INITRAMFS)/etc:
 	@mkdir -p $@
 	@cp -r $(CUR_DIR)/etc/* $@
 	@cp -r $(CUR_DIR)/etc/systemd $@
+	@cp -r /opt/systemd/lib $@
 
 # Install busybox into /bin and /usr/bin.
 $(INITRAMFS)/bin:
@@ -121,10 +128,12 @@ $(INITRAMFS)/sbin:
 	@mkdir -p $@
 	@cp /sbin/ldconfig $@
 	@cp /sbin/ldconfig.real $@
+	@cp /sbin/agetty $@
 
 $(INITRAMFS)/usr/bin: | $(INITRAMFS)/bin
 	@mkdir -p $@
 	@cp /usr/bin/busybox $@
+	@/usr/bin/busybox --install -s $@
 
 $(INITRAMFS)/usr/lib:
 	@mkdir -p $@

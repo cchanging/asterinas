@@ -21,7 +21,7 @@ use crate::{
 /// Each epoll entry can be added, modified, or deleted by the `EpollCtl` command.
 pub(super) struct Entry {
     // The file descriptor and the file.
-    key: EntryKey,
+    pub key: EntryKey,
     // The event masks and flags.
     inner: Mutex<Inner>,
     // The observer that receives events.
@@ -33,8 +33,8 @@ pub(super) struct Entry {
 
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub(super) struct EntryKey {
-    fd: FileDesc,
-    file: KeyableWeak<dyn FileLike>,
+    pub fd: FileDesc,
+    pub file: KeyableWeak<dyn FileLike>,
 }
 
 impl From<(FileDesc, KeyableWeak<dyn FileLike>)> for EntryKey {

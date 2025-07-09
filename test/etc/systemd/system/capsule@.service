@@ -16,7 +16,7 @@ After=dbus.service systemd-oomd.service
 User=c-%i
 DynamicUser=yes
 Type=notify-reload
-ExecStart=/opt/systemd/lib/systemd/systemd --user --unit=capsule@%i.target
+ExecStart=/etc/lib/systemd/systemd --user --unit=capsule@%i.target
 Environment=HOME=/var/lib/capsules/%i
 Environment=XDG_RUNTIME_DIR=/run/capsules/%i
 StateDirectory=capsules/%i

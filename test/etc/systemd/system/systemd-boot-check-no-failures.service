@@ -16,7 +16,7 @@ Before=boot-complete.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/systemd/lib/systemd/systemd-boot-check-no-failures
+ExecStart=/etc/lib/systemd/systemd-boot-check-no-failures
 
 [Install]
 RequiredBy=boot-complete.target

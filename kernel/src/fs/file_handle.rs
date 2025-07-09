@@ -44,7 +44,7 @@ pub trait FileLike: Pollable + Send + Sync + Any {
     }
 
     fn ioctl(&self, cmd: IoctlCmd, arg: usize) -> Result<i32> {
-        return_errno_with_message!(Errno::EINVAL, "ioctl is not supported");
+        return_errno_with_message!(Errno::ENOTTY, "ioctl is not supported");
     }
 
     fn resize(&self, new_size: usize) -> Result<()> {

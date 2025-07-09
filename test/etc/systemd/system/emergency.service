@@ -20,7 +20,7 @@ Before=rescue.service
 Environment=HOME=/root
 WorkingDirectory=-/root
 ExecStartPre=-plymouth --wait quit
-ExecStart=-/opt/systemd/lib/systemd/systemd-sulogin-shell emergency
+ExecStart=-/etc/lib/systemd/systemd-sulogin-shell emergency
 Type=idle
 StandardInput=tty-force
 StandardOutput=inherit

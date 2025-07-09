@@ -16,4 +16,4 @@ After=sleep.target
 
 [Service]
 Type=oneshot
-ExecStart=/opt/systemd/lib/systemd/systemd-sleep suspend
+ExecStart=/etc/lib/systemd/systemd-sleep suspend

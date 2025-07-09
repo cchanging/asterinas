@@ -22,4 +22,4 @@ Before=shutdown.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/systemd/lib/systemd/systemd-remount-fs
+ExecStart=/etc/lib/systemd/systemd-remount-fs

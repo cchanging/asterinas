@@ -19,6 +19,6 @@ ConditionPathIsReadWrite=/proc/sys/net/
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/systemd/lib/systemd/systemd-sysctl
+ExecStart=/etc/lib/systemd/systemd-sysctl
 TimeoutSec=90s
 ImportCredential=sysctl.*

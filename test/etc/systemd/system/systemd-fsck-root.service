@@ -20,5 +20,5 @@ OnFailureJobMode=replace-irreversibly
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/systemd/lib/systemd/systemd-fsck
+ExecStart=/etc/lib/systemd/systemd-fsck
 TimeoutSec=infinity

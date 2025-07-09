@@ -19,4 +19,4 @@ AssertPathExists=/etc/initrd-release
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/systemd/lib/systemd/systemd-volatile-root yes /sysroot
+ExecStart=/etc/lib/systemd/systemd-volatile-root yes /sysroot

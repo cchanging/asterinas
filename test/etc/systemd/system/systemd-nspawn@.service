@@ -13,12 +13,12 @@ Documentation=man:systemd-nspawn(1)
 Wants=modprobe@tun.service modprobe@loop.service modprobe@dm_mod.service
 PartOf=machines.target
 Before=machines.target
-After=network.target modprobe@tun.service modprobe@loop.service modprobe@dm_mod.service
+After=modprobe@tun.service modprobe@loop.service modprobe@dm_mod.service
 RequiresMountsFor=/var/lib/machines/%i
 
 [Service]
 # Make sure the DeviceAllow= lines below can properly resolve the 'block-loop' expression (and others)
-ExecStart=systemd-nspawn --quiet --keep-unit --boot --link-journal=try-guest --network-veth -U --settings=override --machine=%i
+ExecStart=systemd-nspawn --quiet --keep-unit --boot -U --settings=override --machine=%i
 KillMode=mixed
 Type=notify
 RestartForceExitStatus=133

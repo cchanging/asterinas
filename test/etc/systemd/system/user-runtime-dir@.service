@@ -14,8 +14,8 @@ After=systemd-logind.service dbus.service
 IgnoreOnIsolate=yes
 
 [Service]
-ExecStart=/opt/systemd/lib/systemd/systemd-user-runtime-dir start %i
-ExecStop=/opt/systemd/lib/systemd/systemd-user-runtime-dir stop %i
+ExecStart=/etc/lib/systemd/systemd-user-runtime-dir start %i
+ExecStop=/etc/lib/systemd/systemd-user-runtime-dir stop %i
 Type=oneshot
 RemainAfterExit=yes
 Slice=user-%i.slice

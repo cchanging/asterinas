@@ -44,6 +44,7 @@ exclude = [
     "kernel/libs/comp-sys/component-macro",
     "kernel/libs/comp-sys/controlled",
     "osdk",
+    "systemd",
 ]
 
 [workspace.lints.rust]

@@ -40,6 +40,8 @@ pub fn init() -> Result<()> {
 
     for (index, tty) in tty::iter_n_tty().enumerate() {
         add_node(tty.clone(), &format!("tty{}", index))?;
+        add_node(tty.clone(), &format!("tty{}", 1))?;
+        add_node(tty.clone(), &format!("tty{}", 2))?;
     }
 
     #[cfg(target_arch = "x86_64")]

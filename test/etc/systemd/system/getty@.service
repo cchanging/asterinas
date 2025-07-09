@@ -43,6 +43,7 @@ RestartSec=0
 UtmpIdentifier=%I
 StandardInput=tty
 StandardOutput=tty
+StandardError=tty 
 TTYPath=/dev/%I
 TTYReset=yes
 TTYVHangup=yes

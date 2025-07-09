@@ -19,5 +19,5 @@ Before=shutdown.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/systemd/lib/systemd/systemd-growfs /
+ExecStart=/etc/lib/systemd/systemd-growfs /
 TimeoutSec=infinity
