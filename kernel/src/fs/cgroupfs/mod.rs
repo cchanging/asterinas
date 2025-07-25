@@ -7,6 +7,7 @@ pub use inode::CgroupInode;
 use spin::Once;
 pub use systree_node::{CgroupNode, CgroupSystem};
 
+mod controller;
 mod fs;
 mod inode;
 mod systree_node;

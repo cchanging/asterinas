@@ -114,4 +114,8 @@ impl Inode for CgroupInode {
 
         Ok(())
     }
+
+    fn is_dentry_cacheable(&self) -> bool {
+        !matches!(self.node_kind, SysTreeNodeKind::Attr(..))
+    }
 }
