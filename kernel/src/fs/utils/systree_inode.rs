@@ -189,7 +189,7 @@ pub(in crate::fs) trait SysTreeInodeTy: Send + Sync + 'static {
             }
         } else {
             // If no child node found, try finding an attribute of the current branch node
-            let Some(attr) = sysnode.node_attrs().get(name) else {
+            let Some(attr) = sysnode.attr(name) else {
                 return_errno_with_message!(Errno::ENOENT, "child node or attribute not found");
             };
 
@@ -204,7 +204,7 @@ pub(in crate::fs) trait SysTreeInodeTy: Send + Sync + 'static {
                 }
             };
 
-            let inode = Self::new_attr(attr.clone(), parent_node_arc, Arc::downgrade(&self.this()));
+            let inode = Self::new_attr(attr, parent_node_arc, Arc::downgrade(&self.this()));
             Ok(inode)
         }
     }
@@ -214,7 +214,7 @@ pub(in crate::fs) trait SysTreeInodeTy: Send + Sync + 'static {
         Self: Sized + 'static,
     {
         // This function is called when the current inode is a Leaf directory
-        let Some(attr) = sysnode.node_attrs().get(name) else {
+        let Some(attr) = sysnode.attr(name) else {
             return Err(Error::new(Errno::ENOENT));
         };
 
@@ -229,7 +229,7 @@ pub(in crate::fs) trait SysTreeInodeTy: Send + Sync + 'static {
             }
         };
 
-        let inode = Self::new_attr(attr.clone(), leaf_node_arc, Arc::downgrade(&self.this()));
+        let inode = Self::new_attr(attr, leaf_node_arc, Arc::downgrade(&self.this()));
         Ok(inode)
     }
 
