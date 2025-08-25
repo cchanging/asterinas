@@ -35,9 +35,7 @@ impl FileTable {
         }
     }
 
-    pub fn new_with_stdio() -> Self {
-        let mut table = SlotVec::new();
-        let fs_resolver = FsResolver::new();
+    pub(super) fn set_stdio(&mut self, fs_resolver: &FsResolver) {
         let tty_path = FsPath::new(AT_FDCWD, "/dev/console").expect("cannot find tty");
         let stdin = {
             let flags = AccessMode::O_RDONLY as u32;
@@ -54,13 +52,12 @@ impl FileTable {
             let mode = InodeMode::S_IWUSR;
             fs_resolver.open(&tty_path, flags, mode.bits()).unwrap()
         };
-        table.put(FileTableEntry::new(Arc::new(stdin), FdFlags::empty()));
-        table.put(FileTableEntry::new(Arc::new(stdout), FdFlags::empty()));
-        table.put(FileTableEntry::new(Arc::new(stderr), FdFlags::empty()));
-        Self {
-            table,
-            subject: Subject::new(),
-        }
+        self.table
+            .put(FileTableEntry::new(Arc::new(stdin), FdFlags::empty()));
+        self.table
+            .put(FileTableEntry::new(Arc::new(stdout), FdFlags::empty()));
+        self.table
+            .put(FileTableEntry::new(Arc::new(stderr), FdFlags::empty()));
     }
 
     pub fn len(&self) -> usize {

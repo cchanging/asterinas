@@ -29,7 +29,7 @@ use crate::{
     fs::{
         exfat::{ExfatFS, ExfatMountOptions},
         ext2::Ext2,
-        fs_resolver::FsPath,
+        fs_resolver::{FsPath, FsResolver},
     },
     prelude::*,
 };
@@ -51,7 +51,7 @@ fn start_block_device(device_name: &str) -> Result<Arc<dyn BlockDevice>> {
     }
 }
 
-pub fn lazy_init() {
+pub fn init() {
     registry::init();
 
     sysfs::init();
@@ -64,21 +64,36 @@ pub fn lazy_init() {
     exfat::init();
     overlayfs::init();
 
+    rootfs::init();
+}
+
+pub fn init_in_first_kthread(fs_resolver: &FsResolver) {
+    rootfs::init_in_first_kthread(fs_resolver).unwrap();
+}
+
+pub fn init_in_first_process(ctx: &Context) {
     //The device name is specified in qemu args as --serial={device_name}
     let ext2_device_name = "vext2";
     let exfat_device_name = "vexfat";
+
+    let fs = ctx.thread_local.borrow_fs();
+    let fs_resolver = fs.resolver().read();
 
     if let Ok(block_device_ext2) = start_block_device(ext2_device_name) {
         let ext2_fs = Ext2::open(block_device_ext2).unwrap();
         let target_path = FsPath::try_from("/ext2").unwrap();
         println!("[kernel] Mount Ext2 fs at {:?} ", target_path);
-        self::rootfs::mount_fs_at(ext2_fs, &target_path).unwrap();
+        self::rootfs::mount_fs_at(ext2_fs, &target_path, &fs_resolver).unwrap();
     }
 
     if let Ok(block_device_exfat) = start_block_device(exfat_device_name) {
         let exfat_fs = ExfatFS::open(block_device_exfat, ExfatMountOptions::default()).unwrap();
         let target_path = FsPath::try_from("/exfat").unwrap();
         println!("[kernel] Mount ExFat fs at {:?} ", target_path);
-        self::rootfs::mount_fs_at(exfat_fs, &target_path).unwrap();
+        self::rootfs::mount_fs_at(exfat_fs, &target_path, &fs_resolver).unwrap();
     }
+
+    // Initialize the file table for the first process.
+    let mut file_table = ctx.thread_local.borrow_file_table_mut();
+    file_table.unwrap().write().set_stdio(&fs_resolver);
 }
