@@ -22,7 +22,7 @@ use crate::{
 };
 
 /// A `Dentry` represents a cached filesystem node in the VFS tree.
-pub(super) struct Dentry {
+pub(in crate::fs) struct Dentry {
     inode: Arc<dyn Inode>,
     type_: InodeType,
     name_and_parent: RwLock<Option<(String, Arc<Dentry>)>>,

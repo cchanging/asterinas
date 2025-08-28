@@ -9,6 +9,7 @@ use crate::{
     events::Observer,
     fs::{
         file_table::FdEvents,
+        procfs::pid::mountinfo::MountInfoFileOps,
         utils::{DirEntryVecExt, Inode},
     },
     prelude::*,
@@ -19,6 +20,7 @@ mod cmdline;
 mod comm;
 mod exe;
 mod fd;
+mod mountinfo;
 mod stat;
 mod status;
 mod task;
@@ -65,6 +67,7 @@ impl DirOps for PidDirOps {
             "comm" => CommFileOps::new_inode(self.0.clone(), this_ptr.clone()),
             "fd" => FdDirOps::new_inode(self.0.clone(), this_ptr.clone()),
             "cmdline" => CmdlineFileOps::new_inode(self.0.clone(), this_ptr.clone()),
+            "mountinfo" => MountInfoFileOps::new_inode(self.0.main_thread(), this_ptr.clone()),
             "status" => {
                 StatusFileOps::new_inode(self.0.clone(), self.0.main_thread(), this_ptr.clone())
             }
@@ -94,6 +97,9 @@ impl DirOps for PidDirOps {
         });
         cached_children.put_entry_if_not_found("cmdline", || {
             CmdlineFileOps::new_inode(self.0.clone(), this_ptr.clone())
+        });
+        cached_children.put_entry_if_not_found("mountinfo", || {
+            MountInfoFileOps::new_inode(self.0.main_thread(), this_ptr.clone())
         });
         cached_children.put_entry_if_not_found("status", || {
             StatusFileOps::new_inode(self.0.clone(), self.0.main_thread(), this_ptr.clone())

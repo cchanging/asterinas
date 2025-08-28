@@ -3,7 +3,7 @@
 use core::sync::atomic::{AtomicU32, Ordering};
 
 use aster_rights::{ReadDupOp, ReadOp, WriteOp};
-use ostd::sync::{RoArc, Waker};
+use ostd::sync::{RoArc, RwMutexReadGuard, Waker};
 
 use super::{
     kill::SignalSenderIds,
@@ -19,7 +19,7 @@ use super::{
 };
 use crate::{
     events::Observer,
-    fs::file_table::FileTable,
+    fs::{file_table::FileTable, thread_info::ThreadFsInfo},
     namespace::NsContext,
     prelude::*,
     process::signal::constants::SIGCONT,
@@ -53,6 +53,9 @@ pub struct PosixThread {
 
     /// Process credentials. At the kernel level, credentials are a per-thread attribute.
     credentials: Credentials,
+
+    /// The file system information of the thread.
+    fs: RwMutex<Arc<ThreadFsInfo>>,
 
     // Files
     /// File table
@@ -99,6 +102,11 @@ impl PosixThread {
 
     pub fn thread_name(&self) -> &Mutex<Option<ThreadName>> {
         &self.name
+    }
+
+    /// Returns a read guard to the filesystem information of the thread.
+    pub fn fs(&self) -> RwMutexReadGuard<Arc<ThreadFsInfo>> {
+        self.fs.read()
     }
 
     pub fn file_table(&self) -> &Mutex<Option<RoArc<FileTable>>> {

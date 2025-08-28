@@ -2,6 +2,7 @@
 
 //! Form file paths within and across FSes with dentries and mount points.
 
+use alloc::format;
 use core::time::Duration;
 
 use inherit_methods_macro::inherit_methods;
@@ -54,7 +55,7 @@ impl Path {
         Ok(Self::new(self.mount.clone(), new_child_dentry))
     }
 
-    fn new(mount: Arc<Mount>, dentry: Arc<Dentry>) -> Self {
+    pub(in crate::fs) fn new(mount: Arc<Mount>, dentry: Arc<Dentry>) -> Self {
         Self { mount, dentry }
     }
 
@@ -408,4 +409,61 @@ pub const fn is_dot_or_dotdot(filename: &str) -> bool {
     }
 }
 
+pub(super) fn generate_mountinfo(root_mount: &Arc<Mount>) -> String {
+    let mut mount_info_content = String::new();
+
+    root_mount.traverse_with(|mount| {
+        let mount_id = mount.id();
+        let parent = mount.parent().and_then(|parent| parent.upgrade());
+
+        let parent_id = parent.as_ref().map_or(mount_id, |p| p.id());
+
+        // Linux dev_t encoding
+        let major = 0;
+        let minor = 0;
+
+        let root_path_name = Path::new_fs_root(mount.clone()).abs_path();
+
+        let mount_point_path_name = if let Some(parent) = parent {
+            if let Some(mount_point) = mount.mountpoint() {
+                Path::new(parent, mount_point).abs_path()
+            } else {
+                "".to_string()
+            }
+        } else {
+            // No parent means it's the root of the namespace.
+            "/".to_string()
+        };
+
+        // Options are simplified for now.
+        let mount_options = "rw,relatime";
+
+        let fs_type = mount.fs().name();
+        let source = "none";
+        let super_options = "rw";
+
+        let line = format!(
+            "{} {} {}:{} {} {} {} - {} {} {}\n",
+            mount_id,
+            parent_id,
+            major,
+            minor,
+            root_path_name,
+            mount_point_path_name,
+            mount_options,
+            fs_type,
+            source,
+            super_options
+        );
+
+        mount_info_content.push_str(&line);
+    });
+
+    mount_info_content
+}
+
 const DOT_BYTE: u8 = b'.';
+
+pub(super) fn init() {
+    mount::init();
+}
