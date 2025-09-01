@@ -22,6 +22,7 @@ mod cgroup;
 mod cpuset;
 mod memory;
 mod pids;
+mod util;
 
 /// A trait to abstract all individual cgroup controllers.
 trait SubControl {

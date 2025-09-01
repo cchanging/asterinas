@@ -7,7 +7,7 @@ use alloc::{
 };
 use core::{
     fmt::Debug,
-    sync::atomic::{AtomicUsize, Ordering},
+    sync::atomic::{AtomicBool, AtomicUsize, Ordering},
 };
 
 use aster_systree::{
@@ -20,7 +20,7 @@ use ostd::mm::{VmReader, VmWriter};
 use crate::{
     fs::cgroupfs::controller::{CgroupSysNode, Controller, SubCtrlState},
     prelude::*,
-    process::{Pid, Process},
+    process::{signal::constants::SIGSTOP, Pid, Process},
 };
 
 /// The root of a cgroup hierarchy, serving as the entry point to
@@ -50,8 +50,10 @@ pub struct CgroupNode {
     fields: AttrLessBranchNodeFields<CgroupNode, Self>,
     /// The controller of this cgroup node.
     controller: Controller,
+    /// Indicates whether this cgroup node is frozen.
+    pub freeze: AtomicBool,
     /// Processes bound to this node.
-    processes: Mutex<BTreeMap<Pid, Weak<Process>>>,
+    pub processes: Mutex<BTreeMap<Pid, Weak<Process>>>,
     /// The depth of the node in the cgroupfs [`SysTree`], where the child of
     /// the root node has a depth of 1.
     depth: usize,
@@ -114,6 +116,7 @@ impl CgroupNode {
             CgroupNode {
                 fields,
                 controller: Controller::new(sub_ctrl_state, false),
+                freeze: AtomicBool::new(false),
                 processes: Mutex::new(BTreeMap::new()),
                 depth,
                 populated_count: AtomicUsize::new(0),
@@ -260,6 +263,58 @@ impl CgroupNode {
 
     pub(super) fn populated_count(&self) -> &AtomicUsize {
         &self.populated_count
+    }
+
+    pub(super) fn set_freeze(&self) {
+        let was_frozen = self.freeze.fetch_or(true, Ordering::Relaxed);
+        if !was_frozen {
+            self.stop_process();
+            // Propagate freeze to all children iteratively.
+            let mut stack: Vec<Arc<dyn SysObj>> = self.children();
+            while let Some(node) = stack.pop() {
+                let node = Arc::downcast::<CgroupNode>(node).unwrap();
+                let was_frozen = node.freeze.fetch_or(true, Ordering::Relaxed);
+                if !was_frozen {
+                    node.stop_process();
+                    stack.extend(node.children());
+                }
+            }
+        }
+    }
+
+    fn stop_process(&self) {
+        let processes = self.processes.lock();
+        for weak_process in processes.values() {
+            if let Some(process) = weak_process.upgrade() {
+                process.stop(SIGSTOP);
+            }
+        }
+    }
+
+    pub(super) fn clear_freeze(&self) {
+        let was_frozen = self.freeze.fetch_and(false, Ordering::Relaxed);
+        if was_frozen {
+            self.wake_up_process();
+            // Propagate unfreeze to all children iteratively.
+            let mut stack: Vec<Arc<dyn SysObj>> = self.children();
+            while let Some(node) = stack.pop() {
+                let node = Arc::downcast::<CgroupNode>(node).unwrap();
+                let was_frozen = node.freeze.fetch_and(false, Ordering::Relaxed);
+                if was_frozen {
+                    self.wake_up_process();
+                    stack.extend(node.children());
+                }
+            }
+        }
+    }
+
+    fn wake_up_process(&self) {
+        let processes = self.processes.lock();
+        for weak_process in processes.values() {
+            if let Some(process) = weak_process.upgrade() {
+                process.resume();
+            }
+        }
     }
 }
 

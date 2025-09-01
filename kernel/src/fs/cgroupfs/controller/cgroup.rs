@@ -32,6 +32,11 @@ impl CgroupController {
                     SysStr::from("cgroup.events"),
                     SysPerms::DEFAULT_RO_ATTR_PERMS,
                 );
+                builder.add(
+                    SysStr::from("cgroup.freeze"),
+                    SysPerms::DEFAULT_RW_ATTR_PERMS,
+                );
+                builder.add(SysStr::from("cgroup.type"), SysPerms::DEFAULT_RW_ATTR_PERMS);
             }
             builder.add(
                 SysStr::from("cgroup.controllers"),
@@ -124,7 +129,29 @@ impl super::SubControl for CgroupController {
                 };
                 // Currently we have not enabled the "frozen" attribute
                 // so the "frozen" field is always zero.
-                let output = format!("populated {}\nfrozen {}\n", res, 0);
+                let output = format!(
+                    "populated {}\nfrozen {}\n",
+                    res,
+                    cgroup_node.freeze.load(Ordering::Acquire) as u32
+                );
+                writer
+                    .write_fallible(&mut VmReader::from(output.as_bytes()))
+                    .map_err(|_| Error::AttributeError)
+            }
+            "cgroup.type" => {
+                let output = "domain\n";
+                writer
+                    .write_fallible(&mut VmReader::from(output.as_bytes()))
+                    .map_err(|_| Error::AttributeError)
+            }
+            "cgroup.freeze" => {
+                let cgroup_node = cgroup_node.as_any().downcast_ref::<CgroupNode>().unwrap();
+                let frozen = if cgroup_node.freeze.load(Ordering::Acquire) {
+                    1
+                } else {
+                    0
+                };
+                let output = format!("{}\n", frozen);
                 writer
                     .write_fallible(&mut VmReader::from(output.as_bytes()))
                     .map_err(|_| Error::AttributeError)
@@ -144,7 +171,11 @@ impl super::SubControl for CgroupController {
     ) -> Result<usize> {
         match name {
             "cgroup.procs" => {
-                let (pid, pid_len) = read_pid_from_reader(reader)?;
+                let (context, context_len) = super::util::read_context_from_reader(reader)?;
+                let (pid, pid_len) = (
+                    super::util::parse_context_to_val::<Pid>(context)?,
+                    context_len,
+                );
 
                 // According to "no internal processes" rule of cgroupv2, if a non-root
                 // cgroup node has activated some sub-controls, it cannot bind any process.
@@ -241,6 +272,28 @@ impl super::SubControl for CgroupController {
 
                 Ok(len)
             }
+            "cgroup.type" => {
+                let (context, context_len) = super::util::read_context_from_reader(reader)?;
+                println!("Warning! Ignoring write to cgroup.type: {}", context.trim());
+                Ok(context_len)
+            }
+            "cgroup.freeze" => {
+                let (context, context_len) = super::util::read_context_from_reader(reader)?;
+                let value = super::util::parse_context_to_val::<u32>(context)?;
+
+                if let Some(cgroup_node) = cgroup_node.as_any().downcast_ref::<CgroupNode>() {
+                    match value {
+                        0 => {
+                            cgroup_node.clear_freeze();
+                        }
+                        1 => {
+                            cgroup_node.set_freeze();
+                        }
+                        _ => return Err(Error::InvalidOperation),
+                    }
+                }
+                Ok(context_len)
+            }
             _ => {
                 // TODO: Activate support for reading other attributes.
                 Err(Error::AttributeError)
@@ -249,41 +302,13 @@ impl super::SubControl for CgroupController {
     }
 }
 
-fn read_buffer_from_reader(reader: &mut VmReader) -> Result<(Vec<u8>, usize)> {
-    let mut buffer = alloc::vec![0; reader.remain()];
-    let len = reader
-        .read_fallible(&mut VmWriter::from(buffer.as_mut_slice()))
-        .map_err(|_| Error::AttributeError)?;
-
-    Ok((buffer, len))
-}
-
-/// Reads a PID from the given reader.
-///
-/// Returns a tuple containing the PID and the number of bytes read.
-fn read_pid_from_reader(reader: &mut VmReader) -> Result<(Pid, usize)> {
-    let (buffer, len) = read_buffer_from_reader(reader)?;
-
-    let pid = alloc::str::from_utf8(&buffer[..len])
-        .map_err(|_| Error::AttributeError)
-        .and_then(|string| {
-            let strip_string = string.trim();
-            strip_string
-                .parse::<u32>()
-                .map_err(|_| Error::AttributeError)
-        })?;
-
-    Ok((pid, len))
-}
-
 /// Reads the actions for sub-control from the given reader.
 ///
 /// Returns a tuple containing vector of actions and the number of bytes read.
 fn read_subtree_control_from_reader(
     reader: &mut VmReader,
 ) -> Result<(Vec<SubControlAction>, usize)> {
-    let (buffer, len) = read_buffer_from_reader(reader)?;
-    let context = String::from_utf8_lossy_owned(buffer);
+    let (context, len) = super::util::read_context_from_reader(reader)?;
 
     let mut actions_vec = Vec::new();
     let actions = context.split_whitespace();

@@ -3,7 +3,7 @@
 use aster_systree::{Error, Result, SysAttrSet, SysAttrSetBuilder, SysPerms, SysStr};
 use ostd::mm::{VmReader, VmWriter};
 
-use crate::fs::cgroupfs::controller::CgroupSysNode;
+use crate::{fs::cgroupfs::controller::CgroupSysNode, util::MultiWrite};
 
 /// The controller responsible for cpuset in the cgroup subsystem.
 pub struct CpuSetController {
@@ -40,11 +40,27 @@ impl super::SubControl for CpuSetController {
 
     fn read_attr(
         &self,
-        _name: &str,
-        _writer: &mut VmWriter,
+        name: &str,
+        writer: &mut VmWriter,
         _cgroup_node: &dyn CgroupSysNode,
     ) -> Result<usize> {
-        Err(Error::AttributeError)
+        match name {
+            "cpuset.cpus.effective" => {
+                let context = "0-3";
+                let len = writer
+                    .write(&mut VmReader::from(context.as_bytes()))
+                    .map_err(|_| Error::AttributeError)?;
+                Ok(len)
+            }
+            "cpuset.mems.effective" => {
+                let context = "0";
+                let len = writer
+                    .write(&mut VmReader::from(context.as_bytes()))
+                    .map_err(|_| Error::AttributeError)?;
+                Ok(len)
+            }
+            _ => Err(Error::AttributeError),
+        }
     }
 
     fn write_attr(
