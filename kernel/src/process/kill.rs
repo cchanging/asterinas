@@ -8,9 +8,13 @@ use super::{
         sig_num::SigNum,
         signals::{user::UserSignal, Signal},
     },
-    Pgid, Pid, Process, Sid, Uid,
+    Pgid, Pid, Process,
 };
-use crate::{prelude::*, thread::Tid};
+use crate::{
+    prelude::*,
+    process::{credentials::capabilities::CapSet, posix_thread::PosixThread},
+    thread::Tid,
+};
 
 /// Sends a signal to a process, using the current process as the sender.
 ///
@@ -76,10 +80,10 @@ pub fn tgkill(tid: Tid, tgid: Pid, signal: Option<UserSignal>, ctx: &Context) ->
         return Ok(());
     }
 
-    let posix_thread = thread.as_posix_thread().unwrap();
+    let target_posix_thread = thread.as_posix_thread().unwrap();
 
-    // Check tgid
-    let pid = posix_thread.process().pid();
+    // Check the TGID
+    let pid = target_posix_thread.process().pid();
     if pid != tgid {
         return_errno_with_message!(
             Errno::EINVAL,
@@ -89,13 +93,12 @@ pub fn tgkill(tid: Tid, tgid: Pid, signal: Option<UserSignal>, ctx: &Context) ->
 
     // Check permission
     let signum = signal.map(|signal| signal.num());
-    let sender = current_thread_sender_ids(signum.as_ref(), ctx);
-    posix_thread.check_signal_perm(signum.as_ref(), &sender)?;
+    check_signal_perm(target_posix_thread, ctx, signum)?;
 
     if let Some(signal) = signal {
         // We've checked the permission issues above.
         // FIXME: We should take some lock while checking the permission to avoid race conditions.
-        posix_thread.enqueue_signal(Box::new(signal));
+        target_posix_thread.enqueue_signal(Box::new(signal));
     }
 
     Ok(())
@@ -120,93 +123,59 @@ pub fn kill_all(signal: Option<UserSignal>, ctx: &Context) -> Result<()> {
 }
 
 fn kill_process(process: &Process, signal: Option<UserSignal>, ctx: &Context) -> Result<()> {
-    let sig_dispositions = process.sig_dispositions().lock();
-    let tasks = process.tasks().lock();
-
     let signum = signal.map(|signal| signal.num());
-    let sender_ids = current_thread_sender_ids(signum.as_ref(), ctx);
+    let target_main_thread = process.main_thread();
+    check_signal_perm(target_main_thread.as_posix_thread().unwrap(), ctx, signum)?;
 
-    let mut permitted_thread = None;
-    for task in tasks.as_slice() {
-        let posix_thread = task.as_posix_thread().unwrap();
-
-        // First check permission
-        if posix_thread
-            .check_signal_perm(signum.as_ref(), &sender_ids)
-            .is_ok()
-        {
-            let Some(ref signum) = signum else {
-                // If `signal` is `None`, only permission check is required.
-                return Ok(());
-            };
-
-            if !posix_thread.has_signal_blocked(*signum) {
-                // Send the signal to any thread that does not block the signal.
-                permitted_thread = Some(posix_thread);
-                break;
-            } else if permitted_thread.is_none() {
-                // If all threads block the signal, send the signal to the first permitted thread.
-                permitted_thread = Some(posix_thread);
-            }
-        }
-    }
-
-    let Some(permitted_thread) = permitted_thread else {
-        return_errno_with_message!(Errno::EPERM, "cannot send signal to the target process");
+    let Some(signal) = signal else {
+        return Ok(());
     };
 
-    // Since `permitted_thread` has been set, `signal` cannot be `None`.
-    let signal = signal.unwrap();
-
-    // Drop the signal if it's ignored. See explanation at `enqueue_signal_locked`.
-    let signum = signal.num();
-    if sig_dispositions.get(signum).will_ignore(signum) {
-        return Ok(());
-    }
-
-    permitted_thread.enqueue_signal_locked(Box::new(signal), sig_dispositions);
+    process.enqueue_signal(signal);
 
     Ok(())
 }
 
-fn current_thread_sender_ids(signum: Option<&SigNum>, ctx: &Context) -> SignalSenderIds {
-    let credentials = ctx.posix_thread.credentials();
-    let ruid = credentials.ruid();
-    let euid = credentials.euid();
-    let sid = signum.and_then(|signum| {
-        if *signum == SIGCONT {
-            Some(ctx.process.sid())
-        } else {
-            None
+// Reference: <https://elixir.bootlin.com/linux/v6.17/source/kernel/signal.c>.
+fn check_signal_perm(target: &PosixThread, ctx: &Context, signum: Option<SigNum>) -> Result<()> {
+    let target_process = target.process();
+
+    if Arc::ptr_eq(&target_process, &ctx.process) {
+        return Ok(());
+    }
+
+    let current_cred = ctx.posix_thread.credentials();
+    let target_cred = target.credentials();
+
+    if current_cred.euid() == target_cred.suid()
+        || current_cred.euid() == target_cred.ruid()
+        || current_cred.ruid() == target_cred.suid()
+        || current_cred.ruid() == target_cred.ruid()
+    {
+        return Ok(());
+    }
+
+    if target_process
+        .user_ns()
+        .lock()
+        .check_cap(CapSet::KILL, ctx.posix_thread)
+        .is_ok()
+    {
+        return Ok(());
+    }
+
+    if let Some(signum) = signum
+        && signum == SIGCONT
+    {
+        let target_sid = target_process.sid();
+        let current_sid = ctx.process.sid();
+        if target_sid == current_sid {
+            return Ok(());
         }
-    });
-
-    SignalSenderIds::new(ruid, euid, sid)
-}
-
-/// The ids of the signal sender process.
-///
-/// This struct now includes effective user id, real user id and session id.
-pub(super) struct SignalSenderIds {
-    ruid: Uid,
-    euid: Uid,
-    sid: Option<Sid>,
-}
-
-impl SignalSenderIds {
-    fn new(ruid: Uid, euid: Uid, sid: Option<Sid>) -> Self {
-        Self { ruid, euid, sid }
     }
 
-    pub(super) fn ruid(&self) -> Uid {
-        self.ruid
-    }
-
-    pub(super) fn euid(&self) -> Uid {
-        self.euid
-    }
-
-    pub(super) fn sid(&self) -> Option<Sid> {
-        self.sid
-    }
+    return_errno_with_message!(
+        Errno::EPERM,
+        "sending signal to the target process or thread is not allowed"
+    )
 }
