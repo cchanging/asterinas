@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 use alloc::{
+    borrow::Cow,
     string::ToString,
     sync::{Arc, Weak},
 };
@@ -10,15 +11,15 @@ use core::{
 };
 
 use aster_systree::{
-    inherit_sys_branch_node, BranchNodeFields, Error, Result, SysAttrSetBuilder, SysBranchNode,
-    SysObj, SysPerms, SysStr, MAX_ATTR_SIZE,
+    inherit_sys_branch_node, AttrLessBranchNodeFields, Error, Result, SysAttr, SysAttrSet,
+    SysBranchNode, SysObj, SysPerms, SysStr,
 };
-use aster_util::printer::VmPrinter;
 use inherit_methods_macro::inherit_methods;
 use ostd::mm::{VmReader, VmWriter};
 use spin::Once;
 
 use crate::{
+    fs::cgroupfs::controller::{CgroupSysNode, Controller, SubCtrlState},
     prelude::*,
     process::{process_table, Pid, Process},
 };
@@ -119,9 +120,17 @@ impl CgroupMembership {
 ///
 /// The cgroup system provides v2 unified hierarchy, and is also used as a root
 /// node in the cgroup systree.
-#[derive(Debug)]
 pub struct CgroupSystem {
-    fields: BranchNodeFields<CgroupNode, Self>,
+    fields: AttrLessBranchNodeFields<CgroupNode, Self>,
+    controller: Controller,
+}
+
+impl Debug for CgroupSystem {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("CgroupSystem")
+            .field("fields", &self.fields)
+            .finish()
+    }
 }
 
 /// A control group node in the cgroup systree.
@@ -130,7 +139,9 @@ pub struct CgroupSystem {
 /// management. Except for the root node, all nodes in the cgroup tree are of
 /// this type.
 pub struct CgroupNode {
-    fields: BranchNodeFields<CgroupNode, Self>,
+    fields: AttrLessBranchNodeFields<CgroupNode, Self>,
+    /// The controller of this cgroup node.
+    controller: Controller,
     /// Processes bound to this node.
     processes: Mutex<BTreeMap<Pid, Weak<Process>>>,
     /// The depth of the node in the cgroupfs [`SysTree`], where the child of
@@ -179,79 +190,40 @@ impl CgroupSystem {
     fn new() -> Arc<Self> {
         let name = SysStr::from("cgroup");
 
-        let mut builder = SysAttrSetBuilder::new();
-        // TODO: Add more attributes as needed.
-        builder.add(
-            SysStr::from("cgroup.controllers"),
-            SysPerms::DEFAULT_RO_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cgroup.max.depth"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cgroup.procs"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cgroup.threads"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cpu.pressure"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(SysStr::from("cpu.stat"), SysPerms::DEFAULT_RO_ATTR_PERMS);
-
-        let attrs = builder.build().expect("Failed to build attribute set");
         Arc::new_cyclic(|weak_self| {
-            let fields = BranchNodeFields::new(name, attrs, weak_self.clone());
-            CgroupSystem { fields }
+            let fields = AttrLessBranchNodeFields::new(name, weak_self.clone());
+            CgroupSystem {
+                fields,
+                controller: Controller::new(SubCtrlState::all(), true),
+            }
         })
     }
 }
 
-impl CgroupNode {
-    pub(self) fn new(name: SysStr, depth: usize) -> Arc<Self> {
-        let mut builder = SysAttrSetBuilder::new();
-        // TODO: Add more attributes as needed. The normal cgroup node may have
-        // more attributes than the unified one.
-        builder.add(
-            SysStr::from("cgroup.controllers"),
-            SysPerms::DEFAULT_RO_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cgroup.max.depth"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cgroup.procs"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cgroup.threads"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(
-            SysStr::from("cpu.pressure"),
-            SysPerms::DEFAULT_RW_ATTR_PERMS,
-        );
-        builder.add(SysStr::from("cpu.stat"), SysPerms::DEFAULT_RO_ATTR_PERMS);
-        builder.add(
-            SysStr::from("cgroup.events"),
-            SysPerms::DEFAULT_RO_ATTR_PERMS,
-        );
+impl CgroupSysNode for CgroupSystem {
+    fn controller(&self) -> &Controller {
+        &self.controller
+    }
+}
 
-        let attrs = builder.build().expect("Failed to build attribute set");
+impl CgroupNode {
+    pub(super) fn new(name: SysStr, depth: usize, sub_ctrl_state: SubCtrlState) -> Arc<Self> {
         Arc::new_cyclic(|weak_self| {
-            let fields = BranchNodeFields::new(name, attrs, weak_self.clone());
+            let fields = AttrLessBranchNodeFields::new(name, weak_self.clone());
             CgroupNode {
                 fields,
+                controller: Controller::new(sub_ctrl_state, false),
                 processes: Mutex::new(BTreeMap::new()),
                 depth,
                 populated_count: AtomicUsize::new(0),
             }
         })
+    }
+}
+
+impl CgroupSysNode for CgroupNode {
+    fn controller(&self) -> &Controller {
+        &self.controller
     }
 }
 
@@ -324,6 +296,25 @@ impl CgroupNode {
 
         f()
     }
+
+    /// Whether this cgroup node has any processes bound to it.
+    pub fn have_processes(&self) -> bool {
+        !self.processes.lock().is_empty()
+    }
+
+    /// Reads the PID of the processes bound to this cgroup node.
+    pub(super) fn read_procs(&self) -> String {
+        self.processes
+            .lock()
+            .keys()
+            .map(|pid| pid.to_string())
+            .collect::<Vec<String>>()
+            .join("\n")
+    }
+
+    pub(super) fn populated_count(&self) -> &AtomicUsize {
+        &self.populated_count
+    }
 }
 
 inherit_sys_branch_node!(CgroupSystem, fields, {
@@ -335,51 +326,20 @@ inherit_sys_branch_node!(CgroupSystem, fields, {
         // This method should be a no-op for `RootNode`.
     }
 
-    fn read_attr_at(&self, name: &str, offset: usize, writer: &mut VmWriter) -> Result<usize> {
-        let mut printer = VmPrinter::new_skip(writer, offset);
-        match name {
-            "cgroup.procs" => {
-                let process_table = process_table::process_table_mut();
-                for process in process_table.iter() {
-                    if process.cgroup().is_none() {
-                        writeln!(printer, "{}", process.pid())?;
-                    }
-                }
-            }
-            _ => {
-                // TODO: Add support for reading other attributes.
-                return Err(Error::AttributeError);
-            }
-        }
+    fn attr(&self, name: &str) -> Option<SysAttr> {
+        self.controller.attr(name)
+    }
 
-        Ok(printer.bytes_written())
+    fn node_attrs(&self) -> Cow<SysAttrSet> {
+        Cow::Owned(self.controller.node_attrs())
+    }
+
+    fn read_attr_at(&self, name: &str, offset: usize, writer: &mut VmWriter) -> Result<usize> {
+        self.controller.read_attr_at(name, offset, writer, self)
     }
 
     fn write_attr(&self, name: &str, reader: &mut VmReader) -> Result<usize> {
-        match name {
-            "cgroup.procs" => {
-                let (content, len) = reader
-                    .read_cstring_until_end(MAX_ATTR_SIZE)
-                    .map_err(|_| Error::PageFault)?;
-                let pid = content
-                    .to_str()
-                    .ok()
-                    .and_then(|string| string.trim().parse::<Pid>().ok())
-                    .ok_or(Error::InvalidOperation)?;
-
-                with_process_cgroup_locked(pid, |process, cgroup_membership| {
-                    cgroup_membership.move_process_to_root(&process);
-
-                    Ok(())
-                })?;
-
-                Ok(len)
-            }
-            _ => {
-                // TODO: Add support for reading other attributes.
-                Err(Error::AttributeError)
-            }
-        }
+        self.controller.write_attr(name, reader, self)
     }
 
     fn perms(&self) -> SysPerms {
@@ -387,71 +347,28 @@ inherit_sys_branch_node!(CgroupSystem, fields, {
     }
 
     fn create_child(&self, name: &str) -> Result<Arc<dyn SysObj>> {
-        let new_child = CgroupNode::new(name.to_string().into(), 1);
+        let sub_ctrl_state = self.controller().sub_ctrl_state();
+        let new_child = CgroupNode::new(name.to_string().into(), 1, *sub_ctrl_state);
         self.add_child(new_child.clone())?;
         Ok(new_child)
     }
 });
 
 inherit_sys_branch_node!(CgroupNode, fields, {
+    fn attr(&self, name: &str) -> Option<SysAttr> {
+        self.controller.attr(name)
+    }
+
+    fn node_attrs(&self) -> Cow<SysAttrSet> {
+        Cow::Owned(self.controller.node_attrs())
+    }
+
     fn read_attr_at(&self, name: &str, offset: usize, writer: &mut VmWriter) -> Result<usize> {
-        let mut printer = VmPrinter::new_skip(writer, offset);
-        match name {
-            "cgroup.procs" => {
-                for pid in self.processes.lock().keys() {
-                    writeln!(printer, "{}", pid)?;
-                }
-            }
-            "cgroup.events" => {
-                let res = if self.populated_count.load(Ordering::Relaxed) > 0 {
-                    1
-                } else {
-                    0
-                };
-
-                writeln!(printer, "populated {}", res)?;
-                // Currently we have not enabled the "frozen" attribute
-                // so the "frozen" field is always zero.
-                writeln!(printer, "frozen {}", 0)?;
-            }
-            _ => {
-                // TODO: Add support for reading other attributes.
-                return Err(Error::AttributeError);
-            }
-        }
-
-        Ok(printer.bytes_written())
+        self.controller.read_attr_at(name, offset, writer, self)
     }
 
     fn write_attr(&self, name: &str, reader: &mut VmReader) -> Result<usize> {
-        match name {
-            "cgroup.procs" => {
-                let (content, len) = reader
-                    .read_cstring_until_end(MAX_ATTR_SIZE)
-                    .map_err(|_| Error::PageFault)?;
-                let pid = content
-                    .to_str()
-                    .ok()
-                    .and_then(|string| string.trim().parse::<Pid>().ok())
-                    .ok_or(Error::InvalidOperation)?;
-
-                with_process_cgroup_locked(pid, |process, cgroup_membership| {
-                    // TODO: According to the "no internal processes" rule of cgroupv2
-                    // (Ref: https://man7.org/linux/man-pages/man7/cgroups.7.html),
-                    // if the cgroup node has enabled some controllers like "memory", "io",
-                    // it is forbidden to bind a process to an internal cgroup node.
-                    cgroup_membership.move_process_to_node(process, self);
-
-                    Ok(())
-                })?;
-
-                Ok(len)
-            }
-            _ => {
-                // TODO: Add support for reading other attributes.
-                Err(Error::AttributeError)
-            }
-        }
+        self.controller.write_attr(name, reader, self)
     }
 
     fn perms(&self) -> SysPerms {
@@ -459,7 +376,8 @@ inherit_sys_branch_node!(CgroupNode, fields, {
     }
 
     fn create_child(&self, name: &str) -> Result<Arc<dyn SysObj>> {
-        let new_child = CgroupNode::new(name.to_string().into(), self.depth + 1);
+        let sub_ctrl_state = self.controller().sub_ctrl_state();
+        let new_child = CgroupNode::new(name.to_string().into(), self.depth + 1, *sub_ctrl_state);
         self.add_child(new_child.clone())?;
         Ok(new_child)
     }
@@ -472,7 +390,7 @@ inherit_sys_branch_node!(CgroupNode, fields, {
 ///
 /// Returns `Error::InvalidOperation` if the PID is not found or if the target
 /// process is a zombie.
-fn with_process_cgroup_locked<F>(pid: Pid, op: F) -> Result<()>
+pub(super) fn with_process_cgroup_locked<F>(pid: Pid, op: F) -> Result<()>
 where
     F: FnOnce(Arc<Process>, &mut CgroupMembership) -> Result<()>,
 {
