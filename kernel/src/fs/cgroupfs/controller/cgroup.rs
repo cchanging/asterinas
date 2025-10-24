@@ -178,67 +178,67 @@ impl super::SubControl for CgroupController {
             "cgroup.subtree_control" => {
                 let (actions, len) = read_subtree_control_from_reader(reader)?;
 
-                if let Some(cgroup_node) = cgroup_node.as_any().downcast_ref::<CgroupNode>() {
-                    // According to "no internal processes" rule of cgroupv2, if a non-root
-                    // cgroup node has bound processes, it cannot activate any sub-control.
-                    //
-                    // Ref: https://man7.org/linux/man-pages/man7/cgroups.7.html
-                    if cgroup_node.have_processes() {
-                        return Err(Error::ResourceUnavailable);
-                    }
-                }
+                // if let Some(cgroup_node) = cgroup_node.as_any().downcast_ref::<CgroupNode>() {
+                //     // According to "no internal processes" rule of cgroupv2, if a non-root
+                //     // cgroup node has bound processes, it cannot activate any sub-control.
+                //     //
+                //     // Ref: https://man7.org/linux/man-pages/man7/cgroups.7.html
+                //     if cgroup_node.have_processes() {
+                //         return Err(Error::ResourceUnavailable);
+                //     }
+                // }
 
-                let parent_node = cgroup_node.cgroup_parent();
-                let parent_ctrls_state = parent_node
-                    .as_ref()
-                    .map(|parent_node| parent_node.controller().sub_ctrl_state.lock());
-                for action in actions {
-                    match action {
-                        SubControlAction::Activate(name) => {
-                            // A cgroup can activate the sub-control only if this
-                            // sub-control has been activated in its parent cgroup.
-                            let can_activate =
-                                parent_ctrls_state
-                                    .as_ref()
-                                    .is_none_or(|parent_ctrls_state| {
-                                        parent_ctrls_state.is_enabled(&name).unwrap()
-                                    });
+                // let parent_node = cgroup_node.cgroup_parent();
+                // let parent_ctrls_state = parent_node
+                //     .as_ref()
+                //     .map(|parent_node| parent_node.controller().sub_ctrl_state.lock());
+                // for action in actions {
+                //     match action {
+                //         SubControlAction::Activate(name) => {
+                //             // A cgroup can activate the sub-control only if this
+                //             // sub-control has been activated in its parent cgroup.
+                //             let can_activate =
+                //                 parent_ctrls_state
+                //                     .as_ref()
+                //                     .is_none_or(|parent_ctrls_state| {
+                //                         parent_ctrls_state.is_enabled(&name).unwrap()
+                //                     });
 
-                            if !can_activate {
-                                return Err(Error::NotFound);
-                            }
+                //             if !can_activate {
+                //                 return Err(Error::NotFound);
+                //             }
 
-                            cgroup_node.controller().activate(&name, cgroup_node)?;
-                        }
-                        SubControlAction::Deactivate(name) => {
-                            let mut can_deactivate = true;
-                            // If any child node has activated this sub-control,
-                            // the deactivation operation will be rejected.
-                            cgroup_node.visit_children_with(0, &mut |child| {
-                                let cgroup_child =
-                                    child.as_any().downcast_ref::<CgroupNode>().unwrap();
-                                if cgroup_child
-                                    .controller()
-                                    .sub_ctrl_state
-                                    .lock()
-                                    .is_enabled(&name)
-                                    .unwrap()
-                                {
-                                    can_deactivate = false;
-                                    None
-                                } else {
-                                    Some(())
-                                }
-                            });
+                //             cgroup_node.controller().activate(&name, cgroup_node)?;
+                //         }
+                //         SubControlAction::Deactivate(name) => {
+                //             let mut can_deactivate = true;
+                //             // If any child node has activated this sub-control,
+                //             // the deactivation operation will be rejected.
+                //             cgroup_node.visit_children_with(0, &mut |child| {
+                //                 let cgroup_child =
+                //                     child.as_any().downcast_ref::<CgroupNode>().unwrap();
+                //                 if cgroup_child
+                //                     .controller()
+                //                     .sub_ctrl_state
+                //                     .lock()
+                //                     .is_enabled(&name)
+                //                     .unwrap()
+                //                 {
+                //                     can_deactivate = false;
+                //                     None
+                //                 } else {
+                //                     Some(())
+                //                 }
+                //             });
 
-                            if !can_deactivate {
-                                return Err(Error::InvalidOperation);
-                            }
+                //             if !can_deactivate {
+                //                 return Err(Error::InvalidOperation);
+                //             }
 
-                            cgroup_node.controller().deactivate(&name, cgroup_node)?;
-                        }
-                    }
-                }
+                //             cgroup_node.controller().deactivate(&name, cgroup_node)?;
+                //         }
+                //     }
+                // }
 
                 Ok(len)
             }

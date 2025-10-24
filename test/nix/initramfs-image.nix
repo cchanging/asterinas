@@ -14,6 +14,8 @@ stdenvNoCC.mkDerivation {
     chmod -R 0755 var
     chmod -R 1777 tmp
 
+    find etc/systemd/system -type f -exec chmod -x {} \;
+
     if [ "${toString compressed}" == "1" ]; then
       find . -print0 | cpio -o -H newc --null | gzip > $out
     else

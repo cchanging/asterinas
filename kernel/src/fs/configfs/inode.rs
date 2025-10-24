@@ -6,11 +6,10 @@ use ostd::sync::RwLock;
 
 use crate::{
     fs::{
-        configfs::fs::ConfigFs,
-        utils::{
+        configfs::fs::ConfigFs, notify::FsnotifyCommon, utils::{
             systree_inode::{SysTreeInodeTy, SysTreeNodeKind},
             FileSystem, Inode, InodeMode, Metadata,
-        },
+        }
     },
     Result,
 };
@@ -25,6 +24,8 @@ pub struct ConfigInode {
     mode: RwLock<InodeMode>,
     /// Weak reference to the parent inode.
     parent: Weak<ConfigInode>,
+    /// Fsnotify common.
+    fsnotify_common: FsnotifyCommon,
     /// Weak self-reference for cyclic data structures.
     this: Weak<ConfigInode>,
 }
@@ -45,6 +46,7 @@ impl SysTreeInodeTy for ConfigInode {
             mode: RwLock::new(mode),
             parent,
             this: this.clone(),
+            fsnotify_common: FsnotifyCommon::new(),
         })
     }
 
@@ -67,6 +69,10 @@ impl SysTreeInodeTy for ConfigInode {
 
     fn parent(&self) -> &Weak<Self> {
         &self.parent
+    }
+
+    fn fsnotify(&self) -> &FsnotifyCommon {
+        &self.fsnotify_common
     }
 
     fn this(&self) -> Arc<Self> {

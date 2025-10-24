@@ -4,6 +4,7 @@
 
 //! Opened File Handle
 
+use aster_util::printer::VmPrinter;
 use ostd::io::IoMem;
 
 use super::{inode_handle::InodeHandle, path::Path};
@@ -119,6 +120,23 @@ pub trait FileLike: Pollable + Send + Sync + Any {
 
     fn path(&self) -> Option<&Path> {
         None
+    }
+
+    fn read_info(&self, offset: usize, writer: &mut VmWriter) -> Result<usize> {
+        let mut printer = VmPrinter::new_skip(writer, offset);
+
+        writeln!(printer, "pos:\t{}", 0)?;
+        writeln!(printer, "flags:\t0{:o}", self.status_flags().bits())?;
+        // TODO: Fill in the real mount id when supporting it.
+        let mnt_id = if let Some(path) = self.path() {
+            path.mount_node().id()
+        } else {
+            0
+        };
+        writeln!(printer, "mnt_id:\t{}", mnt_id)?;
+        writeln!(printer, "ino:\t{}", self.metadata().ino)?;
+
+        Ok(printer.bytes_written())
     }
 }
 

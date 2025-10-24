@@ -52,6 +52,8 @@ pub fn init_in_first_process(ctx: &Context) -> Result<()> {
 
     for (index, tty) in tty::iter_n_tty().enumerate() {
         add_node(tty.clone(), &format!("tty{}", index), &fs_resolver)?;
+        add_node(tty.clone(), &format!("tty{}", 1), &fs_resolver)?;
+        add_node(tty.clone(), &format!("tty{}", 2), &fs_resolver)?;
     }
 
     #[cfg(target_arch = "x86_64")]

@@ -91,7 +91,7 @@ impl Mount {
     }
 
     /// Gets the mount ID.
-    pub(super) fn id(&self) -> usize {
+    pub fn id(&self) -> usize {
         self.id
     }
 

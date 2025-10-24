@@ -1,5 +1,5 @@
 { lib, stdenvNoCC, fetchFromGitHub, hostPlatform, writeClosure, busybox, apps
-, benchmark, syscall, }:
+, benchmark, syscall, systemd}:
 let
   etc = lib.fileset.toSource {
     root = ./../src/etc;
@@ -9,7 +9,11 @@ let
     name = "gvisor-libs";
     path = "/lib/x86_64-linux-gnu";
   };
-  all_pkgs = [ busybox etc ] ++ lib.optionals (apps != null) [ apps.package ]
+  agetty = builtins.path {
+    name = "agetty";
+    path = "/usr/sbin/agetty";
+  };
+  all_pkgs = [ busybox etc systemd] ++ lib.optionals (apps != null) [ apps.package ]
     ++ lib.optionals (benchmark != null) [ benchmark.package ]
     ++ lib.optionals (syscall != null) [ syscall.package ];
 in stdenvNoCC.mkDerivation {
@@ -23,6 +27,52 @@ in stdenvNoCC.mkDerivation {
     ln -sfn usr/lib $out/lib
     ln -sfn usr/lib64 $out/lib64
     cp -r ${busybox}/bin/* $out/bin/
+
+    mkdir -p $out/lib/x86_64-linux-gnu
+    cp -L ${gvisor_libs}/ld-linux-x86-64.so.2 $out/lib64/ld-linux-x86-64.so.2
+    cp -L ${gvisor_libs}/libstdc++.so.6 $out/lib/x86_64-linux-gnu/libstdc++.so.6
+    cp -L ${gvisor_libs}/libgcc_s.so.1 $out/lib/x86_64-linux-gnu/libgcc_s.so.1
+    cp -L ${gvisor_libs}/libc.so.6 $out/lib/x86_64-linux-gnu/libc.so.6
+    cp -L ${gvisor_libs}/libm.so.6 $out/lib/x86_64-linux-gnu/libm.so.6
+
+    cp "${agetty}" $out/sbin/agetty
+
+    mkdir -p $out/share
+    cp -r ${systemd}/bin/* $out/bin/
+    cp -r ${systemd}/lib/* $out/lib/
+
+    cp -r ${systemd}/sbin/* $out/sbin/
+    cp -r ${systemd}/share/* $out/share/
+
+    cp -r ${systemd}/example/* $out/etc/ 
+
+    chmod -R 0777 $out/etc/systemd/system/
+
+    find $out/etc/systemd/system \( -type f -o -type l \) \( -name "*udev*" -o -name "*journal*" -o -name "*network*" -o -name "*modprobe*" -o -name "*tmpfiles*" \) -delete
+
+    rm $out/etc/systemd/system/sys-fs-fuse-connections.mount
+    rm $out/etc/systemd/system/systemd-creds.socket
+    rm $out/etc/systemd/system/systemd-creds@.service
+    rm $out/etc/systemd/system/sockets.target.wants/systemd-creds.socket
+
+    rm $out/etc/systemd/system/systemd-remount-fs.service
+    rm $out/etc/systemd/system/systemd-firstboot.service
+
+    rm $out/etc/systemd/system/systemd-random-seed.service
+    rm $out/etc/systemd/system/systemd-update-utmp.service
+    rm $out/etc/systemd/system/sys-kernel-config.mount
+    rm $out/etc/systemd/system/sys-kernel-debug.mount
+    rm $out/etc/systemd/system/sys-kernel-tracing.mount
+    rm $out/etc/systemd/system/tmp.mount
+    rm $out/etc/systemd/system/local-fs.target.wants/tmp.mount
+    rm $out/etc/systemd/system/systemd-update-done.service
+    rm $out/etc/systemd/system/sysinit.target.wants/sys-fs-fuse-connections.mount
+    rm $out/etc/systemd/system/sysinit.target.wants/sys-kernel-config.mount
+    rm $out/etc/systemd/system/sysinit.target.wants/sys-kernel-debug.mount
+    rm $out/etc/systemd/system/sysinit.target.wants/sys-kernel-tracing.mount
+    rm $out/etc/systemd/system/sysinit.target.wants/systemd-update-done.service
+
+    ln -sf ./multi-user.target $out/etc/systemd/system/default.target
 
     cp -r ${etc}/* $out/etc/
 
@@ -55,9 +105,9 @@ in stdenvNoCC.mkDerivation {
     mkdir -p $out/nix/store
     pkg_path=${lib.strings.concatStringsSep ":" all_pkgs}
     while IFS= read -r dep_path; do
-      if [[ "$pkg_path" == *"$dep_path"* ]]; then
-        continue
-      fi
+      # if [[ "$pkg_path" == *"$dep_path"* ]]; then
+      #   continue
+      # fi
       cp -r $dep_path $out/nix/store/
     done < ${writeClosure all_pkgs}
   '';

@@ -25,7 +25,7 @@ pub fn sys_mount(
     ctx: &Context,
 ) -> Result<SyscallReturn> {
     let user_space = ctx.user_space();
-    let devname = user_space.read_cstring(devname_addr, MAX_FILENAME_LEN)?;
+    let devname = user_space.read_cstring(devname_addr, MAX_FILENAME_LEN);
     let dirname = user_space.read_cstring(dirname_addr, MAX_FILENAME_LEN)?;
     let mount_flags = MountFlags::from_bits_truncate(flags as u32);
     debug!(
@@ -52,7 +52,7 @@ pub fn sys_mount(
         do_remount()?;
     } else if mount_flags.contains(MountFlags::MS_BIND) {
         do_bind_mount(
-            devname,
+            devname?,
             dst_path,
             mount_flags.contains(MountFlags::MS_REC),
             ctx,
@@ -64,20 +64,22 @@ pub fn sys_mount(
     {
         do_change_type()?;
     } else if mount_flags.contains(MountFlags::MS_MOVE) {
-        do_move_mount_old(devname, dst_path, ctx)?;
+        do_move_mount_old(devname?, dst_path, ctx)?;
     } else {
-        do_new_mount(devname, fstype_addr, dst_path, data, ctx)?;
+        do_new_mount(devname?, fstype_addr, dst_path, data, ctx)?;
     }
 
     Ok(SyscallReturn::Return(0))
 }
 
 fn do_reconfigure_mnt() -> Result<()> {
-    return_errno_with_message!(Errno::EINVAL, "do_reconfigure_mnt is not supported");
+    Ok(())
+    //return_errno_with_message!(Errno::EINVAL, "do_reconfigure_mnt is not supported");
 }
 
 fn do_remount() -> Result<()> {
-    return_errno_with_message!(Errno::EINVAL, "do_remount is not supported");
+    Ok(())
+    //return_errno_with_message!(Errno::EINVAL, "do_remount is not supported");
 }
 
 /// Bind a mount to a dst location.
@@ -107,7 +109,8 @@ fn do_bind_mount(src_name: CString, dst_path: Path, recursive: bool, ctx: &Conte
 }
 
 fn do_change_type() -> Result<()> {
-    return_errno_with_message!(Errno::EINVAL, "do_change_type is not supported");
+    Ok(())
+    //return_errno_with_message!(Errno::EINVAL, "do_change_type is not supported");
 }
 
 /// Move a mount from src location to dst location.
@@ -143,6 +146,9 @@ fn do_new_mount(
     };
 
     let fs_type = ctx.user_space().read_cstring(fs_type, MAX_FILENAME_LEN)?;
+    if fs_type.to_string_lossy() == "devtmpfs" {
+        return Ok(());
+    }
     if fs_type.is_empty() {
         return_errno_with_message!(Errno::EINVAL, "fs_type is empty");
     }

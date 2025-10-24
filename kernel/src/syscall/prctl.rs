@@ -93,6 +93,9 @@ pub fn sys_prctl(
             ctx.user_space()
                 .write_val(write_addr, &(process.is_child_subreaper() as u32))?;
         }
+        PrctlCmd::PR_SET_SECUREBITS =>  {
+            return Ok(SyscallReturn::Return(0));
+        }
         _ => todo!(),
     }
     Ok(SyscallReturn::Return(0))
@@ -106,6 +109,7 @@ const PR_GET_KEEPCAPS: i32 = 7;
 const PR_SET_KEEPCAPS: i32 = 8;
 const PR_SET_NAME: i32 = 15;
 const PR_GET_NAME: i32 = 16;
+const PR_SET_SECUREBITS: i32 = 28;
 const PR_SET_TIMERSLACK: i32 = 29;
 const PR_GET_TIMERSLACK: i32 = 30;
 const PR_SET_CHILD_SUBREAPER: i32 = 36;
@@ -128,6 +132,7 @@ pub enum PrctlCmd {
     PR_GET_DUMPABLE,
     PR_SET_CHILD_SUBREAPER(bool),
     PR_GET_CHILD_SUBREAPER(Vaddr),
+    PR_SET_SECUREBITS
 }
 
 #[repr(u64)]
@@ -156,6 +161,7 @@ impl PrctlCmd {
             PR_SET_KEEPCAPS => Ok(PrctlCmd::PR_SET_KEEPCAPS(arg2 as _)),
             PR_SET_CHILD_SUBREAPER => Ok(PrctlCmd::PR_SET_CHILD_SUBREAPER(arg2 > 0)),
             PR_GET_CHILD_SUBREAPER => Ok(PrctlCmd::PR_GET_CHILD_SUBREAPER(arg2 as _)),
+            PR_SET_SECUREBITS => Ok(PrctlCmd::PR_SET_SECUREBITS),
             _ => {
                 debug!("prctl cmd number: {}", option);
                 return_errno_with_message!(Errno::EINVAL, "unsupported prctl command");

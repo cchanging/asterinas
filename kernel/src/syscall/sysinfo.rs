@@ -27,6 +27,7 @@ pub fn sys_sysinfo(sysinfo_addr: Vaddr, ctx: &Context) -> Result<SyscallReturn> 
         uptime: read_monotonic_time().as_secs() as i64,
         totalram: crate::vm::mem_total() as u64,
         freeram: osdk_frame_allocator::load_total_free_size() as u64,
+        mem_unit: 1,
         ..Default::default() // TODO: add other system information
     };
     ctx.user_space().write_val(sysinfo_addr, &info)?;
