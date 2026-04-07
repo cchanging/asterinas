@@ -4,10 +4,7 @@ use ostd::mm::{VmIo, VmReader, VmWriter};
 
 use super::{
     BLOCK_SIZE, BlockDevice,
-    bio::{
-        Bio, BioCompleteFn, BioEnqueueError, BioSegment, BioStatus, BioType, BioWaiter,
-        SubmittedBio,
-    },
+    bio::{Bio, BioCompleteFn, BioEnqueueError, BioSegment, BioStatus, BioType, BioWaiter},
     id::{Bid, Sid},
 };
 use crate::{
@@ -200,13 +197,17 @@ impl dyn BlockDevice {
     }
 }
 
-pub(super) fn general_complete_fn(bio: &SubmittedBio, complete_fn: Option<BioCompleteFn>) {
-    let is_success = bio.status() == BioStatus::Complete;
+pub(super) fn general_complete_fn(
+    bio_type: BioType,
+    bio_status: BioStatus,
+    complete_fn: Option<BioCompleteFn>,
+) {
+    let is_success = bio_status == BioStatus::Complete;
     if !is_success {
         log::error!(
             "failed to do {:?} on the device with error status: {:?}",
-            bio.type_(),
-            bio.status()
+            bio_type,
+            bio_status
         );
     }
     if let Some(complete_fn) = complete_fn {

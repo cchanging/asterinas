@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 
 use alloc::boxed::Box;
-use core::sync::atomic::AtomicU64;
 
 use align_ext::AlignExt;
 use aster_util::mem_obj_slice::Slice;
@@ -14,7 +13,7 @@ use ostd::{
         dma::DmaStream,
         io::util::{HasVmReaderWriter, VmReaderWriterResult},
     },
-    sync::{SpinLock, WaitQueue},
+    sync::{LocalIrqDisabled, SpinLock, WaitQueue},
 };
 use spin::Once;
 
@@ -35,8 +34,16 @@ pub type BioCompleteFn = Box<dyn FnOnce(bool) + Send + Sync>;
 /// (2) The target sectors on the device for doing I/O,
 /// (3) The memory locations (`BioSegment`) from/to which data are read/written,
 /// (4) The optional callback function that will be invoked when the I/O is completed.
-#[derive(Debug)]
-pub struct Bio(Arc<BioInner>);
+///
+/// Before submission, a `Bio` owns its segments and completion callback.
+/// After submission, that ownership is transferred to `SubmittedBio`, while
+/// the returned `BioWaiter` only retains shared metadata for waiting and
+/// status queries.
+pub struct Bio {
+    metadata: Arc<BioMetaData>,
+    complete_fn: Option<BioCompleteFn>,
+    segments: Vec<BioSegment>,
+}
 
 impl Bio {
     /// Constructs a new `Bio`.
@@ -57,48 +64,60 @@ impl Bio {
             .map(|segment| segment.nsectors().to_raw())
             .sum();
 
-        let inner = Arc::new(BioInner {
+        let metadata = Arc::new(BioMetaData {
             type_,
             sid_range: start_sid..start_sid + nsectors,
-            sid_offset: AtomicU64::new(0),
-            segments,
-            complete_fn: SpinLock::new(complete_fn),
             status: AtomicU32::new(BioStatus::Init as u32),
             wait_queue: WaitQueue::new(),
         });
-        Self(inner)
+        Self {
+            metadata,
+            complete_fn,
+            segments,
+        }
     }
 
     /// Returns the type.
     pub fn type_(&self) -> BioType {
-        self.0.type_()
+        self.metadata.type_()
     }
 
     /// Returns the range of target sectors on the device.
     pub fn sid_range(&self) -> &Range<Sid> {
-        self.0.sid_range()
+        self.metadata.sid_range()
     }
 
-    /// Returns the slice to the memory segments.
+    /// Returns the slice to the memory segments currently owned by this handle.
+    ///
+    /// The `Bio` handles returned by `BioWaiter` are metadata-only and never retain segments.
     pub fn segments(&self) -> &[BioSegment] {
-        self.0.segments()
+        &self.segments
     }
 
     /// Returns the status.
     pub fn status(&self) -> BioStatus {
-        self.0.status()
+        self.metadata.status()
     }
 
     /// Submits self to the `block_device` asynchronously.
+    ///
+    /// This method consumes `self` and transfers its segments and completion
+    /// callback to the submitted request.
     ///
     /// Returns a `BioWaiter` to the caller to wait for its completion.
     ///
     /// # Panics
     ///
     /// The caller must not submit a `Bio` more than once. Otherwise, a panic shall be triggered.
-    pub fn submit(&self, block_device: &dyn BlockDevice) -> Result<BioWaiter, BioEnqueueError> {
+    pub fn submit(self, block_device: &dyn BlockDevice) -> Result<BioWaiter, BioEnqueueError> {
+        let Self {
+            metadata,
+            complete_fn,
+            segments,
+        } = self;
+
         // Change the status from "Init" to "Submit".
-        let result = self.0.status.compare_exchange(
+        let result = metadata.status.compare_exchange(
             BioStatus::Init as u32,
             BioStatus::Submit as u32,
             Ordering::Release,
@@ -106,9 +125,16 @@ impl Bio {
         );
         assert!(result.is_ok());
 
-        if let Err(e) = block_device.enqueue(SubmittedBio(self.0.clone())) {
+        let waiter_metadata = metadata.clone();
+        let submitted_bio = SubmittedBio {
+            metadata,
+            sid_offset: 0,
+            complete_fn,
+            segments,
+        };
+        if let Err(e) = block_device.enqueue(submitted_bio) {
             // Fail to submit, revert the status.
-            let result = self.0.status.compare_exchange(
+            let result = waiter_metadata.status.compare_exchange(
                 BioStatus::Submit as u32,
                 BioStatus::Init as u32,
                 Ordering::Release,
@@ -119,7 +145,7 @@ impl Bio {
         }
 
         Ok(BioWaiter {
-            bios: vec![self.0.clone()],
+            metadata: vec![waiter_metadata],
         })
     }
 
@@ -131,7 +157,7 @@ impl Bio {
     ///
     /// The caller must not submit a `Bio` more than once. Otherwise, a panic shall be triggered.
     pub fn submit_and_wait(
-        &self,
+        self,
         block_device: &dyn BlockDevice,
     ) -> Result<BioStatus, BioEnqueueError> {
         let waiter = self.submit(block_device)?;
@@ -141,7 +167,7 @@ impl Bio {
                 Ok(status)
             }
             None => {
-                let status = self.status();
+                let status = waiter.status(0);
                 assert!(status != BioStatus::Complete);
                 Ok(status)
             }
@@ -168,32 +194,26 @@ impl From<BioEnqueueError> for ostd::Error {
 
 /// A waiter for `Bio` submissions.
 ///
-/// This structure holds a list of `Bio` requests and provides functionality to
-/// wait for their completion and retrieve their statuses.
+/// This structure tracks the shared metadata of submitted `Bio` requests and
+/// provides functionality to wait for their completion and retrieve their
+/// statuses.
 #[must_use]
 #[derive(Debug)]
 pub struct BioWaiter {
-    bios: Vec<Arc<BioInner>>,
+    metadata: Vec<Arc<BioMetaData>>,
 }
 
 impl BioWaiter {
     /// Constructs a new `BioWaiter` instance with no `Bio` requests.
     pub fn new() -> Self {
-        Self { bios: Vec::new() }
+        Self {
+            metadata: Vec::new(),
+        }
     }
 
     /// Returns the number of `Bio` requests associated with `self`.
     pub fn nreqs(&self) -> usize {
-        self.bios.len()
-    }
-
-    /// Gets the `index`-th `Bio` request associated with `self`.
-    ///
-    /// # Panics
-    ///
-    /// If the `index` is out of bounds, this method will panic.
-    pub fn req(&self, index: usize) -> Bio {
-        Bio(self.bios[index].clone())
+        self.metadata.len()
     }
 
     /// Returns the status of the `index`-th `Bio` request associated with `self`.
@@ -202,26 +222,21 @@ impl BioWaiter {
     ///
     /// If the `index` is out of bounds, this method will panic.
     pub fn status(&self, index: usize) -> BioStatus {
-        self.bios[index].status()
+        self.metadata[index].status()
     }
 
     /// Merges the `Bio` requests from another `BioWaiter` into this one.
     ///
-    /// The another `BioWaiter`'s `Bio` requests are appended to the end of
-    /// the `Bio` list of `self`, effectively concatenating the two lists.
+    /// Another `BioWaiter`'s tracked requests are appended to the end of
+    /// `self`, effectively concatenating the two lists.
     pub fn concat(&mut self, mut other: Self) {
-        self.bios.append(&mut other.bios);
-    }
-
-    /// Returns an iterator for the `Bio` requests associated with `self`.
-    pub fn reqs(&self) -> impl Iterator<Item = Bio> {
-        self.bios.iter().map(|bio_inner| Bio(bio_inner.clone()))
+        self.metadata.append(&mut other.metadata);
     }
 
     /// Waits for the completion of all `Bio` requests.
     ///
-    /// This method iterates through each `Bio` in the list, waiting for their
-    /// completion.
+    /// This method iterates through each submitted request tracked by `self`,
+    /// waiting for its completion.
     ///
     /// The return value is an option indicating whether all the requests in the list
     /// have successfully completed.
@@ -229,9 +244,9 @@ impl BioWaiter {
     pub fn wait(&self) -> Option<BioStatus> {
         let mut ret = Some(BioStatus::Complete);
 
-        for bio in self.bios.iter() {
-            let status = bio.wait_queue.wait_until(|| {
-                let status = bio.status();
+        for metadata in self.metadata.iter() {
+            let status = metadata.wait_queue.wait_until(|| {
+                let status = metadata.status();
                 if status != BioStatus::Submit {
                     Some(status)
                 } else {
@@ -248,7 +263,7 @@ impl BioWaiter {
 
     /// Clears all `Bio` requests in this waiter.
     pub fn clear(&mut self) {
-        self.bios.clear();
+        self.metadata.clear();
     }
 }
 
@@ -261,48 +276,60 @@ impl Default for BioWaiter {
 /// A submitted `Bio` object.
 ///
 /// The request queue of block device only accepts a `SubmittedBio` into the queue.
-#[derive(Debug)]
-pub struct SubmittedBio(Arc<BioInner>);
+pub struct SubmittedBio {
+    metadata: Arc<BioMetaData>,
+    sid_offset: u64,
+    complete_fn: Option<BioCompleteFn>,
+    segments: Vec<BioSegment>,
+}
 
 impl SubmittedBio {
     /// Returns the type.
     pub fn type_(&self) -> BioType {
-        self.0.type_()
+        self.metadata.type_()
     }
 
     /// Returns the range of target sectors on the device.
     pub fn sid_range(&self) -> &Range<Sid> {
-        self.0.sid_range()
+        self.metadata.sid_range()
     }
 
     /// Returns the offset of the first sector id.
     pub fn sid_offset(&self) -> u64 {
-        self.0.sid_offset.load(Ordering::Relaxed)
+        self.sid_offset
     }
 
     /// Sets the offset of the first sector id.
-    pub fn set_sid_offset(&self, offset: u64) {
-        self.0.sid_offset.store(offset, Ordering::Relaxed);
+    pub fn set_sid_offset(&mut self, offset: u64) {
+        self.sid_offset = offset;
     }
 
     /// Returns the slice to the memory segments.
     pub fn segments(&self) -> &[BioSegment] {
-        self.0.segments()
+        &self.segments
     }
 
     /// Returns the status.
     pub fn status(&self) -> BioStatus {
-        self.0.status()
+        self.metadata.status()
     }
 
-    /// Completes the `Bio` with the `status` and invokes the callback function.
+    /// Completes the `Bio` by consuming `self`, releasing the segments, and
+    /// invoking the callback function.
     ///
     /// When the driver finishes the request for this `Bio`, it will call this method.
-    pub fn complete(&self, status: BioStatus) {
+    pub fn complete(self, status: BioStatus) {
         assert!(status != BioStatus::Init && status != BioStatus::Submit);
 
+        let Self {
+            metadata,
+            complete_fn,
+            segments,
+            ..
+        } = self;
+
         // Set the status.
-        let result = self.0.status.compare_exchange(
+        let result = metadata.status.compare_exchange(
             BioStatus::Submit as u32,
             status as u32,
             Ordering::Release,
@@ -310,31 +337,27 @@ impl SubmittedBio {
         );
         assert!(result.is_ok());
 
-        self.0.wait_queue.wake_all();
+        drop(segments);
 
-        general_complete_fn(self, self.0.complete_fn.disable_irq().lock().take());
+        metadata.wait_queue.wake_all();
+
+        general_complete_fn(metadata.type_(), status, complete_fn);
     }
 }
 
-/// The common inner part of `Bio`.
-struct BioInner {
+/// The metadata and waitable state shared by submitted `Bio`s and their waiter handles.
+struct BioMetaData {
     /// The type of the I/O
     type_: BioType,
     /// The logical range of target sectors on device
     sid_range: Range<Sid>,
-    /// The offset of the first sector id, used to adjust the `sid_range` for partition devices
-    sid_offset: AtomicU64,
-    /// The memory segments in this `Bio`
-    segments: Vec<BioSegment>,
-    /// The I/O completion callback
-    complete_fn: SpinLock<Option<BioCompleteFn>>,
     /// The I/O status
     status: AtomicU32,
     /// The wait queue for I/O completion
     wait_queue: WaitQueue,
 }
 
-impl BioInner {
+impl BioMetaData {
     pub fn type_(&self) -> BioType {
         self.type_
     }
@@ -343,22 +366,36 @@ impl BioInner {
         &self.sid_range
     }
 
-    pub fn segments(&self) -> &[BioSegment] {
-        &self.segments
-    }
-
     pub fn status(&self) -> BioStatus {
         BioStatus::try_from(self.status.load(Ordering::Relaxed)).unwrap()
     }
 }
 
-impl Debug for BioInner {
+impl Debug for BioMetaData {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        f.debug_struct("BioInner")
+        f.debug_struct("BioMetaData")
             .field("type", &self.type_())
             .field("sid_range", &self.sid_range())
             .field("status", &self.status())
-            .field("segments", &self.segments())
+            .finish()
+    }
+}
+
+impl Debug for Bio {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        f.debug_struct("Bio")
+            .field("metadata", &self.metadata)
+            .field("segments", &self.segments)
+            .finish()
+    }
+}
+
+impl Debug for SubmittedBio {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        f.debug_struct("SubmittedBio")
+            .field("metadata", &self.metadata)
+            .field("sid_offset", &self.sid_offset)
+            .field("segments", &self.segments)
             .finish()
     }
 }
@@ -564,7 +601,7 @@ struct BioSegmentPool {
     pool: Arc<DmaStream>,
     total_blocks: usize,
     direction: BioDirection,
-    manager: SpinLock<PoolSlotManager>,
+    manager: SpinLock<PoolSlotManager, LocalIrqDisabled>,
 }
 
 /// Manages the free slots in the pool.
