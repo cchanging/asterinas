@@ -7,10 +7,16 @@ use alloc::{
 };
 
 use id_alloc::IdAlloc;
-use ostd::{cpu::PrivilegeLevel, irq::InterruptLevel, sync::Mutex, timer};
+use ostd::{
+    cpu::{CpuId, PrivilegeLevel},
+    irq::InterruptLevel,
+    sync::Mutex,
+    timer,
+};
 
 use super::Process;
 use crate::{
+    fs::cgroupfs::{CpuStatKind, charge_cpu_time},
     process::{
         posix_thread::AsPosixThread,
         signal::{constants::SIGALRM, signals::kernel::KernelSignal},
@@ -56,6 +62,7 @@ fn update_cpu_time() {
         // `None` here.
         return;
     };
+    let current_cpu = CpuId::current_racy();
 
     let timer_manager = process.timer_manager();
     // Based on whether the timer interrupt occurs in kernel mode or user mode,
@@ -64,9 +71,11 @@ fn update_cpu_time() {
     if is_kernel_interrupted {
         posix_thread.prof_clock().kernel_clock().add_jiffies(1);
         process.prof_clock().kernel_clock().add_jiffies(1);
+        charge_cpu_time(&process, current_cpu, CpuStatKind::System);
     } else {
         posix_thread.prof_clock().user_clock().add_jiffies(1);
         process.prof_clock().user_clock().add_jiffies(1);
+        charge_cpu_time(&process, current_cpu, CpuStatKind::User);
         timer_manager
             .virtual_timer()
             .timer_manager()

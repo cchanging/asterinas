@@ -10,6 +10,7 @@ use core::{
 use aster_systree::{Error, Result, SysAttrSetBuilder, SysBranchNode, SysObj};
 use atomic_integer_wrapper::define_atomic_version_of_integer_like_type;
 use bitflags::bitflags;
+pub use cpu::{CpuStatKind, charge_cpu_time};
 use ostd::{
     mm::{VmReader, VmWriter},
     sync::Rcu,
@@ -17,10 +18,14 @@ use ostd::{
 
 use crate::fs::cgroupfs::{
     CgroupMembership, CgroupNode,
-    controller::{cpuset::CpuSetController, memory::MemoryController, pids::PidsController},
+    controller::{
+        cpu::CpuController, cpuset::CpuSetController, memory::MemoryController,
+        pids::PidsController,
+    },
     systree_node::CgroupSysNode,
 };
 
+mod cpu;
 mod cpuset;
 mod memory;
 mod pids;
@@ -35,7 +40,7 @@ trait SubControl {
 /// Defines the static properties and behaviors of a specific cgroup sub-controller.
 trait SubControlStatic: SubControl + Sized + 'static {
     /// Creates a new instance of the sub-controller.
-    fn new(is_root: bool) -> Self;
+    fn new(is_root: bool, is_active: bool) -> Self;
 
     /// Returns the `SubCtrlType` enum variant corresponding to this sub-controller.
     fn type_() -> SubCtrlType;
@@ -49,11 +54,21 @@ trait SubControlStatic: SubControl + Sized + 'static {
 pub(super) enum SubCtrlType {
     Memory,
     CpuSet,
+    Cpu,
     Pids,
 }
 
 impl SubCtrlType {
-    const ALL: [Self; 3] = [Self::Memory, Self::CpuSet, Self::Pids];
+    const ALL: [Self; 4] = [Self::Memory, Self::CpuSet, Self::Cpu, Self::Pids];
+
+    const fn as_str(self) -> &'static str {
+        match self {
+            Self::Memory => "memory",
+            Self::CpuSet => "cpuset",
+            Self::Cpu => "cpu",
+            Self::Pids => "pids",
+        }
+    }
 }
 
 impl FromStr for SubCtrlType {
@@ -63,6 +78,7 @@ impl FromStr for SubCtrlType {
         match s {
             "memory" => Ok(SubCtrlType::Memory),
             "cpuset" => Ok(SubCtrlType::CpuSet),
+            "cpu" => Ok(SubCtrlType::Cpu),
             "pids" => Ok(SubCtrlType::Pids),
             _ => Err(Error::NotFound),
         }
@@ -74,7 +90,8 @@ bitflags! {
     pub(super) struct SubCtrlSet: u8 {
         const MEMORY = 1 << 0;
         const CPUSET = 1 << 1;
-        const PIDS = 1 << 2;
+        const CPU = 1 << 2;
+        const PIDS = 1 << 3;
     }
 }
 
@@ -104,14 +121,12 @@ impl SubCtrlSet {
 
 impl Display for SubCtrlSet {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        if self.contains(Self::MEMORY) {
-            write!(f, "memory ")?;
-        }
-        if self.contains(Self::CPUSET) {
-            write!(f, "cpuset ")?;
-        }
-        if self.contains(Self::PIDS) {
-            write!(f, "pids")?;
+        let mut iter = self.iter_types();
+        if let Some(first) = iter.next() {
+            write!(f, "{}", first.as_str())?;
+            for ctrl_type in iter {
+                write!(f, " {}", ctrl_type.as_str())?;
+            }
         }
 
         Ok(())
@@ -123,6 +138,7 @@ impl From<SubCtrlType> for SubCtrlSet {
         match ctrl_type {
             SubCtrlType::Memory => Self::MEMORY,
             SubCtrlType::CpuSet => Self::CPUSET,
+            SubCtrlType::Cpu => Self::CPU,
             SubCtrlType::Pids => Self::PIDS,
         }
     }
@@ -159,14 +175,17 @@ struct SubController<T: SubControlStatic> {
 
 impl<T: SubControlStatic> SubController<T> {
     fn new(parent_controller: Option<&Controller>) -> Self {
+        let is_root = parent_controller.is_none();
         let is_active = if let Some(parent) = parent_controller {
             parent.active_set().contains_type(T::type_())
         } else {
             true
         };
 
-        let inner = if is_active {
-            Some(T::new(parent_controller.is_none()))
+        let inner = if is_active || T::type_() == SubCtrlType::Cpu {
+            // `cpu.stat` exists regardless of whether `+cpu` has been enabled, so the
+            // CPU sub-controller must remain instantiated even while inactive.
+            Some(T::new(is_root, is_active))
         } else {
             None
         };
@@ -208,6 +227,7 @@ pub struct Controller {
 
     memory: Rcu<Arc<SubController<MemoryController>>>,
     cpuset: Rcu<Arc<SubController<CpuSetController>>>,
+    cpu: Rcu<Arc<SubController<CpuController>>>,
     pids: Rcu<Arc<SubController<PidsController>>>,
 }
 
@@ -216,12 +236,14 @@ impl Controller {
     pub(super) fn new(parent_controller: Option<&Controller>) -> Self {
         let memory_controller = Arc::new(SubController::new(parent_controller));
         let cpuset_controller = Arc::new(SubController::new(parent_controller));
+        let cpu_controller = Arc::new(SubController::new(parent_controller));
         let pids_controller = Arc::new(SubController::new(parent_controller));
 
         Self {
             active_set: AtomicSubCtrlSet::new(SubCtrlSet::empty()),
             memory: Rcu::new(memory_controller),
             cpuset: Rcu::new(cpuset_controller),
+            cpu: Rcu::new(cpu_controller),
             pids: Rcu::new(pids_controller),
         }
     }
@@ -229,6 +251,7 @@ impl Controller {
     pub(super) fn init_attr_set(builder: &mut SysAttrSetBuilder, is_root: bool) {
         MemoryController::init_attr_set(builder, is_root);
         CpuSetController::init_attr_set(builder, is_root);
+        CpuController::init_attr_set(builder, is_root);
         PidsController::init_attr_set(builder, is_root);
     }
 
@@ -236,6 +259,7 @@ impl Controller {
         match ctrl_type {
             SubCtrlType::Memory => MemoryController::read_from(self),
             SubCtrlType::CpuSet => CpuSetController::read_from(self),
+            SubCtrlType::Cpu => CpuController::read_from(self),
             SubCtrlType::Pids => PidsController::read_from(self),
         }
     }
@@ -374,6 +398,20 @@ impl Controller {
                 SubCtrlType::CpuSet => {
                     let new_controller = Arc::new(SubController::new(Some(parent_controller)));
                     child_node.controller().cpuset.update(new_controller);
+                }
+                SubCtrlType::Cpu => {
+                    // Preserve the accumulated CPU accounting while toggling `+cpu` on the
+                    // parent. The base usage fields of `cpu.stat` are always tracked, and only
+                    // the extra throttling-related fields depend on whether the controller is active.
+                    let is_enabled = parent_controller
+                        .active_set()
+                        .contains_type(SubCtrlType::Cpu);
+                    let guard = child_node.controller().cpu.read();
+                    if is_enabled {
+                        guard.get().enable();
+                    } else {
+                        guard.get().disable();
+                    }
                 }
                 SubCtrlType::Pids => {
                     let mut new_controller: SubController<PidsController> =
