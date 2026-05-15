@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 
+use align_ext::AlignExt;
 use io_util::batch::IoBatch;
 use ostd::mm::{VmIo, VmReader, VmWriter};
 
 use super::{
-    BLOCK_SIZE, BlockDevice,
+    BLOCK_SIZE, BlockDevice, SECTOR_SIZE,
     bio::{Bio, BioCompleteFn, BioEnqueueError, BioSegment, BioStatus, BioType},
     id::{Bid, Sid},
 };
@@ -85,30 +86,38 @@ impl VmIo for dyn BlockDevice {
     /// Reads consecutive bytes of several sectors in size.
     fn read(&self, offset: usize, writer: &mut VmWriter) -> ostd::Result<()> {
         let read_len = writer.avail();
-        if !is_sector_aligned(offset) || !is_sector_aligned(read_len) {
-            return Err(ostd::Error::InvalidArgs);
-        }
         if read_len == 0 {
             return Ok(());
         }
 
+        let device_size = self.metadata().nr_sectors * SECTOR_SIZE;
+        if offset >= device_size {
+            return Ok(());
+        }
+
+        let effective_len = read_len.min(device_size - offset);
+        let request_end = offset + effective_len;
+        let aligned_offset = offset.align_down(SECTOR_SIZE);
+        let aligned_end = request_end.align_up(SECTOR_SIZE);
+        let aligned_len = aligned_end - aligned_offset;
+
         let (bio, bio_segment) = {
             let num_blocks = {
-                let first = Bid::from_offset(offset).to_raw();
-                let last = Bid::from_offset(offset + read_len - 1).to_raw();
+                let first = Bid::from_offset(aligned_offset).to_raw();
+                let last = Bid::from_offset(aligned_end - 1).to_raw();
                 (last - first + 1) as usize
             };
             let bio_segment = BioSegment::alloc_inner(
                 num_blocks,
-                offset % BLOCK_SIZE,
-                read_len,
+                aligned_offset % BLOCK_SIZE,
+                aligned_len,
                 BioDirection::FromDevice,
             );
 
             (
                 Bio::new(
                     BioType::Read,
-                    Sid::from_offset(offset),
+                    Sid::from_offset(aligned_offset),
                     vec![bio_segment.clone()],
                     None,
                 ),
@@ -118,7 +127,18 @@ impl VmIo for dyn BlockDevice {
 
         let status = bio.submit_and_wait(self)?;
         match status {
-            BioStatus::Complete => bio_segment.read(0, writer),
+            BioStatus::Complete => {
+                let segment_offset = offset - aligned_offset;
+
+                // `BioSegment`'s `VmIo::read` does not allow short reads,
+                // so the writer must be precisely limited here.
+                let mut limited_writer = writer.clone_exclusive();
+                limited_writer.limit(effective_len);
+                bio_segment.read(segment_offset, &mut limited_writer)?;
+                writer.skip(effective_len);
+
+                Ok(())
+            }
             _ => Err(ostd::Error::IoError),
         }
     }
@@ -126,35 +146,64 @@ impl VmIo for dyn BlockDevice {
     /// Writes consecutive bytes of several sectors in size.
     fn write(&self, offset: usize, reader: &mut VmReader) -> ostd::Result<()> {
         let write_len = reader.remain();
-        if !is_sector_aligned(offset) || !is_sector_aligned(write_len) {
-            return Err(ostd::Error::InvalidArgs);
-        }
         if write_len == 0 {
             return Ok(());
         }
 
-        let bio = {
+        let device_size = self.metadata().nr_sectors * SECTOR_SIZE;
+        if offset >= device_size {
+            return Err(ostd::Error::InvalidArgs);
+        }
+
+        let effective_len = write_len.min(device_size - offset);
+        let request_end = offset + effective_len;
+        let aligned_offset = offset.align_down(SECTOR_SIZE);
+        let aligned_end = request_end.align_up(SECTOR_SIZE);
+        let aligned_len = aligned_end - aligned_offset;
+
+        let bio_segment = {
             let num_blocks = {
-                let first = Bid::from_offset(offset).to_raw();
-                let last = Bid::from_offset(offset + write_len - 1).to_raw();
+                let first = Bid::from_offset(aligned_offset).to_raw();
+                let last = Bid::from_offset(aligned_end - 1).to_raw();
                 (last - first + 1) as usize
             };
-            let bio_segment = BioSegment::alloc_inner(
+            BioSegment::alloc_inner(
                 num_blocks,
-                offset % BLOCK_SIZE,
-                write_len,
+                aligned_offset % BLOCK_SIZE,
+                aligned_len,
                 BioDirection::ToDevice,
-            );
-            bio_segment.write(0, reader)?;
-
-            Bio::new(
-                BioType::Write,
-                Sid::from_offset(offset),
-                vec![bio_segment],
-                None,
             )
         };
 
+        // If the write range is not sector-aligned, preserve the bytes in the
+        // surrounding sectors that are outside the user-requested range.
+        if !is_sector_aligned(offset) || !is_sector_aligned(effective_len) {
+            let read_bio = Bio::new(
+                BioType::Read,
+                Sid::from_offset(aligned_offset),
+                vec![bio_segment.clone()],
+                None,
+            );
+            if read_bio.submit_and_wait(self)? != BioStatus::Complete {
+                return Err(ostd::Error::IoError);
+            }
+        }
+
+        let segment_offset = offset - aligned_offset;
+
+        // `BioSegment`'s `VmIo::write` does not allow short writes,
+        // so the reader must be precisely limited here.
+        let mut limited_reader = reader.clone();
+        limited_reader.limit(effective_len);
+        bio_segment.write(segment_offset, &mut limited_reader)?;
+        reader.skip(effective_len);
+
+        let bio = Bio::new(
+            BioType::Write,
+            Sid::from_offset(aligned_offset),
+            vec![bio_segment],
+            None,
+        );
         let status = bio.submit_and_wait(self)?;
         match status {
             BioStatus::Complete => Ok(()),
